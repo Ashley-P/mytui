@@ -1,0 +1,2 @@
+# Ignore object files and the obj directory
+obj/*
