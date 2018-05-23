@@ -6,7 +6,7 @@ PROJECT = libmytui.a
 LIBS =
 
 
-_DEPS =
+_DEPS = tui.h
 DEPS = $(patsubst %, $(INCLUDEDIR)/%, $(_DEPS))
 
 _OBJECTS = tui.o
@@ -27,3 +27,6 @@ clean:
 
 test:
 	gcc -o test src/test.c -L. -lmytui -Iinclude
+
+cleantest:
+	del *.exe
