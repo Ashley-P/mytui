@@ -22,11 +22,11 @@ $(PROJECT): $(OBJECTS)
 .PHONY: clean
 
 clean:
-	del "D:/Code/c/projects/mytui/src/obj/"
+	del ".\src\obj\*"
 	del *.a
 
 test:
 	gcc -o test src/test.c -L. -lmytui -Iinclude
 
 cleantest:
-	del *.exe
+	del ".\test.exe"
