@@ -4,4 +4,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+
+int winerr(const char *msg);
+
+
 #endif
