@@ -16,15 +16,14 @@ static SMALL_RECT y;
 
 
 int init_tui(const int n_screenwidth, const int n_screenheight) {
+    // setting up error logging
+    init_stderr();
+
     // New console process
     if (!FreeConsole())
         win_err("FreeConsole");
     if (!AllocConsole())
         win_err("AllocConsole");
-    
-
-    // setting up error logging
-    init_stderr();
 
     h_console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,
                                                 0,
