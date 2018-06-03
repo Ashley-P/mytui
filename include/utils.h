@@ -5,7 +5,9 @@
 #include <windows.h>
 
 
-int winerr(const char *msg);
+void init_stderr();
+
+int win_err(const char *msg);
 
 
 #endif

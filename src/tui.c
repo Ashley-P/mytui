@@ -6,7 +6,6 @@
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console; // Handle for the console
-static HANDLE h_stderr; //TODO redirect to a file
 static wchar_t *wc_screen; // Buffer to write characters to
 static DWORD dw_bytes_written = 0; // Required by windows.h
 
@@ -16,9 +15,14 @@ static COORD c_screensize;
 static SMALL_RECT y;
 
 
-int inittui(const int n_screenwidth, const int n_screenheight) {
+int init_tui(const int n_screenwidth, const int n_screenheight) {
+    // New console process
     FreeConsole();
     AllocConsole();
+    
+
+    // setting up error logging
+    init_stderr();
 
     h_console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,
                                                 0,
@@ -26,8 +30,7 @@ int inittui(const int n_screenwidth, const int n_screenheight) {
                                                 CONSOLE_TEXTMODE_BUFFER,
                                                 NULL);
     
-    h_stderr = GetStdHandle(STD_ERROR_HANDLE);
-    wc_screen = allocwcarray(n_screenwidth, n_screenheight);
+    wc_screen = alloc_wc_array(n_screenwidth, n_screenheight);
     
     /*
      * Slightly hacky way of setting up the console.
@@ -60,7 +63,7 @@ int inittui(const int n_screenwidth, const int n_screenheight) {
     return 0;
 }
 
-wchar_t * allocwcarray(const int n_screenwidth, const int n_screenheight) {
+wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
     wchar_t *ptr = (wchar_t *)calloc(n_screenwidth * n_screenheight, sizeof(wchar_t));
 
     // TODO: replace with better error handling

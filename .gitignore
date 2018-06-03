@@ -12,3 +12,4 @@ src/obj/*
 
 # Test files
 src/test.c
+error.log
