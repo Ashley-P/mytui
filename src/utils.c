@@ -39,6 +39,8 @@ int win_err(const char *msg) {
               strlen(err),
               &dw_bytes_written,
               NULL);
+
+    free(err2);
               
     return 0;
 }
