@@ -16,7 +16,7 @@ void init_stderr() {
 }
 
 
-int winerr(const char *msg) {
+int win_err(const char *msg) {
     char buf[256];
     char err[256];
     char *err2;

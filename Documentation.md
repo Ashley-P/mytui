@@ -35,18 +35,18 @@ The variables here are for internal use by the library
 
 #### Synopsis
 
-    int inittui(const int nScreenWidth, const int nScreenHeight);
-    wchar_t* allocwcarray(const int nScreenWidth, const int nScreenHeight);
+    int init_tui(const int nScreenWidth, const int nScreenHeight);
+    wchar_t* alloc_wc_array(const int nScreenWidth, const int nScreenHeight);
     
 
 #### Description
 
-    inittui() creates a new console process and a screen buffer for it. stderr
+    init_tui() creates a new console process and a screen buffer for it. stderr
     is redirected to an output file and an array is created to fit the desired
     screen size. Then the screen buffer is linked to the console and the screen
     size is changed.
 
-    allocwcarray() returns a pointer to a chunk of memory that has been
+    alloc_wc_array() returns a pointer to a chunk of memory that has been
     acquired through calloc.
 
 
@@ -67,9 +67,14 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 
 #### Synopsis
     
-    int winerr(const char *msg);
+    void init_stderr
+    int win_err(const char *msg);
 
 
 #### Description
 
-    winerr() puts a formatted error message from the windows functions into a file
+    win_err() puts a formatted error message from the \<windows.h\> functions into a
+    logging file.
+
+    init_stderr() creates a new file to log errors in. If the file already
+    exists, it's overwritten.
