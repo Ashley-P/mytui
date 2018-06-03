@@ -17,8 +17,10 @@ static SMALL_RECT y;
 
 int init_tui(const int n_screenwidth, const int n_screenheight) {
     // New console process
-    FreeConsole();
-    AllocConsole();
+    if (!FreeConsole())
+        win_err("FreeConsole");
+    if (!AllocConsole())
+        win_err("AllocConsole");
     
 
     // setting up error logging
@@ -30,6 +32,8 @@ int init_tui(const int n_screenwidth, const int n_screenheight) {
                                                 CONSOLE_TEXTMODE_BUFFER,
                                                 NULL);
     
+    if (h_console == INVALID_HANDLE_VALUE)
+        win_err("Bad Handle");
     wc_screen = alloc_wc_array(n_screenwidth, n_screenheight);
     
     /*
@@ -40,11 +44,16 @@ int init_tui(const int n_screenwidth, const int n_screenheight) {
     c_screensize = (COORD) {(short)n_screenwidth, (short)n_screenheight};
     y = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
 
-    SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1}));
-    SetConsoleScreenBufferSize(h_console, c_screensize);
-    SetConsoleActiveScreenBuffer(h_console);
-    SetConsoleWindowInfo(h_console, TRUE, &y);
-    SetConsoleMode(h_console, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+    if (!SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1})))
+        win_err("SetConsoleWindowInfo");
+    if (!SetConsoleScreenBufferSize(h_console, c_screensize))
+        win_err("SetConsoleScreenBufferSize");
+    if (!SetConsoleActiveScreenBuffer(h_console))
+        win_err("SetConsoleActiveScreenBuffer");
+    if (!SetConsoleWindowInfo(h_console, TRUE, &y))
+        win_err("SetConsoleWindowInfo");
+    if (!SetConsoleMode(h_console, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+        win_err("SetConsoleMode");
 
     // Just a test
     while(1) {
