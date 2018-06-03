@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <windows.h>
+#include "utils.h"
 
 
 int inittui(const int n_screenwidth, const int n_screenheight);

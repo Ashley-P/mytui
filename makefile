@@ -6,10 +6,10 @@ PROJECT = libmytui.a
 LIBS =
 
 
-_DEPS = tui.h
+_DEPS = tui.h utils.h
 DEPS = $(patsubst %, $(INCLUDEDIR)/%, $(_DEPS))
 
-_OBJECTS = tui.o
+_OBJECTS = tui.o utils.o
 OBJECTS = $(patsubst %, $(OBJECTSDIR)/%, $(_OBJECTS))
 
 $(OBJECTSDIR)/%.o : src/%.c $(DEPS)
