@@ -1,5 +1,6 @@
 #include "tui.h"
-/* All the includes are in the header so the user doesn't have to include 
+/*
+ * All the includes are in the header so the user doesn't have to include 
  * everything themselves
  */
 
@@ -28,7 +29,8 @@ int inittui(const int n_screenwidth, const int n_screenheight) {
     h_stderr = GetStdHandle(STD_ERROR_HANDLE);
     wc_screen = allocwcarray(n_screenwidth, n_screenheight);
     
-    /* Slightly hacky way of setting up the console.
+    /*
+     * Slightly hacky way of setting up the console.
      * Sets the console window size to be very small, then scales it back
      * up to the size of the buffer
      */
