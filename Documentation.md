@@ -25,6 +25,8 @@ The variables here are for internal use by the library
     DWORD dw_bytes_written      required variable for usage with windows
     COORD c_screensize          initialises the buffer size
     SMALL_RECT y                initialises the window size
+    size_t s_screen             size of screen in bytes
+    int i_bufsize               size of *wc_screen in elements
 
 
 ### Constants
@@ -37,6 +39,8 @@ The variables here are for internal use by the library
 
     int init_tui(const int nScreenWidth, const int nScreenHeight);
     wchar_t* alloc_wc_array(const int nScreenWidth, const int nScreenHeight);
+    void tui_draw();
+    void tui_loop();
     
 
 #### Description
@@ -48,6 +52,11 @@ The variables here are for internal use by the library
 
     alloc_wc_array() returns a pointer to a chunk of memory that has been
     acquired through calloc.
+
+    tui_draw() is where all the drawing to the buffer is handled
+
+    tui_loop() is the looping for the program, drawing and other functions are
+    called sequentially
 
 
 ---

@@ -5,10 +5,11 @@
  */
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
-static HANDLE h_console; // Handle for the console
-static wchar_t *wc_screen; // Buffer to write characters to
-static DWORD dw_bytes_written = 0; // Required by windows.h
-
+static HANDLE h_console;            // Handle for the console
+static wchar_t *wc_screen;          // Buffer to write characters to
+static DWORD dw_bytes_written = 0;  // Required by windows.h
+static size_t s_screen;             // Size of the screen in bytes
+static int i_bufsize;               // Size of *wc_screen in elements
 
 // Needed for initialisation
 static COORD c_screensize;
@@ -54,21 +55,13 @@ int init_tui(const int n_screenwidth, const int n_screenheight) {
     if (!SetConsoleMode(h_console, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
         win_err("SetConsoleMode");
 
-    // Just a test
-    while(1) {
-        *wc_screen = L'A';
-        *(wc_screen + sizeof(wchar_t)) = L'B';
-        *(wc_screen + (n_screenwidth * n_screenheight) - 1) = L'0';
-        *(wc_screen + (n_screenwidth * n_screenheight)) = L'\0';
-        WriteConsoleOutputCharacterW(h_console,
-                                     wc_screen,
-                                     n_screenwidth * n_screenheight,
-                                     (COORD) {0, 0},
-                                     &dw_bytes_written);
+    // Remove the blinking cursor
+    if (!SetConsoleCursorInfo(h_console, &((CONSOLE_CURSOR_INFO) {1, FALSE})))
+        win_err("SetConsoleCursorInfo");
 
-    }
+    s_screen = n_screenwidth * n_screenheight * sizeof(wchar_t);
 
-    return 0;
+    return 1;
 }
 
 wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
@@ -79,5 +72,35 @@ wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
         printf("Calloc error");
         exit(-1);
     }
+
+    i_bufsize = n_screenwidth * n_screenheight;
+
     return ptr;
+}
+
+void tui_draw() {
+    // Basic drawing for now
+    // Resetting each element
+    /*
+    for(int i = 0; i < s_screen; i++)
+        *(wc_screen + i) = L' ';
+    */
+    // Test
+    *(wc_screen) = L'A';
+    *(wc_screen + i_bufsize - 1) = L'Z';
+
+    *(wc_screen + i_bufsize) = L'\0';
+
+    WriteConsoleOutputCharacterW(h_console,
+                                 wc_screen,
+                                 i_bufsize,
+                                 (COORD) {0, 0},
+                                 &dw_bytes_written);
+}
+
+
+void tui_loop() {
+    while(1) {
+        tui_draw();
+    }
 }
