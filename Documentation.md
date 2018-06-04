@@ -25,7 +25,6 @@ The variables here are for internal use by the library
     DWORD dw_bytes_written      required variable for usage with windows
     COORD c_screensize          initialises the buffer size
     SMALL_RECT y                initialises the window size
-    size_t s_screen             size of screen in bytes
     int i_bufsize               size of *wc_screen in elements
 
 
