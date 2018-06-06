@@ -1,6 +1,9 @@
 #ifndef TUI_H_
 #define TUI_H_
 
+extern int sn_screenwidth;
+extern int sn_screenheight;
+extern int i_bufsize;
 
 int init_tui(const int n_screenwidth, const int n_screenheight);
 

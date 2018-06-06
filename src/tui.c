@@ -1,16 +1,18 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <windows.h>
 #include "utils.h"
 #include "tui.h"
+#include "draw.h"
 
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
 static wchar_t *wc_screen;          // Buffer to write characters to
 static DWORD dw_bytes_written = 0;  // Required by windows.h
-static int i_bufsize;               // Size of *wc_screen in elements
-static int sn_screenwidth;
-static int sn_screenheight;
+int i_bufsize;               // Size of *wc_screen in elements
+int sn_screenwidth;
+int sn_screenheight;
 
 // Needed for initialisation
 static COORD c_screensize;
@@ -79,20 +81,13 @@ wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
 void tui_draw() {
     // Basic drawing for now
     // Resetting each element
-    for(int i = 0; i < i_bufsize; i++)
-        *(wc_screen + i) = L' ';
-    
+    reset_buf(wc_screen);   
     // Test
     *(wc_screen) = L'A';
     *(wc_screen + i_bufsize - 1) = L'Z';
 
-    for(int j = 5; j < 10; j++) {
-        for(int k = 5; k < 10; k++) {
-            *(wc_screen + j + (k * sn_screenwidth)) = L'#';
-        }
-    }
-
-    *(wc_screen + i_bufsize) = L'\0';
+    draw_box(wc_screen, 5, 5, 10, 10, true);
+    draw_box(wc_screen, 5, 20, 10, 10, false);
 
     WriteConsoleOutputCharacterW(h_console,
                                  wc_screen,
