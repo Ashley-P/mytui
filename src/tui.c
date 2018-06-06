@@ -9,6 +9,8 @@ static HANDLE h_console;            // Handle for the console
 static wchar_t *wc_screen;          // Buffer to write characters to
 static DWORD dw_bytes_written = 0;  // Required by windows.h
 static int i_bufsize;               // Size of *wc_screen in elements
+static int sn_screenwidth;
+static int sn_screenheight;
 
 // Needed for initialisation
 static COORD c_screensize;
@@ -34,6 +36,8 @@ int init_tui(const int n_screenwidth, const int n_screenheight) {
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
     wc_screen = alloc_wc_array(n_screenwidth, n_screenheight);
+    sn_screenwidth = n_screenwidth;
+    sn_screenheight = n_screenheight;
     
     /*
      * Slightly hacky way of setting up the console.
@@ -81,6 +85,12 @@ void tui_draw() {
     // Test
     *(wc_screen) = L'A';
     *(wc_screen + i_bufsize - 1) = L'Z';
+
+    for(int j = 5; j < 10; j++) {
+        for(int k = 5; k < 10; k++) {
+            *(wc_screen + j + (k * sn_screenwidth)) = L'#';
+        }
+    }
 
     *(wc_screen + i_bufsize) = L'\0';
 
