@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <windows.h>
 #include "utils.h"
 
 

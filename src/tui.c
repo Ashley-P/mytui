@@ -1,8 +1,8 @@
+#include <stdlib.h>
+#include <windows.h>
+#include "utils.h"
 #include "tui.h"
-/*
- * All the includes are in the header so the user doesn't have to include 
- * everything themselves
- */
+
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
