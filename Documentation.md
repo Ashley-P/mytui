@@ -111,6 +111,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
     void reset_buf(wchar_t *buf);
     void draw_box(wchar_t *buf, int x, int y, const int width, const int height, const bool fill);
+    void draw_str(wchar_t *buf, const wchar_t *str, const size_t str_len, int x, int y);
 
 
 #### Description
@@ -118,5 +119,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     reset_buf() Fills the buffer with spaces and sets the last character to the null character.
     Used after every draw to the screen
 
-    draw_box Draws a box of the desired width and height at the provided co-ordinates x and y.
+    draw_box() Draws a box of the desired width and height at the provided co-ordinates x and y.
     The character used is the hash '#'. The box can be filled or just left with the borders
+
+    draw_str() Draws a string to the screen at the desired position.
