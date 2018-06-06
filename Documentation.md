@@ -90,3 +90,33 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 
     tui_err() is similar to win_err() in that it puts a formatted error message into
     a logging file, and also offers the opportunity to quit the program all together.
+
+
+---
+## The \<draw.h\> Header
+
+The \<draw.h\> header file contains all the declarations for the functions and datatypes
+
+### Datatypes
+
+### Variables
+
+### Constants
+
+### Structs
+
+### Functions
+
+#### Synopsis
+
+    void reset_buf(wchar_t *buf);
+    void draw_box(wchar_t *buf, int x, int y, const int width, const int height, const bool fill);
+
+
+#### Description
+    
+    reset_buf() Fills the buffer with spaces and sets the last character to the null character.
+    Used after every draw to the screen
+
+    draw_box Draws a box of the desired width and height at the provided co-ordinates x and y.
+    The character used is the hash '#'. The box can be filled or just left with the borders
