@@ -7,8 +7,8 @@
 
 void init_stderr();
 
-int win_err(const char *msg);
+void win_err(const char *msg);
 
-int tui_err(const char *msg);
+void tui_err(const char *msg, const int quit_prog);
 
 #endif

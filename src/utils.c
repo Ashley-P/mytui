@@ -16,7 +16,7 @@ void init_stderr() {
 }
 
 
-int win_err(const char *msg) {
+void win_err(const char *msg) {
     char buf[256];
     char err[256];
     char *err2;
@@ -45,11 +45,9 @@ int win_err(const char *msg) {
               NULL);
 
     free(err2);
-              
-    return 0;
 }
 
-int tui_err(const char *msg) {
+void tui_err(const char *msg, const int quit_prog) {
     char err[256];
     char *err2;
     memset(err, '\0', 256);
@@ -63,6 +61,6 @@ int tui_err(const char *msg) {
               NULL);
     
     free(err2);
-
-    return 0;
+    if (quit_prog == 1)
+        exit(-1);
 }

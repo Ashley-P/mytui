@@ -64,11 +64,8 @@ int init_tui(const int n_screenwidth, const int n_screenheight) {
 wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
     wchar_t *ptr = (wchar_t *)calloc(n_screenwidth * n_screenheight, sizeof(wchar_t));
 
-    // TODO: replace with better error handling
-    if (ptr == NULL) {
-        printf("Calloc error");
-        exit(-1);
-    }
+    if (ptr == NULL)
+        tui_err("Calloc failed to allocate memory", 1);
 
     i_bufsize = n_screenwidth * n_screenheight;
 
