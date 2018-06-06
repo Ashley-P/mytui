@@ -27,9 +27,9 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     if (fill == false) {
         for(int i = 0; i < height; i++) {
             *(buf + (i + y) + (x * sn_screenwidth)) = L'#';                 // Top Border
-            *(buf + (i + y) + ((x + height - 1) * sn_screenwidth)) = L'#';  // Bottom Border
+            *(buf + (i + y) + ((x + height - 1) * sn_screenwidth)) = L'#';      // Bottom Border
             *(buf + y + ((x + i) * sn_screenwidth)) = L'#';                 // Left Border
-            *(buf + (y + height) + ((x + i) * sn_screenwidth)) = L'#';      // Right border
+            *(buf + (y + height - 1) + ((x + i) * sn_screenwidth)) = L'#';      // Right border
         }
     }
 }
