@@ -30,7 +30,11 @@ int win_err(const char *msg) {
                   buf,
                   256,
                   NULL);
-    // This is where it goes to a file
+    /*
+     * This is where it goes to a file
+     * It has to be done like this to prevent 
+     * artifacts being left in the error file
+     */
     sprintf(err, "ERROR: %s.\t%s\r\n", msg, buf);
     err2 = (char *)malloc(strlen(err));
     strcpy(err2, err);
@@ -42,5 +46,23 @@ int win_err(const char *msg) {
 
     free(err2);
               
+    return 0;
+}
+
+int tui_err(const char *msg) {
+    char err[256];
+    char *err2;
+    memset(err, '\0', 256);
+    sprintf(err, "ERROR: %s\r\n", msg);
+    err2 = (char *)malloc(strlen(err));
+    strcpy(err2, err);
+    WriteFile(errlog,
+              err2,
+              strlen(err),
+              &dw_bytes_written,
+              NULL);
+    
+    free(err2);
+
     return 0;
 }

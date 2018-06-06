@@ -9,5 +9,6 @@ void init_stderr();
 
 int win_err(const char *msg);
 
+int tui_err(const char *msg);
 
 #endif
