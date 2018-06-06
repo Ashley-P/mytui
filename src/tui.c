@@ -19,7 +19,7 @@ static COORD c_screensize;
 static SMALL_RECT y;
 
 
-int init_tui(const int n_screenwidth, const int n_screenheight) {
+int tui_init(const int n_screenwidth, const int n_screenheight) {
     // setting up error logging
     init_stderr();
 
