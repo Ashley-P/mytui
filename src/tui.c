@@ -83,9 +83,6 @@ void tui_draw() {
     // Resetting each element
     reset_buf(wc_screen);   
     // Test
-    *(wc_screen) = L'A';
-    *(wc_screen + i_bufsize - 1) = L'Z';
-
     draw_box(wc_screen, 5, 5, 10, 10, true);
     draw_box(wc_screen, 5, 20, 10, 10, false);
 

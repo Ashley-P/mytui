@@ -8,4 +8,6 @@ void reset_buf(wchar_t *buf);
 
 void draw_box(wchar_t *buf, int x, int y, const int width, const int height, const bool fill);
 
+void draw_str(wchar_t *buf, const wchar_t *str, const size_t str_len, int x, int y);
+
 #endif

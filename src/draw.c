@@ -18,7 +18,7 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     if (fill == true) {
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++) {
-                *(buf + (i + y) + ((x + j) * sn_screenwidth )) = L'#';
+                *(buf + (x + i) + ((y + j) * sn_screenwidth )) = L'#';
             }
         }
     }
@@ -26,10 +26,16 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     // Non-filled box
     if (fill == false) {
         for(int i = 0; i < height; i++) {
-            *(buf + (i + y) + (x * sn_screenwidth)) = L'#';                 // Top Border
-            *(buf + (i + y) + ((x + height - 1) * sn_screenwidth)) = L'#';      // Bottom Border
-            *(buf + y + ((x + i) * sn_screenwidth)) = L'#';                 // Left Border
-            *(buf + (y + height - 1) + ((x + i) * sn_screenwidth)) = L'#';      // Right border
+            *(buf + (x + i) + (y * sn_screenwidth)) = L'#';                 // Top Border
+            *(buf + (x + i) + ((y + height - 1) * sn_screenwidth)) = L'#';      // Bottom Border
+            *(buf + x + ((y + i) * sn_screenwidth)) = L'#';                 // Left Border
+            *(buf + (x + height - 1) + ((y + i) * sn_screenwidth)) = L'#';      // Right border
         }
+    }
+}
+
+void draw_str(wchar_t *buf, const wchar_t *str, const size_t str_len, int x, int y) {
+    for(int i = 0; i < str_len; i++) {
+        *(buf + (x + i) + (y * sn_screenwidth)) = *(str + i);
     }
 }
