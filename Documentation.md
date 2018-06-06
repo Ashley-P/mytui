@@ -76,13 +76,17 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 #### Synopsis
     
     void init_stderr
-    int win_err(const char *msg);
+    void win_err(const char *msg);
+    void tui_err(const char *msg, const int quit_prog);
 
 
 #### Description
 
+    init_stderr() creates a new file to log errors in. If the file already
+    exists, it's overwritten.
+
     win_err() puts a formatted error message from the \<windows.h\> functions into a
     logging file.
 
-    init_stderr() creates a new file to log errors in. If the file already
-    exists, it's overwritten.
+    tui_err() is similar to win_err() in that it puts a formatted error message into
+    a logging file, and also offers the opportunity to quit the program all together.
