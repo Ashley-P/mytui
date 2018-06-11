@@ -38,6 +38,7 @@ The variables here are for internal use by the library
 
     int init_tui(const int nScreenWidth, const int nScreenHeight);
     wchar_t* alloc_wc_array(const int nScreenWidth, const int nScreenHeight);
+    void tui_handle_input();
     void tui_draw();
     void tui_loop();
     
@@ -51,6 +52,8 @@ The variables here are for internal use by the library
 
     alloc_wc_array() returns a pointer to a chunk of memory that has been
     acquired through calloc.
+
+    tui_handle_input() handles all the events for the program
 
     tui_draw() is where all the drawing to the buffer is handled
 
