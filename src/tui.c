@@ -85,6 +85,8 @@ void tui_draw() {
     // Test
     draw_box(wc_screen, 5, 5, 10, 10, true);
     draw_box(wc_screen, 5, 20, 10, 10, false);
+    draw_str(wc_screen, L"test", 24, 20);
+    draw_str(wc_screen, L"test", 20, 20);
 
     WriteConsoleOutputCharacterW(h_console,
                                  wc_screen,

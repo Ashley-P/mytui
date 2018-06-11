@@ -34,7 +34,8 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     }
 }
 
-void draw_str(wchar_t *buf, const wchar_t *str, const size_t str_len, int x, int y) {
+void draw_str(wchar_t *buf, const wchar_t *str, int x, int y) {
+    int str_len = wcslen(str);
     for(int i = 0; i < str_len; i++) {
         *(buf + (x + i) + (y * sn_screenwidth)) = *(str + i);
     }
