@@ -8,6 +8,7 @@
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
+static HANDLE h_stdin;
 static wchar_t *wc_screen;          // Buffer to write characters to
 static DWORD dw_bytes_written = 0;  // Required by windows.h
 int i_bufsize;               // Size of *wc_screen in elements
@@ -22,6 +23,11 @@ static SMALL_RECT y;
 int tui_init(const int n_screenwidth, const int n_screenheight) {
     // setting up error logging
     init_stderr();
+    
+    h_stdin = GetStdHandle(STD_INPUT_HANDLE);
+    if (h_stdin == INVALID_HANDLE_VALUE)
+        win_err("Bad Handle");
+
 
     // New console process
     if (!FreeConsole())
@@ -78,6 +84,36 @@ wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
     return ptr;
 }
 
+void tui_handle_input() {
+    unsigned long ul_evread;
+    INPUT_RECORD ir_inpbuf[256];
+
+    if (!ReadConsoleInput(h_stdin,
+                          ir_inpbuf,
+                          256,
+                          &ul_evread))
+        win_err("ReadConsoleInput");
+
+    for(int i = 0; i < ul_evread; i++) {
+        switch (ir_inpbuf[i].EventType) {
+            case KEY_EVENT:
+                tui_err("Key Event", 0);
+                break;
+
+            case MOUSE_EVENT:
+                tui_err("Mouse Event", 0);
+                break;
+
+            case WINDOW_BUFFER_SIZE_EVENT:
+                tui_err("Window Buffer Size Event", 0);
+                break;
+
+            case FOCUS_EVENT: case MENU_EVENT: // Ignore these
+                break;
+        }
+    }
+}
+
 void tui_draw() {
     // Basic drawing for now
     // Resetting each element
@@ -85,8 +121,6 @@ void tui_draw() {
     // Test
     draw_box(wc_screen, 5, 5, 10, 10, true);
     draw_box(wc_screen, 5, 20, 10, 10, false);
-    draw_str(wc_screen, L"test", 24, 20);
-    draw_str(wc_screen, L"test", 20, 20);
 
     WriteConsoleOutputCharacterW(h_console,
                                  wc_screen,
@@ -98,6 +132,7 @@ void tui_draw() {
 
 void tui_loop() {
     while(1) {
+        tui_handle_input();
         tui_draw();
     }
 }
