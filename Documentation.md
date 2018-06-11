@@ -126,3 +126,38 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     The character used is the hash '#'. The box can be filled or just left with the borders
 
     draw_str() Draws a string to the screen at the desired position.
+
+
+## The \<widgets.h\> Header
+
+The \<widgets.h\> header contains all the widgets that the user of this library should be calling.
+
+### Datatypes
+
+### Variables
+
+### Constants
+
+### Structs
+
+    typedef struct Button_ {
+        int px;
+        int py;
+        int width;
+        int height;
+        char *text;
+    } sButton, *psButton;
+
+### Functions
+
+#### Synopsis
+    
+    psButton * tui_button(const int px, const int py, const int width, const int height, const char *text);
+
+#### Description
+
+    tui_button() creates a Button_ struct and returns a pointer to it. (In the future it will also be added
+    to an array/list of drawn objects/structs and to an array/list of all objects/structs.)
+
+
+---
