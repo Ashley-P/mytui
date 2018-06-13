@@ -3,11 +3,14 @@
 
 #include <stdbool.h>
 #include <wchar.h>
+#include "widgets.h"
 
 void reset_buf(wchar_t *buf);
 
 void draw_box(wchar_t *buf, int x, int y, const int width, const int height, const bool fill);
 
 void draw_str(wchar_t *buf, const wchar_t *str, int x, int y);
+
+void draw_button(wchar_t *buf, sButton * button);
 
 #endif

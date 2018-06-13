@@ -25,7 +25,7 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     if (fill == true) {
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++) {
-                *(buf + (x + i) + ((y + j) * sn_screenwidth )) = L'#';
+                *(buf + (x + j) + ((y + i) * sn_screenwidth )) = L'#';
             }
         }
     }
@@ -49,5 +49,5 @@ void draw_str(wchar_t *buf, const wchar_t *str, int x, int y) {
 }
 
 void draw_button(wchar_t *buf, sButton * button) {
-    draw_box(buf, button->px, button->py, button->width, button->height, 0);
+    draw_box(buf, button->px, button->py, button->width, button->height, false);
 }
