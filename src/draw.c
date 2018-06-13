@@ -33,10 +33,13 @@ void draw_box(wchar_t *buf, int x, int y, const int width, const int height, con
     // Non-filled box
     if (fill == false) {
         for(int i = 0; i < height; i++) {
-            *(buf + (x + i) + (y * sn_screenwidth)) = L'#';                     // Top Border
-            *(buf + (x + i) + ((y + height - 1) * sn_screenwidth)) = L'#';      // Bottom Border
             *(buf + x + ((y + i) * sn_screenwidth)) = L'#';                     // Left Border
-            *(buf + (x + height - 1) + ((y + i) * sn_screenwidth)) = L'#';      // Right border
+            *(buf + (x + width - 1) + ((y + i) * sn_screenwidth)) = L'#';       // Right Border
+        }
+
+        for(int j = 0; j < width; j++) {
+            *(buf + (x + j) + (y * sn_screenwidth)) = L'#';                     // Top Border
+            *(buf + (x + j) + ((y + height - 1) * sn_screenwidth)) = L'#';      // Bottom Border
         }
     }
 }
