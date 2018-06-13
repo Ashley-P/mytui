@@ -53,4 +53,5 @@ void draw_str(wchar_t *buf, const wchar_t *str, int x, int y) {
 
 void draw_button(wchar_t *buf, sButton * button) {
     draw_box(buf, button->px, button->py, button->width, button->height, false);
+    draw_str(buf, button->text, button->px, button->py);
 }

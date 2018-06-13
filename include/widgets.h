@@ -6,9 +6,10 @@ typedef struct Button_ {
     int py;
     int width;
     int height;
-    char *text;
+    wchar_t *text;
 } sButton, *psButton;
 
 
-psButton * tui_button(const int px, const int py, const int width, const int height, const char *text);
+sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text);
+
 #endif
