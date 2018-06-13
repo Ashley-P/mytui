@@ -127,6 +127,9 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
     draw_str() Draws a string to the screen at the desired position.
 
+    draw_button() Draws a button to the screen. Really it's just calling draw_box () and 
+    draw_str() together.
+
 
 ## The \<widgets.h\> Header
 
@@ -145,14 +148,14 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         int py;
         int width;
         int height;
-        char *text;
+        wchar_t *text;
     } sButton, *psButton;
 
 ### Functions
 
 #### Synopsis
     
-    psButton * tui_button(const int px, const int py, const int width, const int height, const char *text);
+    sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text);
 
 #### Description
 
