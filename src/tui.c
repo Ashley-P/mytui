@@ -120,7 +120,7 @@ void tui_draw() {
     reset_buf(wc_screen);   
     
     // Drawing test because it requires the buffer to be passed currently
-    psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES");
+    psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES", NULL);
     draw_button(wc_screen, mybutton);
 
     WriteConsoleOutputCharacterW(h_console,

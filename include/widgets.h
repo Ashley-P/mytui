@@ -7,9 +7,10 @@ typedef struct Button_ {
     int width;
     int height;
     wchar_t *text;
+    void (*fp)();
 } sButton, *psButton;
 
 
-sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text);
+sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text, void (*fp)());
 
 #endif
