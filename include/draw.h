@@ -3,14 +3,15 @@
 
 #include <stdbool.h>
 #include <wchar.h>
+#include <windows.h>
 #include "widgets.h"
 
-void reset_buf(wchar_t *buf);
+void reset_buf(CHAR_INFO *buf);
 
-void draw_box(wchar_t *buf, int x, int y, const int width, const int height, const bool fill);
+void draw_box(CHAR_INFO *buf, int x, int y, const int width, const int height, const bool fill);
 
-void draw_str(wchar_t *buf, const wchar_t *str, int x, int y);
+void draw_str(CHAR_INFO *buf, const wchar_t *str, int x, int y);
 
-void draw_button(wchar_t *buf, sButton * button);
+void draw_button(CHAR_INFO *buf, sButton * button);
 
 #endif

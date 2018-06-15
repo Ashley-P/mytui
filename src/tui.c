@@ -9,15 +9,15 @@
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
 static HANDLE h_stdin;
-static wchar_t *wc_screen;          // Buffer to write characters to
+static CHAR_INFO *ci_screen;          // Buffer to write characters to
 static DWORD dw_bytes_written = 0;  // Required by windows.h
-int i_bufsize;               // Size of *wc_screen in elements
+int i_bufsize;               // Size of *ci_screen in elements
 int sn_screenwidth;
 int sn_screenheight;
 
 // Needed for initialisation
 static COORD c_screensize;
-static SMALL_RECT y;
+static SMALL_RECT sr_screensize;
 
 
 int tui_init(const int n_screenwidth, const int n_screenheight) {
@@ -43,7 +43,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
-    wc_screen = alloc_wc_array(n_screenwidth, n_screenheight);
+    ci_screen = alloc_ci_array(n_screenwidth, n_screenheight);
     sn_screenwidth = n_screenwidth;
     sn_screenheight = n_screenheight;
     
@@ -53,7 +53,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
      * up to the size of the buffer
      */
     c_screensize = (COORD) {(short)n_screenwidth, (short)n_screenheight};
-    y = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
+    sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
 
     if (!SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1})))
         win_err("SetConsoleWindowInfo");
@@ -61,7 +61,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
         win_err("SetConsoleScreenBufferSize");
     if (!SetConsoleActiveScreenBuffer(h_console))
         win_err("SetConsoleActiveScreenBuffer");
-    if (!SetConsoleWindowInfo(h_console, TRUE, &y))
+    if (!SetConsoleWindowInfo(h_console, TRUE, &sr_screensize))
         win_err("SetConsoleWindowInfo");
     if (!SetConsoleMode(h_console, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
         win_err("SetConsoleMode");
@@ -75,6 +75,17 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 
 wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
     wchar_t *ptr = (wchar_t *)calloc(n_screenwidth * n_screenheight, sizeof(wchar_t));
+
+    if (ptr == NULL)
+        tui_err("Calloc failed to allocate memory", 1);
+
+    i_bufsize = n_screenwidth * n_screenheight;
+
+    return ptr;
+}
+
+CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
+        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
         tui_err("Calloc failed to allocate memory", 1);
@@ -117,17 +128,22 @@ void tui_handle_input() {
 void tui_draw() {
     // Basic drawing for now
     // Resetting each element
-    reset_buf(wc_screen);   
+    reset_buf(ci_screen);   
     
     // Drawing test because it requires the buffer to be passed currently
     psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES", NULL);
-    draw_button(wc_screen, mybutton);
+    draw_button(ci_screen, mybutton);
 
-    WriteConsoleOutputCharacterW(h_console,
-                                 wc_screen,
-                                 i_bufsize,
-                                 (COORD) {0, 0},
-                                 &dw_bytes_written);
+    // Some hacky stuff to turn ci_screen into a 2 dimensional array
+
+    if(!WriteConsoleOutputW(h_console,
+                           ci_screen,
+                           c_screensize,
+                           (COORD) {0, 0},
+                           &sr_screensize))
+            win_err("WriteConsoleOutput");
+
+
 }
 
 
