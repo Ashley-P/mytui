@@ -73,17 +73,6 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     return 1;
 }
 
-wchar_t * alloc_wc_array(const int n_screenwidth, const int n_screenheight) {
-    wchar_t *ptr = (wchar_t *)calloc(n_screenwidth * n_screenheight, sizeof(wchar_t));
-
-    if (ptr == NULL)
-        tui_err("Calloc failed to allocate memory", 1);
-
-    i_bufsize = n_screenwidth * n_screenheight;
-
-    return ptr;
-}
-
 CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
         CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
