@@ -1,7 +1,7 @@
 # Macros
 INCLUDEDIR =include
 OBJECTSDIR =src/obj
-CFLAGS  =-I$(INCLUDEDIR)
+CFLAGS  =-I$(INCLUDEDIR) -g -Wall
 PROJECT = libmytui.a
 LIBS =
 
