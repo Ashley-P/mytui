@@ -9,9 +9,8 @@
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
 static HANDLE h_stdin;
-static CHAR_INFO *ci_screen;          // Buffer to write characters to
-static DWORD dw_bytes_written = 0;  // Required by windows.h
-int i_bufsize;               // Size of *ci_screen in elements
+static CHAR_INFO *ci_screen;        // Buffer to write characters to
+int i_bufsize;                      // Size of *ci_screen in elements
 int sn_screenwidth;
 int sn_screenheight;
 
@@ -63,7 +62,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
         win_err("SetConsoleActiveScreenBuffer");
     if (!SetConsoleWindowInfo(h_console, TRUE, &sr_screensize))
         win_err("SetConsoleWindowInfo");
-    if (!SetConsoleMode(h_console, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+    if (!SetConsoleMode(h_stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
         win_err("SetConsoleMode");
 
     // Remove the blinking cursor
