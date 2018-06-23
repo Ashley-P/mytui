@@ -22,23 +22,22 @@ static SMALL_RECT sr_screensize;
 int tui_init(const int n_screenwidth, const int n_screenheight) {
     // setting up error logging
     init_stderr();
-    
-    h_stdin = GetStdHandle(STD_INPUT_HANDLE);
-    if (h_stdin == INVALID_HANDLE_VALUE)
-        win_err("Bad Handle");
-
 
     // New console process
     if (!FreeConsole())
         win_err("FreeConsole");
     if (!AllocConsole())
         win_err("AllocConsole");
+    
+    h_stdin = GetStdHandle(STD_INPUT_HANDLE);
+    if (h_stdin == INVALID_HANDLE_VALUE)
+        win_err("Bad Handle");
 
     h_console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,
-                                                0,
-                                                NULL,
-                                                CONSOLE_TEXTMODE_BUFFER,
-                                                NULL);
+                                          0,
+                                          NULL,
+                                          CONSOLE_TEXTMODE_BUFFER,
+                                          NULL);
     
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
@@ -62,8 +61,10 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
         win_err("SetConsoleActiveScreenBuffer");
     if (!SetConsoleWindowInfo(h_console, TRUE, &sr_screensize))
         win_err("SetConsoleWindowInfo");
+    if (!SetConsoleMode(h_console, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+        win_err("SetConsoleMode 1");
     if (!SetConsoleMode(h_stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
-        win_err("SetConsoleMode");
+        win_err("SetConsoleMode 2");
 
     // Remove the blinking cursor
     if (!SetConsoleCursorInfo(h_console, &((CONSOLE_CURSOR_INFO) {1, FALSE})))

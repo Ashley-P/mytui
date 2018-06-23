@@ -9,8 +9,6 @@ void reset_buf(CHAR_INFO *buf) {
         (buf + i)->Char.UnicodeChar = L' ';
         (buf + i)->Attributes = 0x07;
     }
-    (buf + i_bufsize)->Char.UnicodeChar = L'\0';
-    (buf + i_bufsize)->Attributes = 0x07;
 }
 
 void draw_box(CHAR_INFO *buf, int x, int y, const int width, const int height, const bool fill) {
