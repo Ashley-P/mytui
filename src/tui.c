@@ -9,6 +9,7 @@
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
 static HANDLE h_console;            // Handle for the console
 static HANDLE h_stdin;
+static HANDLE h_inpthr;
 static CHAR_INFO *ci_screen;        // Buffer to write characters to
 int i_bufsize;                      // Size of *ci_screen in elements
 int sn_screenwidth;
@@ -70,6 +71,17 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     if (!SetConsoleCursorInfo(h_console, &((CONSOLE_CURSOR_INFO) {1, FALSE})))
         win_err("SetConsoleCursorInfo");
 
+    // Threading setup for input handling
+    h_inpthr = CreateThread(NULL,
+                            0,
+                            inpthr_loop,
+                            NULL,
+                            0,
+                            NULL);
+
+    if (h_inpthr == INVALID_HANDLE_VALUE)
+        win_err("CreateThread");
+
     return 1;
 }
 
@@ -120,8 +132,9 @@ void tui_draw() {
     reset_buf(ci_screen);   
     
     // Drawing test because it requires the buffer to be passed currently
-    psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES", NULL);
+    psButton mybutton = tui_button(i, 5, 7, 3, L"MEMES", NULL);
     draw_button(ci_screen, mybutton);
+
 
     // Some hacky stuff to turn ci_screen into a 2 dimensional array
 
@@ -135,10 +148,15 @@ void tui_draw() {
 
 }
 
+void inpthr_loop() {
+    while(1) {
+        tui_handle_input();
+    }
+}
 
 void tui_loop() {
     while(1) {
-        tui_handle_input();
         tui_draw();
+        sleep(1);
     }
 }

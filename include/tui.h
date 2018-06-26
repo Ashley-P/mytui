@@ -14,6 +14,8 @@ void tui_handle_input();
 
 void tui_draw();
 
+void inpthr_loop();
+
 void tui_loop();
 
 #endif

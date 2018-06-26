@@ -21,10 +21,13 @@ The variables here are for internal use by the library
 
     HANDLE h_console            handle for the console
     HANDLE h_stderr             handle for stderr which is redirected to a file
+    HANDLE h_inpthr             handle for the thread that reads the input buffer
     CHAR_INFO *ci_screen        CHAR_INFO array that gets passed to the console
     COORD c_screensize          initialises the buffer size
-    SMALL_RECT y                initialises the window size
+    SMALL_RECT sr_screensize    initialises the window size
     int i_bufsize               size of *wc_screen in elements
+    int sn_screenwidth          global screenwidth
+    int sn_screenheight         global screenheight
 
 
 ### Constants
@@ -35,11 +38,11 @@ The variables here are for internal use by the library
 
 #### Synopsis
 
-    int init_tui(const int nScreenWidth, const int nScreenHeight);
+    int init_tui(const int n_screenwidth, const int n_screenheight);
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
-    void tui_mouse_event(const MOUSE_EVENT_RECORD event);
     void tui_draw();
+    void inpthr_loop();
     void tui_loop();
     
 
@@ -54,9 +57,9 @@ The variables here are for internal use by the library
 
     tui_handle_input() handles all the events for the program
 
-    tui_mouse_event() is where all the mouse events are handled.
-
     tui_draw() is where all the drawing to the buffer is handled
+
+    inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
 
     tui_loop() is the looping for the program, drawing and other functions are
     called sequentially
@@ -120,7 +123,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
 #### Description
     
-    reset_buf() Fills the buffer with spaces and sets the last character to the null character.
+    reset_buf() Fills the buffer with spaces.
     Used after every draw to the screen
 
     draw_box() Draws a box of the desired width and height at the provided co-ordinates x and y.
