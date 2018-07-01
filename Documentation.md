@@ -76,6 +76,10 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 ### Variables
 
 ### Constants
+    
+    TUI_ERROR   1
+    TUI_WARNING 2
+    TUI_OTHER   3
 
 ### Structs
 
@@ -85,7 +89,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     
     void init_stderr
     void win_err(const char *msg);
-    void tui_err(const char *msg, const int quit_prog);
+    void tui_err(const char *msg, const int err_type, const int quit_prog);
 
 
 #### Description
@@ -96,7 +100,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     win_err() puts a formatted error message from the \<windows.h\> functions into a
     logging file.
 
-    tui_err() is similar to win_err() in that it puts a formatted error message into
+    tui_err() is similar to win_err() in that it puts a formatted error/warning/other message into
     a logging file, and also offers the opportunity to quit the program all together.
 
 

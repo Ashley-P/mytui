@@ -18,7 +18,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill) 
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + width > sn_screenheight) {
-        tui_err("draw_box: parameters too large", 0);
+        tui_err("draw_box: parameters too large", TUI_WARNING, 0);
         return;
     }
 

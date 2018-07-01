@@ -90,7 +90,7 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
         CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
-        tui_err("Calloc failed to allocate memory", 1);
+        tui_err("Calloc failed to allocate memory", TUI_ERROR, 1);
 
     i_bufsize = n_screenwidth * n_screenheight;
 
@@ -110,15 +110,15 @@ void tui_handle_input() {
     for(int i = 0; i < ul_evread; i++) {
         switch (ir_inpbuf[i].EventType) {
             case KEY_EVENT:
-                tui_err("Key Event", 0);
+                tui_err("Key Event", TUI_OTHER, 0);
                 break;
 
             case MOUSE_EVENT:
-                tui_err("Mouse Event", 0);
+                tui_err("Mouse Event", TUI_OTHER, 0);
                 break;
 
             case WINDOW_BUFFER_SIZE_EVENT:
-                tui_err("Window Buffer Size Event", 0);
+                tui_err("Window Buffer Size Event", TUI_OTHER, 0);
                 break;
 
             case FOCUS_EVENT: case MENU_EVENT: // Ignore these

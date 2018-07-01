@@ -49,10 +49,20 @@ void win_err(const char *msg) {
     free(err2);
 }
 
-void tui_err(const char *msg, const int quit_prog) {
+void tui_err(const char *msg, const int err_type, const int quit_prog) {
     char err[256];
     memset(err, '\0', 256);
-    sprintf(err, "ERROR: %s\r\n", msg);
+    switch (err_type) {
+        case TUI_ERROR:
+            sprintf(err, "ERROR: %s\r\n", msg);
+            break;
+        case TUI_WARNING:
+            sprintf(err, "WARNING: %s\r\n", msg);
+            break;
+        case TUI_OTHER:
+            sprintf(err, "OTHER: %s\r\n", msg);
+            break;
+    }
     char err2[strlen(err) + 1];
     err2[strlen(err) + 1] = '\0';
     strcpy(err2, err);
