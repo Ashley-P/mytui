@@ -19,15 +19,16 @@ The \<tui.h\> header file contains all the declarations for the functions and da
 
 The variables here are for internal use by the library
 
-    HANDLE h_console            handle for the console
-    HANDLE h_stderr             handle for stderr which is redirected to a file
-    HANDLE h_inpthr             handle for the thread that reads the input buffer
-    CHAR_INFO *ci_screen        CHAR_INFO array that gets passed to the console
-    COORD c_screensize          initialises the buffer size
-    SMALL_RECT sr_screensize    initialises the window size
-    int i_bufsize               size of *wc_screen in elements
-    int sn_screenwidth          global screenwidth
-    int sn_screenheight         global screenheight
+    HANDLE h_console                handle for the console
+    HANDLE h_stderr                 handle for stderr which is redirected to a file
+    HANDLE h_inpthr                 handle for the thread that reads the input buffer
+    CHAR_INFO *ci_screen            CHAR_INFO array that gets passed to the console
+    CHAR_INFO **tui_current_screen  A pointer to the current screen being used
+    COORD c_screensize              initialises the buffer size
+    SMALL_RECT sr_screensize        initialises the window size
+    int i_bufsize                   size of *wc_screen in elements
+    int sn_screenwidth              global screenwidth
+    int sn_screenheight             global screenheight
 
 
 ### Constants
@@ -147,12 +148,14 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Structs
 
-    typedef struct Button_ {
+    typedef struct ButtonT {
         int px;
         int py;
         int width;
         int height;
         wchar_t *text;
+        void (*draw)();
+        void (*callback)();
     } sButton, *psButton;
 
 ### Functions
@@ -163,7 +166,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Description
 
-    tui_button() creates a Button_ struct and returns a pointer to it. (In the future it will also be added
+    tui_button() creates a ButtonT struct and returns a pointer to it. (In the future it will also be added
     to an array/list of drawn objects/structs and to an array/list of all objects/structs.)
 
 
