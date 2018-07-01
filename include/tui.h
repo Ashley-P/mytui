@@ -4,7 +4,8 @@
 
 extern int sn_screenwidth;
 extern int sn_screenheight;
-extern int i_bufsize;
+extern int i_bufsize;           // Size of *ci_screen in elements
+extern CHAR_INFO **tui_current_screen;
 
 int tui_init(const int n_screenwidth, const int n_screenheight);
 

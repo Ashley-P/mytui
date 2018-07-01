@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdbool.h>
-#include <windows.h>
 #include "utils.h"
 #include "tui.h"
 #include "draw.h"
@@ -11,9 +10,10 @@ static HANDLE h_console;            // Handle for the console
 static HANDLE h_stdin;
 static HANDLE h_inpthr;
 static CHAR_INFO *ci_screen;        // Buffer to write characters to
-int i_bufsize;                      // Size of *ci_screen in elements
+CHAR_INFO **tui_current_screen;     // Pointer to the current screen
 int sn_screenwidth;
 int sn_screenheight;
+int i_bufsize;                      // Size of *ci_screen in elements
 
 // Needed for initialisation
 static COORD c_screensize;
@@ -43,6 +43,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
     ci_screen = alloc_ci_array(n_screenwidth, n_screenheight);
+    tui_current_screen = &ci_screen;
     sn_screenwidth = n_screenwidth;
     sn_screenheight = n_screenheight;
     
@@ -129,21 +130,19 @@ void tui_handle_input() {
 void tui_draw() {
     // Basic drawing for now
     // Resetting each element
-    reset_buf(ci_screen);   
+    reset_buf(*tui_current_screen);   
     
     // Drawing test because it requires the buffer to be passed currently
-    psButton mybutton = tui_button(i, 5, 7, 3, L"MEMES", NULL);
-    draw_button(ci_screen, mybutton);
-
-
-    // Some hacky stuff to turn ci_screen into a 2 dimensional array
+    psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES", NULL);
+    draw_button(*tui_current_screen, mybutton);
+    //mybutton.draw(mybutton
 
     if(!WriteConsoleOutputW(h_console,
-                           ci_screen,
-                           c_screensize,
-                           (COORD) {0, 0},
-                           &sr_screensize))
-            win_err("WriteConsoleOutput");
+                            *tui_current_screen,
+                            c_screensize,
+                            (COORD) {0, 0},
+                            &sr_screensize))
+        win_err("WriteConsoleOutput");
 
 
 }
@@ -157,6 +156,5 @@ void inpthr_loop() {
 void tui_loop() {
     while(1) {
         tui_draw();
-        sleep(1);
     }
 }
