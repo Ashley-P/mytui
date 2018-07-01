@@ -117,9 +117,10 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
 #### Synopsis
 
-    void reset_buf(CHAR_INFO *buf);
-    void draw_box(CHAR_INFO *buf, int x, int y, const int width, const int height, const bool fill);
-    void draw_str(CHAR_INFO *buf, const wchar_t *str, const size_t str_len, int x, int y);
+    void reset_buf();
+    void draw_box(int x, int y, const int width, const int height, const bool fill);
+    void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
+    void draw_button(sButton * button);
 
 
 #### Description
