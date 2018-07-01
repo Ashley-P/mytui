@@ -134,7 +134,7 @@ void tui_draw() {
     
     // Drawing test because it requires the buffer to be passed currently
     psButton mybutton = tui_button(5, 5, 7, 3, L"MEMES", NULL);
-    draw_button(*tui_current_screen, mybutton);
+    draw_button(mybutton);
     //mybutton.draw(mybutton
 
     if(!WriteConsoleOutputW(h_console,

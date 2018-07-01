@@ -3,15 +3,16 @@
 #include "draw.h"
 
 sButton * tui_button(const int px, const int py, const int width,
-                     const int height, wchar_t *text, void (*fp)()) {
+                     const int height, wchar_t *text, void (*callback)()) {
     psButton ptr = (psButton)malloc(sizeof(sButton));
     ptr->px = px;
     ptr->py = py;
     ptr->width = width;
     ptr->height = height;
     ptr->text = text;
-    if (fp != NULL)
-        ptr->fp = fp;
+    ptr->draw = &draw_button;
+    if (callback != NULL)
+        ptr->callback = callback;
 
 
     return ptr;
