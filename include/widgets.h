@@ -1,12 +1,13 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
+
 typedef struct WidgetT {
     int type;
     union {
-        sButton button;
-        sFrame  frame;
-    }
+        struct ButtonT *button;
+        struct FrameT  *frame;
+    } widget;
 } sWidget;
 
 typedef struct FrameT {
@@ -14,7 +15,7 @@ typedef struct FrameT {
     int py;
     int width;
     int height;
-    sWidget children[16];
+    sWidget *children[16];
 } sFrame;
 
 typedef struct ButtonT {

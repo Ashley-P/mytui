@@ -156,9 +156,9 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     typedef struct WidgetT {
         int type;
         union {
-            sButton button;
-            sFrame  frame;
-        }
+            struct ButtonT *button;
+            struct FrameT  *frame;
+        } widget;
     } sWidget;
 
     typedef struct FrameT {
@@ -177,7 +177,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         wchar_t *text;
         void (*draw)();
         void (*callback)();
-    } sButton, *psButton;
+    } sButton;
 
 ### Functions
 

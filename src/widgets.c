@@ -4,7 +4,7 @@
 
 sButton * tui_button(const int px, const int py, const int width,
                      const int height, wchar_t *text, void (*callback)()) {
-    psButton ptr = (psButton)malloc(sizeof(sButton));
+    sButton *ptr = (sButton *)malloc(sizeof(sButton));
     ptr->px = px;
     ptr->py = py;
     ptr->width = width;
