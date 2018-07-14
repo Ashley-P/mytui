@@ -13,6 +13,8 @@ sButton * tui_button(const int px, const int py, const int width,
     ptr->draw = &draw_button;
     if (callback != NULL)
         ptr->callback = callback;
+    else
+        ptr-callback = NULL;
 
 
     return ptr;
