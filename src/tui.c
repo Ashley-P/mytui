@@ -56,13 +56,13 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
 
     if (!SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1})))
-        win_err("SetConsoleWindowInfo");
+        win_err("SetConsoleWindowInfo 1");
     if (!SetConsoleScreenBufferSize(h_console, c_screensize))
         win_err("SetConsoleScreenBufferSize");
     if (!SetConsoleActiveScreenBuffer(h_console))
         win_err("SetConsoleActiveScreenBuffer");
     if (!SetConsoleWindowInfo(h_console, TRUE, &sr_screensize))
-        win_err("SetConsoleWindowInfo");
+        win_err("SetConsoleWindowInfo 2");
     if (!SetConsoleMode(h_console, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
         win_err("SetConsoleMode 1");
     if (!SetConsoleMode(h_stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
