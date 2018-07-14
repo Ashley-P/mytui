@@ -4,6 +4,7 @@
 
 typedef struct WidgetT {
     int type;
+    struct WidgetT *master;
     union {
         struct ButtonT *button;
         struct FrameT  *frame;

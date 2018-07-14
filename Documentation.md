@@ -155,6 +155,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     typedef struct WidgetT {
         int type;
+        struct WidgetT *master;
         union {
             struct ButtonT *button;
             struct FrameT  *frame;
