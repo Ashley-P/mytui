@@ -153,6 +153,22 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Structs
 
+    typedef struct WidgetT {
+        int type;
+        union {
+            sButton button;
+            sFrame  frame;
+        }
+    } sWidget;
+
+    typedef struct FrameT {
+        int px;
+        int py;
+        int width;
+        int height;
+        sWidget children[16];
+    } sFrame;
+
     typedef struct ButtonT {
         int px;
         int py;
