@@ -186,7 +186,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Synopsis
     
-    sButton * tui_button(wchar_t *text, void (*callback)());
+    sButton * tui_button(const sFrame *parent, wchar_t *text, void (*callback)());
 
     sFrame * tui_frame(const sFrame *parent);
 
