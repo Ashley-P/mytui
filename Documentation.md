@@ -155,7 +155,11 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     typedef struct tWidget {
         int type;
-        struct tWidget *master;
+        int px;
+        int py;
+        int width;
+        int height;
+        struct tWidget *parent;
         union {
             struct tButton *button;
             struct tFrame  *frame;
@@ -163,18 +167,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     } sWidget;
 
     typedef struct tFrame {
-        int px;
-        int py;
-        int width;
-        int height;
         sWidget children[16];
     } sFrame;
 
     typedef struct tButton {
-        int px;
-        int py;
-        int width;
-        int height;
         wchar_t *text;
         void (*draw)();
         void (*callback)();
@@ -192,7 +188,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     
     sButton * tui_button(wchar_t *text, void (*callback)());
 
-    sFrame * tui_frame(const sFrame *master);
+    sFrame * tui_frame(const sFrame *parent);
 
 #### Description
 

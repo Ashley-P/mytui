@@ -97,7 +97,7 @@ void tui_root_frame() {
     w_root.py           = 0;
     w_root.width        = sn_screenwidth;
     w_root.height       = sn_screenheight;
-    w_root.master       = NULL;
+    w_root.parent       = NULL;
     w_root.widget.frame = &f_root;
 
     for(int i = 0; i < 16; i++)
