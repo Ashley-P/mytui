@@ -153,16 +153,16 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Structs
 
-    typedef struct WidgetT {
+    typedef struct tWidget {
         int type;
-        struct WidgetT *master;
+        struct tWidget *master;
         union {
-            struct ButtonT *button;
-            struct FrameT  *frame;
+            struct tButton *button;
+            struct tFrame  *frame;
         } widget;
     } sWidget;
 
-    typedef struct FrameT {
+    typedef struct tFrame {
         int px;
         int py;
         int width;
@@ -170,7 +170,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         sWidget children[16];
     } sFrame;
 
-    typedef struct ButtonT {
+    typedef struct tButton {
         int px;
         int py;
         int width;

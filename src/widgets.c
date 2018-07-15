@@ -19,3 +19,5 @@ sButton * tui_button(const int px, const int py, const int width,
 
     return ptr;
 }
+
+sFrame * tui_frame(const sFrame *master) {}

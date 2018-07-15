@@ -2,16 +2,16 @@
 #define WIDGETS_H_
 
 
-typedef struct WidgetT {
+typedef struct tWidget {
     int type;
-    struct WidgetT *master;
+    struct tWidget *master;
     union {
-        struct ButtonT *button;
-        struct FrameT  *frame;
+        struct tButton *button;
+        struct tFrame  *frame;
     } widget;
 } sWidget;
 
-typedef struct FrameT {
+typedef struct tFrame {
     int px;
     int py;
     int width;
@@ -19,7 +19,7 @@ typedef struct FrameT {
     sWidget *children[16];
 } sFrame;
 
-typedef struct ButtonT {
+typedef struct tButton {
     int px;
     int py;
     int width;
@@ -31,5 +31,7 @@ typedef struct ButtonT {
 
 
 sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text, void (*fp)());
+
+sFrame * tui_frame(const sFrame *master);
 
 #endif
