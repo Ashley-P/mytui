@@ -192,10 +192,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Description
 
-    tui_button() creates a tButton struct and returns a pointer to it. (In the future it will also be added
-    to an array/list of drawn objects/structs and to an array/list of all objects/structs.)
+    tui_button() creates a tButton struct and returns a pointer to it. It also creates a widget struct
+    and assigns the parent argument to it.
 
-    tui_frame creates a tFrame struct and returns a pointer to it. The frame is used to contain all other
+    tui_frame() creates a tFrame struct and returns a pointer to it. The frame is used to contain all other
     widgets.
 
 

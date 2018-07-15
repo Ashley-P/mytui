@@ -12,7 +12,7 @@ typedef struct tWidget {
     int py;
     int width;
     int height;
-    struct tWidget *parent;
+    struct tFrame *parent;
     union {
         struct tButton *button;
         struct tFrame  *frame;
@@ -30,8 +30,8 @@ typedef struct tButton {
 } sButton;
 
 
-sButton * tui_button(wchar_t *text, void (*callback)());
+sButton * tui_button(sFrame *parent, wchar_t *text, void (*callback)());
 
-sFrame * tui_frame(const sFrame *parent);
+sFrame * tui_frame(sFrame *parent);
 
 #endif
