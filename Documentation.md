@@ -24,11 +24,13 @@ The variables here are for internal use by the library
     HANDLE h_inpthr                 handle for the thread that reads the input buffer
     CHAR_INFO *ci_screen            CHAR_INFO array that gets passed to the console
     CHAR_INFO **tui_current_screen  A pointer to the current screen being used
-    COORD c_screensize              initialises the buffer size
-    SMALL_RECT sr_screensize        initialises the window size
     int i_bufsize                   size of *wc_screen in elements
     int sn_screenwidth              global screenwidth
     int sn_screenheight             global screenheight
+    sWidget w_root                  root widget struct
+    sFrame f_root                   root frame struct
+    COORD c_screensize              initialises the buffer size
+    SMALL_RECT sr_screensize        initialises the window size
 
 
 ### Constants
@@ -40,6 +42,7 @@ The variables here are for internal use by the library
 #### Synopsis
 
     int init_tui(const int n_screenwidth, const int n_screenheight);
+    void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
     void tui_draw();
@@ -53,6 +56,9 @@ The variables here are for internal use by the library
     is redirected to an output file and an array is created to fit the desired
     screen size. Then the screen buffer is linked to the console and the screen
     size is changed.
+
+    tui_root_frame() creates a special root frame and widget struct for all the
+    user created widgets to be a child to.
 
     alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
 

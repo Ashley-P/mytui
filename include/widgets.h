@@ -2,7 +2,7 @@
 #define WIDGETS_H_
 
 enum {
-    FRAME =  1,
+    FRAME  = 1,
     BUTTON = 2
 };
 
