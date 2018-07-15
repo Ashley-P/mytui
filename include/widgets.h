@@ -1,9 +1,17 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
+enum {
+    FRAME =  1,
+    BUTTON = 2
+};
 
 typedef struct tWidget {
     int type;
+    int px;
+    int py;
+    int width;
+    int height;
     struct tWidget *master;
     union {
         struct tButton *button;
@@ -12,25 +20,17 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
-    int px;
-    int py;
-    int width;
-    int height;
     sWidget *children[16];
 } sFrame;
 
 typedef struct tButton {
-    int px;
-    int py;
-    int width;
-    int height;
     wchar_t *text;
     void (*draw)();     // Drawing function
     void (*callback)(); // Callback for the button
 } sButton;
 
 
-sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text, void (*fp)());
+sButton * tui_button(wchar_t *text, void (*callback)());
 
 sFrame * tui_frame(const sFrame *master);
 

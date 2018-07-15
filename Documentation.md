@@ -147,12 +147,6 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Datatypes
 
-### Variables
-
-### Constants
-
-### Structs
-
     typedef struct tWidget {
         int type;
         struct tWidget *master;
@@ -180,16 +174,27 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         void (*callback)();
     } sButton;
 
+### Variables
+
+### Constants
+
+### Structs
+
 ### Functions
 
 #### Synopsis
     
-    sButton * tui_button(const int px, const int py, const int width, const int height, wchar_t *text);
+    sButton * tui_button(wchar_t *text, void (*callback)());
+
+    sFrame * tui_frame(const sFrame *master);
 
 #### Description
 
-    tui_button() creates a ButtonT struct and returns a pointer to it. (In the future it will also be added
+    tui_button() creates a tButton struct and returns a pointer to it. (In the future it will also be added
     to an array/list of drawn objects/structs and to an array/list of all objects/structs.)
+
+    tui_frame creates a tFrame struct and returns a pointer to it. The frame is used to contain all other
+    widgets.
 
 
 ---

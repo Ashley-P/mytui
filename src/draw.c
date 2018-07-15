@@ -57,6 +57,4 @@ void draw_str(const wchar_t *str, int x, int y) {
 }
 
 void draw_button(sButton * button) {
-    draw_box(button->px, button->py, button->width, button->height, false);
-    draw_str(button->text, button->px, button->py);
 }
