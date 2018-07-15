@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "tui.h"
 #include "draw.h"
+#include "widgets.h"
 
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
