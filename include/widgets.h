@@ -12,7 +12,8 @@ typedef struct tWidget {
     int py;
     int width;
     int height;
-    struct tFrame *parent;
+    struct tWidget *parent;
+    struct tWidget *children[16];
     union {
         struct tButton *button;
         struct tFrame  *frame;
@@ -20,7 +21,7 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
-    sWidget *children[16];
+    void (*draw)();     // Drawing function
 } sFrame;
 
 typedef struct tButton {
