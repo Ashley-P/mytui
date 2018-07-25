@@ -27,8 +27,8 @@ The variables here are for internal use by the library
     int i_bufsize                   size of *wc_screen in elements
     int sn_screenwidth              global screenwidth
     int sn_screenheight             global screenheight
-    sWidget w_root                  root widget struct
-    sFrame f_root                   root frame struct
+    sWidget *w_root                 root widget struct
+    sFrame *f_root                  root frame struct
     COORD c_screensize              initialises the buffer size
     SMALL_RECT sr_screensize        initialises the window size
 
