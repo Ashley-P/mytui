@@ -37,4 +37,11 @@ sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
-void calculate_min_size(sWidget *widget) {}
+void calculate_min_size(sWidget *widget) {
+    switch(widget->type) {
+        case FRAME:
+            break;
+        case BUTTON:
+            break;
+    }
+}
