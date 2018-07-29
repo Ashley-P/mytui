@@ -153,6 +153,12 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Datatypes
 
+
+    enum eType {
+        FRAME  = 1,
+        BUTTON = 2
+    };
+
     typedef struct tWidget {
         enum eType type;
         int px;

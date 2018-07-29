@@ -1,10 +1,10 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
-enum {
+enum eType {
     FRAME  = 1,
     BUTTON = 2
-} eType;
+};
 
 typedef struct tWidget {
     enum eType type; 
