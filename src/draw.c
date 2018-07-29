@@ -7,7 +7,7 @@
 void reset_buf() {
     for(int i = 0; i < i_bufsize; i++) {
         (*tui_current_screen + i)->Char.UnicodeChar = L' ';
-        (*tui_current_screen + i)->Attributes = 0x07;
+        (*tui_current_screen + i)->Attributes = 0x70;
     }
 }
 

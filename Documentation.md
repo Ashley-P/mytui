@@ -196,6 +196,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     sButton * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
 
+    void calculate_min_size(sWidget *widget);
+
 #### Description
 
     tui_frame() creates a tFrame struct and returns a pointer to it. The frame is used to contain all other
@@ -204,4 +206,5 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     tui_button() creates a tButton struct and returns a pointer to it. It also creates a widget struct
     and assigns the parent argument to it.
 
+    calculate_min_size() Calculates the minimum size for each widget so that they can be drawn properly
 ---

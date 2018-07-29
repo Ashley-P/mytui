@@ -5,6 +5,8 @@
 sFrame * tui_frame(sWidget *parent) {
     // sFrame setup
     sFrame *ptr = (sFrame *)malloc(sizeof(sFrame));
+    for(int i = 0; i < 16; i++)
+        ptr->children[i] = NULL;
 
     // sWidget setup
     sWidget *ptr2      = (sWidget *)malloc(sizeof(sWidget));
@@ -35,3 +37,4 @@ sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
+void calculate_min_size(sWidget *widget) {}
