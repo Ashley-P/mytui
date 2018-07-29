@@ -9,6 +9,8 @@ extern CHAR_INFO **tui_current_screen;
 
 int tui_init(const int n_screenwidth, const int n_screenheight);
 
+void tui_root_frame();
+
 CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight); // Creates an array of CHAR_INFO structs 
 
 void tui_handle_input();

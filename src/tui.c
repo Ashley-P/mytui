@@ -89,6 +89,9 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     if (h_inpthr == INVALID_HANDLE_VALUE)
         win_err("CreateThread");
 
+    // Other stuff
+    tui_root_frame();
+
     return 1;
 }
 
@@ -171,6 +174,8 @@ void inpthr_loop() {
 }
 
 void tui_loop() {
+    calculate_min_size(w_root);
+
     while(1) {
         tui_draw();
     }
