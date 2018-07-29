@@ -2,7 +2,7 @@
 #include "widgets.h"
 #include "draw.h"
 
-sFrame * tui_frame(sFrame *parent) {
+sFrame * tui_frame(sWidget *parent) {
     // sFrame setup
     sFrame *ptr = (sFrame *)malloc(sizeof(sFrame));
 
@@ -17,7 +17,7 @@ sFrame * tui_frame(sFrame *parent) {
     return ptr;
 }
 
-sButton * tui_button(sFrame *parent, wchar_t *text, void(*callback)()) {
+sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sButton setup
     sButton *ptr  = (sButton *)malloc(sizeof(sButton));
     ptr->draw     = &draw_button;

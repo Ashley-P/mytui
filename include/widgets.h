@@ -20,7 +20,7 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
-    struct tWidget *children[16];
+    struct sWidget *children[16];
     void (*draw)();     // Drawing function
 } sFrame;
 
@@ -31,8 +31,8 @@ typedef struct tButton {
 } sButton;
 
 
-sFrame * tui_frame(sFrame *parent);
+sFrame * tui_frame(sWidget *parent);
 
-sButton * tui_button(sFrame *parent, wchar_t *text, void (*callback)());
+sButton * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
 #endif
