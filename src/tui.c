@@ -96,7 +96,7 @@ void tui_root_frame() {
     w_root = (sWidget *)malloc(sizeof(sWidget));
     f_root = (sFrame *)malloc(sizeof(sFrame));
 
-    w_root->eType        = FRAME;
+    w_root->type         = FRAME;
     w_root->px           = 0;
     w_root->py           = 0;
     w_root->min_width    = sn_screenwidth;

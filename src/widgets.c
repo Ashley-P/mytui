@@ -8,7 +8,7 @@ sFrame * tui_frame(sFrame *parent) {
 
     // sWidget setup
     sWidget *ptr2      = (sWidget *)malloc(sizeof(sWidget));
-    ptr2->eType        = FRAME;
+    ptr2->type         = FRAME;
     ptr2->parent       = parent;
     ptr2->widget.frame = ptr;
 
@@ -24,7 +24,7 @@ sButton * tui_button(sFrame *parent, wchar_t *text, void(*callback)()) {
 
     // sWidget setup
     sWidget *ptr2       = (sWidget *)malloc(sizeof(sWidget));
-    ptr2->eType         = BUTTON;
+    ptr2->type          = BUTTON;
     ptr2->parent        = parent;
     ptr2->widget.button = ptr;
 

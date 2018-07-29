@@ -31,8 +31,8 @@ typedef struct tButton {
 } sButton;
 
 
-sButton * tui_button(sFrame *parent, wchar_t *text, void (*callback)());
-
 sFrame * tui_frame(sFrame *parent);
+
+sButton * tui_button(sFrame *parent, wchar_t *text, void (*callback)());
 
 #endif
