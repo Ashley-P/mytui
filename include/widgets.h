@@ -4,16 +4,15 @@
 enum {
     FRAME  = 1,
     BUTTON = 2
-};
+} eType;
 
 typedef struct tWidget {
-    int type;
+    enum eType type; 
     int px;
     int py;
-    int width;
-    int height;
+    int min_width;
+    int min_height;
     struct tWidget *parent;
-    struct tWidget *children[16];
     union {
         struct tButton *button;
         struct tFrame  *frame;
@@ -21,6 +20,7 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
+    struct tWidget *children[16];
     void (*draw)();     // Drawing function
 } sFrame;
 

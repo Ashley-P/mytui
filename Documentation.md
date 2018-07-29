@@ -143,7 +143,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
     draw_str() Draws a string to the screen at the desired position.
 
-    draw_button() Draws a button to the screen. Really it's just calling draw_box () and 
+    draw_button() Draws a button to the screen. Really it's just calling draw_box() and 
     draw_str() together.
 
 
@@ -154,11 +154,11 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 ### Datatypes
 
     typedef struct tWidget {
-        int type;
+        enum eType type;
         int px;
         int py;
-        int width;
-        int height;
+        int min_width;
+        int min_height;
         struct tWidget *parent;
         union {
             struct tButton *button;
@@ -186,9 +186,9 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Synopsis
     
-    sButton * tui_button(const sFrame *parent, wchar_t *text, void (*callback)());
-
     sFrame * tui_frame(const sFrame *parent);
+
+    sButton * tui_button(const sFrame *parent, wchar_t *text, void (*callback)());
 
 #### Description
 
