@@ -49,5 +49,10 @@ sMinSize calculate_min_size(sWidget *widget) {
 }
 
 // Used to return 
-sMinSize max_sMinSize(sMinSize a, sMinSize b) {}
-
+sMinSize max_sMinSize(sMinSize a, sMinSize b) {
+    // Empty struct is used so it can be returned later
+    sMinSize s_return;
+    s_return width = a.width > b.width ? a.width : b.width;
+    s_return height = a.height > b.height ? a.height : b.height;
+    return s_return;
+}
