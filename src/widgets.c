@@ -33,8 +33,8 @@ sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr2->type           = BUTTON;
     ptr2->parent         = parent;
     ptr2->widget.button  = ptr;
-    ptr2->minsize.width  = 0;
-    ptr2->minsize.height = 0;
+    ptr2->minsize.width  = 1;
+    ptr2->minsize.height = 1;
 
     return ptr;
 }

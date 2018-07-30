@@ -1,7 +1,10 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
-#define MAX_CHILDREN 16
+#define MAX_CHILDREN    16
+#define MAX_GRID_WIDTH  16
+#define MAX_GRID_HEIGHT 16
+
 enum eType {
     FRAME  = 1,
     BUTTON = 2
@@ -14,9 +17,9 @@ typedef struct tMinSize {
 } sMinSize;
 
 typedef struct tWidget {
-    enum eType type; 
     int px;
     int py;
+    enum eType type; 
     struct tMinSize minsize;
     struct tWidget *parent;
     union {
@@ -26,8 +29,9 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
-    struct sWidget *children[MAX_CHILDREN];
     void (*draw)();     // Drawing function
+    struct sWidget *children[MAX_CHILDREN];
+    sWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
 } sFrame;
 
 typedef struct tButton {
