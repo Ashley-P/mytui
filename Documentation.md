@@ -168,8 +168,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         enum eType type;
         int px;
         int py;
-        int min_width;
-        int min_height;
+        struct tMinSize minsize;
         struct tWidget *parent;
         union {
             struct tButton *button;

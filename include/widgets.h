@@ -17,7 +17,7 @@ typedef struct tWidget {
     enum eType type; 
     int px;
     int py;
-    struct tMinSize;
+    struct tMinSize minsize;
     struct tWidget *parent;
     union {
         struct tButton *button;

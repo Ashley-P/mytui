@@ -99,13 +99,13 @@ void tui_root_frame() {
     w_root = (sWidget *)malloc(sizeof(sWidget));
     f_root = (sFrame *)malloc(sizeof(sFrame));
 
-    w_root->type         = FRAME;
-    w_root->px           = 0;
-    w_root->py           = 0;
-    w_root->min_width    = sn_screenwidth;
-    w_root->min_height   = sn_screenheight;
-    w_root->parent       = NULL;
-    w_root->widget.frame = f_root;
+    w_root->type           = FRAME;
+    w_root->px             = 0;
+    w_root->py             = 0;
+    w_root->parent         = NULL;
+    w_root->widget.frame   = f_root;
+    w_root->minsize.width  = sn_screenwidth;
+    w_root->minsize.height = sn_screenheight;
 
     for(int i = 0; i < 16; i++)
         f_root->children[i] = NULL;
