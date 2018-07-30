@@ -159,6 +159,11 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         BUTTON = 2
     };
 
+    typedef struct tMinSize {
+        int width;
+        int height;
+    } sMinSize;
+
     typedef struct tWidget {
         enum eType type;
         int px;

@@ -7,12 +7,17 @@ enum eType {
     BUTTON = 2
 };
 
+/* sMinsize exists so I can return 2 variables from calculate_min_size() */
+typedef struct tMinSize {
+    int width;
+    int height;
+} sMinSize;
+
 typedef struct tWidget {
     enum eType type; 
     int px;
     int py;
-    int min_width;
-    int min_height;
+    struct tMinSize;
     struct tWidget *parent;
     union {
         struct tButton *button;
