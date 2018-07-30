@@ -215,7 +215,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     tui_button() creates a tButton struct and returns a pointer to it. It also creates a widget struct
     and assigns the parent argument to it.
 
-    calculate_min_size() Calculates the minimum size for each widget so that they can be drawn properly
+    calculate_min_size calculates the minimum size for each widget. It returns a sMinSize struct so it can be
+    used recursively if the case is FRAME.
 
     max_sMinSize compares two sMinSize structs and returns a struct with the largest of each variables
 ---
