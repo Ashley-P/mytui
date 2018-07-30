@@ -37,7 +37,9 @@ sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
-void calculate_min_size(sWidget *widget) {
+sMinSize calculate_min_size(sWidget *widget) {
+    // Empty struct is used so it can be returned later
+    sMinSize s_return;
     switch(widget->type) {
         case FRAME:
             break;
@@ -45,3 +47,7 @@ void calculate_min_size(sWidget *widget) {
             break;
     }
 }
+
+// Used to return 
+sMinSize max_sMinSize(sMinSize a, sMinSize b) {}
+

@@ -41,6 +41,8 @@ sFrame * tui_frame(sWidget *parent);
 
 sButton * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
-void calculate_min_size(sWidget *widget);
+sMinSize calculate_min_size(sWidget *widget);
+
+sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
 #endif

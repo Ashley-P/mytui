@@ -203,7 +203,9 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     sButton * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
 
-    void calculate_min_size(sWidget *widget);
+    sMinSize calculate_min_size(sWidget *widget);
+
+    sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
 #### Description
 
@@ -214,4 +216,6 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     and assigns the parent argument to it.
 
     calculate_min_size() Calculates the minimum size for each widget so that they can be drawn properly
+
+    max_sMinSize compares two sMinSize structs and returns a struct with the largest of each variables
 ---
