@@ -186,6 +186,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Constants
 
+    MAX_CHILDREN    16
+
 ### Structs
 
 ### Functions

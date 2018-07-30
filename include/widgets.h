@@ -1,6 +1,7 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
+#define MAX_CHILDREN 16
 enum eType {
     FRAME  = 1,
     BUTTON = 2
@@ -20,7 +21,7 @@ typedef struct tWidget {
 } sWidget;
 
 typedef struct tFrame {
-    struct sWidget *children[16];
+    struct sWidget *children[MAX_CHILDREN];
     void (*draw)();     // Drawing function
 } sFrame;
 
