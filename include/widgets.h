@@ -16,6 +16,18 @@ typedef struct tMinSize {
     int height;
 } sMinSize;
 
+typedef struct tFrame {
+    void (*draw)();     // Drawing function
+    struct tWidget *children[MAX_CHILDREN];
+    struct tWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
+} sFrame, *pFrame;
+
+typedef struct tButton {
+    wchar_t *text;
+    void (*draw)();     // Drawing function
+    void (*callback)(); // Callback for the button
+} sButton, *pButton;
+
 typedef struct tWidget {
     int px;
     int py;
@@ -23,27 +35,14 @@ typedef struct tWidget {
     struct tMinSize minsize;
     struct tWidget *parent;
     union {
-        struct tButton *button;
-        struct tFrame  *frame;
+        struct tButton button;
+        struct tFrame  frame;
     } widget;
-} sWidget;
+} sWidget, *pWidget;
 
-typedef struct tFrame {
-    void (*draw)();     // Drawing function
-    struct sWidget *children[MAX_CHILDREN];
-    sWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
-} sFrame;
+sWidget * tui_frame(sWidget *parent);
 
-typedef struct tButton {
-    wchar_t *text;
-    void (*draw)();     // Drawing function
-    void (*callback)(); // Callback for the button
-} sButton;
-
-
-sFrame * tui_frame(sWidget *parent);
-
-sButton * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
+sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
 sMinSize calculate_min_size(sWidget *widget);
 

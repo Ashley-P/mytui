@@ -4,37 +4,34 @@
 #include "utils.h"
 
 
-sFrame * tui_frame(sWidget *parent) {
-    // sFrame setup
-    sFrame *ptr = (sFrame *)malloc(sizeof(sFrame));
-    for(int i = 0; i < 16; i++)
-        ptr->children[i] = NULL;
-
+sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
-    sWidget *ptr2        = (sWidget *)malloc(sizeof(sWidget));
-    ptr2->type           = FRAME;
-    ptr2->parent         = parent;
-    ptr2->widget.frame   = ptr;
-    ptr2->minsize.width  = 0;
-    ptr2->minsize.height = 0;
+    sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
+    ptr->type           = FRAME;
+    ptr->parent         = parent;
+    ptr->minsize.width  = 0;
+    ptr->minsize.height = 0;
+
+    // sFrame setup
+    for(int i = 0; i < 16; i++)
+        ptr->widget.frame.children[i] = NULL;
 
     return ptr;
 }
 
-sButton * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
-    // sButton setup
-    sButton *ptr  = (sButton *)malloc(sizeof(sButton));
-    ptr->draw     = &draw_button;
-    ptr->text     = text;
-    ptr->callback = callback;
-
+sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
-    sWidget *ptr2        = (sWidget *)malloc(sizeof(sWidget));
-    ptr2->type           = BUTTON;
-    ptr2->parent         = parent;
-    ptr2->widget.button  = ptr;
-    ptr2->minsize.width  = 1;
-    ptr2->minsize.height = 1;
+    sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
+    ptr->type           = BUTTON;
+    ptr->parent         = parent;
+    ptr->minsize.width  = 1;
+    ptr->minsize.height = 1;
+
+    // sButton setup
+    ptr->widget.button.text     = text;
+    ptr->widget.button.draw     = &draw_button;
+    ptr->widget.button.callback = callback;
+
 
     return ptr;
 }

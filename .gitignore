@@ -11,5 +11,4 @@ src/obj/*
 *.exe
 
 # Test files
-src/test.c
 error.log

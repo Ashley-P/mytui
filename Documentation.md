@@ -28,7 +28,6 @@ The variables here are for internal use by the library
     int sn_screenwidth              global screenwidth
     int sn_screenheight             global screenheight
     sWidget *w_root                 root widget struct
-    sFrame *f_root                  root frame struct
     COORD c_screensize              initialises the buffer size
     SMALL_RECT sr_screensize        initialises the window size
 
@@ -153,7 +152,6 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 ### Datatypes
 
-
     enum eType {
         FRAME  = 1,
         BUTTON = 2
@@ -164,6 +162,16 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         int height;
     } sMinSize;
 
+    typedef struct tFrame {
+        sWidget children[16];
+    } sFrame, *pFrame;
+
+    typedef struct tButton {
+        wchar_t *text;
+        void (*draw)();
+        void (*callback)();
+    } sButton, *pButton;
+
     typedef struct tWidget {
         enum eType type;
         int px;
@@ -171,20 +179,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         struct tMinSize minsize;
         struct tWidget *parent;
         union {
-            struct tButton *button;
-            struct tFrame  *frame;
+            struct tButton button;
+            struct tFrame  frame;
         } widget;
-    } sWidget;
-
-    typedef struct tFrame {
-        sWidget children[16];
-    } sFrame;
-
-    typedef struct tButton {
-        wchar_t *text;
-        void (*draw)();
-        void (*callback)();
-    } sButton;
+    } sWidget, *pWidget;
 
 ### Variables
 
@@ -200,9 +198,9 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Synopsis
     
-    sFrame * tui_frame(const sWidget *parent);
+    sWidget * tui_frame(const sWidget *parent);
 
-    sButton * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
+    sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
 
     sMinSize calculate_min_size(sWidget *widget);
 
@@ -210,11 +208,9 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
 #### Description
 
-    tui_frame() creates a tFrame struct and returns a pointer to it. The frame is used to contain all other
-    widgets.
+    tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
-    tui_button() creates a tButton struct and returns a pointer to it. It also creates a widget struct
-    and assigns the parent argument to it.
+    tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
     calculate_min_size calculates the minimum size for each widget. It returns a sMinSize struct so it can be
     used recursively if the case is FRAME.

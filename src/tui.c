@@ -16,9 +16,8 @@ int sn_screenwidth;
 int sn_screenheight;
 int i_bufsize;                      // Size of *ci_screen in elements
 
-// Root frame and widget wrapper
+// Specially created root widget
 sWidget *w_root;
-sFrame  *f_root;
 
 
 // Needed for initialisation
@@ -97,18 +96,16 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 
 void tui_root_frame() {
     w_root = (sWidget *)malloc(sizeof(sWidget));
-    f_root = (sFrame *)malloc(sizeof(sFrame));
 
     w_root->type           = FRAME;
     w_root->px             = 0;
     w_root->py             = 0;
     w_root->parent         = NULL;
-    w_root->widget.frame   = f_root;
     w_root->minsize.width  = sn_screenwidth;
     w_root->minsize.height = sn_screenheight;
 
     for(int i = 0; i < 16; i++)
-        f_root->children[i] = NULL;
+        w_root->widget.frame.children[i] = NULL;
 }
 
 CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {

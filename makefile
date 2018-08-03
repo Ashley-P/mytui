@@ -26,7 +26,7 @@ clean:
 	del *.a
 
 test:
-	gcc -o test src/test.c -L. -lmytui -Iinclude
+	gcc -o test test/test.c -L. -lmytui -Iinclude
 
 cleantest:
 	del ".\test.exe"
