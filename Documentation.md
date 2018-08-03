@@ -206,6 +206,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
+    int parent_widget_type(sWidget *widget);
+
 #### Description
 
     tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
@@ -216,4 +218,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     used recursively if the case is FRAME.
 
     max_sMinSize compares two sMinSize structs and returns a struct with the largest of each variables
+    
+    parent_widget_type checks the type of the widget. If it is not of a type that can have children then it
+    invokes tui_err and quits with program with an error.
 ---

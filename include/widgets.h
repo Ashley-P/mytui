@@ -48,4 +48,6 @@ sMinSize calculate_min_size(sWidget *widget);
 
 sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
+int parent_widget_type(sWidget *widget);
+
 #endif

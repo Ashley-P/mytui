@@ -19,7 +19,7 @@ $(PROJECT): $(OBJECTS)
 	ar -cvq $@ $^
     
 
-.PHONY: clean
+.PHONY: clean test
 
 clean:
 	del ".\src\obj\*"
