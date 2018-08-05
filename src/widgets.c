@@ -6,10 +6,11 @@
 
 sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
-    sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
-    ptr->type           = FRAME;
-    ptr->minsize.width  = 0;
-    ptr->minsize.height = 0;
+    sWidget *ptr            = (sWidget *)malloc(sizeof(sWidget));
+    ptr->type               = FRAME;
+    ptr->minsize.width      = 0;
+    ptr->minsize.height     = 0;
+    ptr->widget.frame.numch = 0;
     if (parent_widget_type(parent))
         ptr->parent = parent;
 

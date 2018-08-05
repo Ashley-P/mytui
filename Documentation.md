@@ -163,7 +163,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     } sMinSize;
 
     typedef struct tFrame {
-        sWidget children[16];
+        void (*draw)();
+        int numch;
+        struct tWidget *children[MAX_CHILDREN];
+        struct tWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
     } sFrame, *pFrame;
 
     typedef struct tButton {

@@ -18,6 +18,7 @@ typedef struct tMinSize {
 
 typedef struct tFrame {
     void (*draw)();     // Drawing function
+    int numch;
     struct tWidget *children[MAX_CHILDREN];
     struct tWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
 } sFrame, *pFrame;
