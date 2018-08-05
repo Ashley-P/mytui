@@ -11,8 +11,18 @@ sWidget * tui_frame(sWidget *parent) {
     ptr->minsize.width      = 0;
     ptr->minsize.height     = 0;
     ptr->widget.frame.numch = 0;
-    if (parent_widget_type(parent))
+    if (parent_widget_type(parent)) {
         ptr->parent = parent;
+        /* Adding the ptr to the array of children and using the counter as a position indicator */
+        switch(parent->type) {
+            case FRAME:
+                parent->widget.frame.children[parent->widget.frame.numch] = ptr;
+                parent->widget.frame.numch += 1;
+                break;
+            default:
+                break;
+        }
+    }
 
     // sFrame setup
     for(int i = 0; i < 16; i++)
@@ -27,8 +37,18 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->type           = BUTTON;
     ptr->minsize.width  = 1;
     ptr->minsize.height = 1;
-    if (parent_widget_type(parent))
+    if (parent_widget_type(parent)) {
         ptr->parent = parent;
+        /* Adding the ptr to the array of children and using the counter as a position indicator */
+        switch(parent->type) {
+            case FRAME:
+                parent->widget.frame.children[parent->widget.frame.numch] = ptr;
+                parent->widget.frame.numch += 1;
+                break;
+            default:
+                break;
+        }
+    }
 
     // sButton setup
     ptr->widget.button.text     = text;
@@ -44,8 +64,13 @@ sMinSize calculate_min_size(sWidget *widget) {
     sMinSize s_return;
     switch(widget->type) {
         case FRAME:
+            // Calculate width with the formula (2 + minimum of minwidth of each row)
+            // Calculate height with the formula (2 + minimum of min height of each row)
+            // Set up gridding before you get to this
             break;
         case BUTTON:
+            s_return.height = 1;
+            s_return.width  = wcslen(widget->widget.button.text);
             break;
         default:
             tui_err("calculate_min_size switch default", 0, 0);
@@ -69,14 +94,14 @@ int parent_widget_type(sWidget *widget) {
      * This is so the user doesn't make the wrong type of widget
      * a parent
      */
-    if (widget->type != FRAME) {
-        switch(widget->type) {
-            case BUTTON:
-                tui_err("Wrong widget type; got sButton", 1, 1);
-                break;
-            default:
-                break;
-        }
+    switch(widget->type) {
+        case FRAME:
+            break;
+        case BUTTON:
+            tui_err("Wrong widget type; got sButton", 1, 1);
+            break;
+        default:
+            break;
     }
 
     return 1;
