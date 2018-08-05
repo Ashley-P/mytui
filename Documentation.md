@@ -153,8 +153,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 ### Datatypes
 
     enum eType {
-        FRAME  = 1,
-        BUTTON = 2
+        FRAME  = 1 << 0,
+        BUTTON = 1 << 1
     };
 
     typedef struct tMinSize {

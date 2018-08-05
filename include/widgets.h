@@ -6,8 +6,8 @@
 #define MAX_GRID_HEIGHT 16
 
 enum eType {
-    FRAME  = 1,
-    BUTTON = 2
+    FRAME  = 1 << 0,
+    BUTTON = 1 << 1
 };
 
 /* sMinsize exists so I can return 2 variables from calculate_min_size() */

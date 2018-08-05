@@ -64,8 +64,9 @@ sMinSize calculate_min_size(sWidget *widget) {
     sMinSize s_return;
     switch(widget->type) {
         case FRAME:
-            // Calculate width with the formula (2 + minimum of minwidth of each row)
             // Calculate height with the formula (2 + minimum of min height of each row)
+            // Calculate width with the formula (2 + minimum of minwidth of each row)
+            // Margins can get integrated into the formula later
             // Set up gridding before you get to this
             break;
         case BUTTON:
@@ -73,7 +74,8 @@ sMinSize calculate_min_size(sWidget *widget) {
             s_return.width  = wcslen(widget->widget.button.text);
             break;
         default:
-            tui_err("calculate_min_size switch default", 0, 0);
+            s_return.height = 0;
+            s_return.width  = 0;
             break;
     }
     return s_return;
@@ -90,7 +92,7 @@ sMinSize max_sMinSize(sMinSize a, sMinSize b) {
 
 int parent_widget_type(sWidget *widget) {
     /*
-     * This function checks if the widget passed is of type FRAME
+     * This function checks if the widget passed is of a type that can have children 
      * This is so the user doesn't make the wrong type of widget
      * a parent
      */
