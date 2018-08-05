@@ -54,7 +54,7 @@ sMinSize calculate_min_size(sWidget *widget) {
     return s_return;
 }
 
-// Used to return 
+// Used to return a sMinSize struct with the largest of each member
 sMinSize max_sMinSize(sMinSize a, sMinSize b) {
     // Empty struct is used so it can be returned later
     sMinSize s_return;
