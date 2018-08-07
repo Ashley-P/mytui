@@ -51,4 +51,6 @@ sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
 int parent_widget_type(sWidget *widget);
 
+void grid_set(sWidget *widget);
+
 #endif

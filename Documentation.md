@@ -211,6 +211,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     int parent_widget_type(sWidget *widget);
 
+    void grid_set(sWidget *widget);
+
 #### Description
 
     tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
@@ -224,4 +226,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     
     parent_widget_type checks the type of the widget. If it is not of a type that can have children then it
     invokes tui_err and quits with program with an error.
+
+    grid_set enters the position of the widget supplied into it's parent's grid array. Sends a warning if
+    it overwrites something (aka the element is not NULL)
 ---

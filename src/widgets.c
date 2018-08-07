@@ -24,9 +24,15 @@ sWidget * tui_frame(sWidget *parent) {
         }
     }
 
-    // sFrame setup
-    for(int i = 0; i < 16; i++)
+    // sFrame setup which just makes sure each element in both arrays are set to null
+    for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.frame.children[i] = NULL;
+
+    for(int j = 0; j < MAX_GRID_WIDTH; j++) {
+        for(int k = 0; k < MAX_GRID_HEIGHT; k++) {
+            ptr->widget.frame.grid[j][k] = NULL;
+        }
+    }
 
     return ptr;
 }
@@ -108,3 +114,7 @@ int parent_widget_type(sWidget *widget) {
 
     return 1;
 }
+
+void grid_set(sWidget *widget) {
+    /* This function sets the grid position in its parent */
+    
