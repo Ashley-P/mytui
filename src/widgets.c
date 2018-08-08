@@ -67,13 +67,20 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
 
 sMinSize calculate_min_size(sWidget *widget) {
     // Empty struct is used so it can be returned later
-    sMinSize s_return;
+    sMinSize s_return = {0, 0};
+    sMinSize s_temp = {0, 0};
     switch(widget->type) {
         case FRAME:
             // Calculate height with the formula (2 + minimum of min height of each row)
             // Calculate width with the formula (2 + minimum of minwidth of each row)
             // Margins can get integrated into the formula later
-            // Set up gridding before you get to this
+            for(int i = 0; i < MAX_GRID_COLS; i++) {
+                for(int j = 0; j < MAX_GRID_ROWS; j++) {
+                    if (widget->widget.frame.grid[i][j])
+                        s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
+                }
+                s_return = max_sMinSize(s_return, s_temp);
+            }
             break;
         case BUTTON:
             s_return.height = 1;
@@ -84,6 +91,13 @@ sMinSize calculate_min_size(sWidget *widget) {
             s_return.width  = 0;
             break;
     }
+    return s_return;
+}
+
+sMinSize add_sMinSize(sMinSize a, sMinSize b) {
+    sMinSize s_return;
+    s_return.width = a.width + b.width;
+    s_return.height = a.height = b.height;
     return s_return;
 }
 

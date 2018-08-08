@@ -207,6 +207,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     sMinSize calculate_min_size(sWidget *widget);
 
+    sMinSize add_sMinSize(sMinSize a, sMinSize b);
+
     sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
     int parent_widget_type(sWidget *widget);
@@ -221,6 +223,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     calculate_min_size calculates the minimum size for each widget. It returns a sMinSize struct so it can be
     used recursively if the case is FRAME.
+
+    add_sMinSize adds to sMinSize structs together and returns the resulting struct
 
     max_sMinSize compares two sMinSize structs and returns a struct with the largest of each variables
     

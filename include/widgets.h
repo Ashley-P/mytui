@@ -50,6 +50,8 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
 sMinSize calculate_min_size(sWidget *widget);
 
+sMinSize add_sMinSize(sMinSize a, sMinSize b);
+
 sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
 int parent_widget_type(sWidget *widget);
