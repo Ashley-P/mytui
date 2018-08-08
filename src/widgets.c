@@ -74,12 +74,26 @@ sMinSize calculate_min_size(sWidget *widget) {
             // Calculate height with the formula (2 + minimum of min height of each row)
             // Calculate width with the formula (2 + minimum of minwidth of each row)
             // Margins can get integrated into the formula later
+            /* HEIGHT */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     if (widget->widget.frame.grid[i][j])
                         s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
                 }
+                s_temp.width = 0;
                 s_return = max_sMinSize(s_return, s_temp);
+                s_return.height += 2;
+            }
+
+            /* WIDTH */
+            for(int k = 0; k < MAX_GRID_ROWS; k++) {
+                for(int l = 0; l < MAX_GRID_COLS; l++) {
+                    if (widget->widget.frame.grid[l][k])
+                        s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[l][k]), s_temp);
+                }
+                s_temp.height = 0;
+                s_return = max_sMinSize(s_return, s_temp);
+                s_return.width += 2;
             }
             break;
         case BUTTON:

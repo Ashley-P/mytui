@@ -16,11 +16,9 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
 
-    pWidget test_frame = tui_frame(w_root);
-
-    pWidget test_button1 = tui_button(test_frame, L"TEST 1", NULL);
-    pWidget test_button2 = tui_button(test_frame, L"TEST 2", NULL);
-    pWidget test_button3 = tui_button(test_frame, L"TEST 3", NULL);
+    pWidget test_button1 = tui_button(w_root, L"TEST 1", NULL);
+    pWidget test_button2 = tui_button(w_root, L"TEST 2", NULL);
+    pWidget test_button3 = tui_button(w_root, L"TEST 3", NULL);
 
     grid_set(test_button1, 0, 0);
     grid_set(test_button2, 0, 1);
