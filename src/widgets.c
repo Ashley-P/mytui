@@ -89,7 +89,6 @@ sMinSize calculate_min_size(sWidget *widget) {
 
 // Used to return a sMinSize struct with the largest of each member
 sMinSize max_sMinSize(sMinSize a, sMinSize b) {
-    // Empty struct is used so it can be returned later
     sMinSize s_return;
     s_return.width = a.width > b.width ? a.width : b.width;
     s_return.height = a.height > b.height ? a.height : b.height;
@@ -99,12 +98,11 @@ sMinSize max_sMinSize(sMinSize a, sMinSize b) {
 int parent_widget_type(sWidget *widget) {
     /*
      * This function checks if the widget passed is of a type that can have children 
-     * This is so the user doesn't make the wrong type of widget
-     * a parent
+     * This is so the user doesn't make the wrong type of widget a parent
      */
     switch(widget->type) {
         case BUTTON:
-            tui_err("Wrong widget type; got sButton", 1, 1);
+            tui_err("Wrong widget type; got BUTTON", 1, 1);
             break;
         case FRAME: default:
             break;
@@ -131,6 +129,8 @@ void grid_set(sWidget *widget, int col, int row) {
     /* Don't need to call parent_widget_type because it get called on the constructor for the widget */
     switch(widget->parent->type) {
         case FRAME:
+            if (widget->parent->widget.frame.grid[col][row])
+                tui_err("Grid position is already taken, overwritten anyway", 2, 0);
             widget->parent->widget.frame.grid[col][row] = widget;
             break;
         case BUTTON: default:
