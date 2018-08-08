@@ -1,9 +1,12 @@
 #ifndef WIDGETS_H_
 #define WIDGETS_H_
 
+#include <stdio.h>
+
 #define MAX_CHILDREN    16
-#define MAX_GRID_WIDTH  16
-#define MAX_GRID_HEIGHT 16
+#define MAX_GRID_COLS  16
+#define MAX_GRID_ROWS 16
+
 
 enum eType {
     FRAME  = 1 << 0,
@@ -20,7 +23,7 @@ typedef struct tFrame {
     void (*draw)();     // Drawing function
     int numch;
     struct tWidget *children[MAX_CHILDREN];
-    struct tWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
+    struct tWidget *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
 } sFrame, *pFrame;
 
 typedef struct tButton {
@@ -51,6 +54,6 @@ sMinSize max_sMinSize(sMinSize a, sMinSize b);
 
 int parent_widget_type(sWidget *widget);
 
-void grid_set(sWidget *widget);
+void grid_set(sWidget *widget, int col, int row);
 
 #endif

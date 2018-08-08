@@ -192,8 +192,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 ### Constants
 
     MAX_CHILDREN    16
-    MAX_GRID_WIDTH  16
-    MAX_GRID_HEIGHT 16
+    MAX_GRID_COLS   16
+    MAX_GRID_ROWS   16
 
 ### Structs
 
@@ -211,7 +211,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     int parent_widget_type(sWidget *widget);
 
-    void grid_set(sWidget *widget);
+    void grid_set(sWidget *widget, int col, int row);
 
 #### Description
 

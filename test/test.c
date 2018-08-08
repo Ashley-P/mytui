@@ -22,6 +22,10 @@ int main() {
     pWidget test_button2 = tui_button(test_frame, L"TEST 2", NULL);
     pWidget test_button3 = tui_button(test_frame, L"TEST 3", NULL);
 
+    grid_set(test_button1, 0, 0);
+    grid_set(test_button2, 0, 1);
+    grid_set(test_button3, 0, 2);
+
     tui_loop();
     return 0;
 }

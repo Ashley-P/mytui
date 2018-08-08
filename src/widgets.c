@@ -28,8 +28,8 @@ sWidget * tui_frame(sWidget *parent) {
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.frame.children[i] = NULL;
 
-    for(int j = 0; j < MAX_GRID_WIDTH; j++) {
-        for(int k = 0; k < MAX_GRID_HEIGHT; k++) {
+    for(int j = 0; j < MAX_GRID_COLS; j++) {
+        for(int k = 0; k < MAX_GRID_ROWS; k++) {
             ptr->widget.frame.grid[j][k] = NULL;
         }
     }
@@ -103,18 +103,38 @@ int parent_widget_type(sWidget *widget) {
      * a parent
      */
     switch(widget->type) {
-        case FRAME:
-            break;
         case BUTTON:
             tui_err("Wrong widget type; got sButton", 1, 1);
             break;
-        default:
+        case FRAME: default:
             break;
     }
 
     return 1;
 }
 
-void grid_set(sWidget *widget) {
+void grid_set(sWidget *widget, int col, int row) {
     /* This function sets the grid position in its parent */
-    
+    /* Make sure there is a warning if a grid position gets overwritten */
+    /* Basic checking for arguments */
+    char err[256];
+    if (col >= MAX_GRID_COLS || col < 0) {
+       sprintf(err, "Error incorrect col value; Expected 0 < col < %d - Got %d", MAX_GRID_COLS, col);
+       tui_err(err, 1, 1);
+    }
+    if (row >= MAX_GRID_ROWS || row < 0) {
+       sprintf(err, "Error incorrect row value; Expected 0 < row < %d - Got %d", MAX_GRID_ROWS, row);
+       tui_err(err, 1, 1);
+    }
+
+    /* Actually assigning the widget to the grid */
+    /* Don't need to call parent_widget_type because it get called on the constructor for the widget */
+    switch(widget->parent->type) {
+        case FRAME:
+            widget->parent->widget.frame.grid[col][row] = widget;
+            break;
+        case BUTTON: default:
+            break;
+
+    }
+}
