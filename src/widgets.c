@@ -80,6 +80,7 @@ sMinSize calculate_min_size(sWidget *widget) {
                     if (widget->widget.frame.grid[i][j])
                         s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
                 }
+                widget->widget.frame.cols_size[i].height = s_temp.height;
                 s_temp.width = 0;
                 s_return = max_sMinSize(s_return, s_temp);
                 s_return.height += 2;
@@ -91,6 +92,7 @@ sMinSize calculate_min_size(sWidget *widget) {
                     if (widget->widget.frame.grid[l][k])
                         s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[l][k]), s_temp);
                 }
+                widget->widget.frame.rows_size[k].width = s_temp.width;
                 s_temp.height = 0;
                 s_return = max_sMinSize(s_return, s_temp);
                 s_return.width += 2;

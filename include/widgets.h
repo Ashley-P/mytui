@@ -24,8 +24,8 @@ typedef struct tFrame {
     int numch;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
-    struct tMinSize *cols_size[MAX_GRID_COLS];
-    struct tMinSize *rows_size[MAX_GRID_ROWS];
+    struct tMinSize cols_size[MAX_GRID_COLS];
+    struct tMinSize rows_size[MAX_GRID_ROWS];
 } sFrame, *pFrame;
 
 typedef struct tButton {
