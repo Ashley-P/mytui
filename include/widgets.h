@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #define MAX_CHILDREN    16
-#define MAX_GRID_COLS  16
-#define MAX_GRID_ROWS 16
+#define MAX_GRID_COLS   16
+#define MAX_GRID_ROWS   16
 
 
 enum eType {

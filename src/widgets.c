@@ -71,7 +71,7 @@ sMinSize calculate_min_size(sWidget *widget) {
     sMinSize s_temp = {0, 0};
     switch(widget->type) {
         case FRAME:
-            // Calculate height with the formula (2 + minimum of min height of each row)
+            // Calculate height with the formula (2 + minimum of minheight of each row)
             // Calculate width with the formula (2 + minimum of minwidth of each row)
             // Margins can get integrated into the formula later
             /* HEIGHT */
