@@ -44,7 +44,8 @@ The variables here are for internal use by the library
     void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
-    void tui_draw();
+    void tui_draw(sWidget *a);
+    void tui_draw__(sWidget *a);
     void inpthr_loop();
     void tui_loop();
     
@@ -64,6 +65,9 @@ The variables here are for internal use by the library
     tui_handle_input() handles all the events for the program
 
     tui_draw() is where all the drawing to the buffer is handled
+
+    tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
+    over the tree created by the user.
 
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
 

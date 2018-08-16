@@ -149,7 +149,7 @@ void tui_handle_input() {
     }
 }
 
-void tui_draw() {
+void tui_draw(sWidget *a) {
     // Basic drawing for now
     // Resetting each element
     reset_buf(*tui_current_screen);   
@@ -174,6 +174,6 @@ void tui_loop() {
     calculate_min_size(w_root);
 
     while(1) {
-        tui_draw();
+        tui_draw(w_root);
     }
 }

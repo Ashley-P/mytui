@@ -20,7 +20,9 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight); /
 
 void tui_handle_input();
 
-void tui_draw();
+void tui_draw(sWidget *a);
+
+void tui_draw__(sWidget *a);
 
 void inpthr_loop();
 
