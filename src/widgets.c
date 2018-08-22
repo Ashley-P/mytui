@@ -8,8 +8,8 @@ sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
     sWidget *ptr            = (sWidget *)malloc(sizeof(sWidget));
     ptr->type               = FRAME;
-    ptr->minsize.width      = 0;
-    ptr->minsize.height     = 0;
+    ptr->minsize.x      = 0;
+    ptr->minsize.y     = 0;
     ptr->widget.frame.numch = 0;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
@@ -41,8 +41,8 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
     sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
     ptr->type           = BUTTON;
-    ptr->minsize.width  = 1;
-    ptr->minsize.height = 1;
+    ptr->minsize.x  = 1;
+    ptr->minsize.y = 1;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
         /* Adding the ptr to the array of children and using the counter as a position indicator */
@@ -65,63 +65,63 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
-sMinSize calculate_min_size(sWidget *widget) {
+sSize calculate_min_size(sWidget *widget) {
     // Empty struct is used so it can be returned later
-    sMinSize s_return = {0, 0};
-    sMinSize s_temp = {0, 0};
+    sSize s_return = {0, 0};
+    sSize s_temp = {0, 0};
     switch(widget->type) {
         case FRAME:
-            // Calculate height with the formula (2 + minimum of minheight of each row)
-            // Calculate width with the formula (2 + minimum of minwidth of each row)
+            // Calculate y with the formula (2 + minimum of miny of each row)
+            // Calculate x with the formula (2 + minimum of minx of each row)
             // Margins can get integrated into the formula later
-            /* HEIGHT */
+            /* y */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     if (widget->widget.frame.grid[i][j])
-                        s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
+                        s_temp = add_sSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
                 }
-                widget->widget.frame.cols_size[i].height = s_temp.height;
-                s_temp.width = 0;
-                s_return = max_sMinSize(s_return, s_temp);
-                s_return.height += 2;
+                widget->widget.frame.cols_size[i].y = s_temp.y;
+                s_temp.x = 0;
+                s_return = max_sSize(s_return, s_temp);
+                s_return.y += 2;
             }
 
-            /* WIDTH */
+            /* x */
             for(int k = 0; k < MAX_GRID_ROWS; k++) {
                 for(int l = 0; l < MAX_GRID_COLS; l++) {
                     if (widget->widget.frame.grid[l][k])
-                        s_temp = add_sMinSize(calculate_min_size(widget->widget.frame.grid[l][k]), s_temp);
+                        s_temp = add_sSize(calculate_min_size(widget->widget.frame.grid[l][k]), s_temp);
                 }
-                widget->widget.frame.rows_size[k].width = s_temp.width;
-                s_temp.height = 0;
-                s_return = max_sMinSize(s_return, s_temp);
-                s_return.width += 2;
+                widget->widget.frame.rows_size[k].x = s_temp.x;
+                s_temp.y = 0;
+                s_return = max_sSize(s_return, s_temp);
+                s_return.x += 2;
             }
             break;
         case BUTTON:
-            s_return.height = 1;
-            s_return.width  = wcslen(widget->widget.button.text);
+            s_return.y = 1;
+            s_return.x  = wcslen(widget->widget.button.text);
             break;
         default:
-            s_return.height = 0;
-            s_return.width  = 0;
+            s_return.y = 0;
+            s_return.x  = 0;
             break;
     }
     return s_return;
 }
 
-sMinSize add_sMinSize(sMinSize a, sMinSize b) {
-    sMinSize s_return;
-    s_return.width = a.width + b.width;
-    s_return.height = a.height = b.height;
+sSize add_sSize(sSize a, sSize b) {
+    sSize s_return;
+    s_return.x = a.x + b.x;
+    s_return.y = a.y = b.y;
     return s_return;
 }
 
-// Used to return a sMinSize struct with the largest of each member
-sMinSize max_sMinSize(sMinSize a, sMinSize b) {
-    sMinSize s_return;
-    s_return.width = a.width > b.width ? a.width : b.width;
-    s_return.height = a.height > b.height ? a.height : b.height;
+// Used to return a sSize struct with the largest of each member
+sSize max_sSize(sSize a, sSize b) {
+    sSize s_return;
+    s_return.x = a.x > b.x ? a.x : b.x;
+    s_return.y = a.y > b.y ? a.y : b.y;
     return s_return;
 }
 

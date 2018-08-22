@@ -12,8 +12,8 @@ static HANDLE h_stdin;
 static HANDLE h_inpthr;
 static CHAR_INFO *ci_screen;        // Buffer to write characters to
 CHAR_INFO **tui_current_screen;     // Pointer to the current screen
-int sn_screenwidth;
-int sn_screenheight;
+int sn_screenx;
+int sn_screeny;
 int i_bufsize;                      // Size of *ci_screen in elements
 
 // Specially created root widget
@@ -25,7 +25,7 @@ static COORD c_screensize;
 static SMALL_RECT sr_screensize;
 
 
-int tui_init(const int n_screenwidth, const int n_screenheight) {
+int tui_init(const int n_screenx, const int n_screeny) {
     // setting up error logging
     init_stderr();
 
@@ -47,18 +47,18 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
-    ci_screen = alloc_ci_array(n_screenwidth, n_screenheight);
+    ci_screen = alloc_ci_array(n_screenx, n_screeny);
     tui_current_screen = &ci_screen;
-    sn_screenwidth = n_screenwidth;
-    sn_screenheight = n_screenheight;
+    sn_screenx = n_screenx;
+    sn_screeny = n_screeny;
     
     /*
      * Slightly hacky way of setting up the console.
      * Sets the console window size to be very small, then scales it back
      * up to the size of the buffer
      */
-    c_screensize = (COORD) {(short)n_screenwidth, (short)n_screenheight};
-    sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
+    c_screensize = (COORD) {(short)n_screenx, (short)n_screeny};
+    sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenx - 1, (short)n_screeny - 1};
 
     if (!SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1})))
         win_err("SetConsoleWindowInfo 1");
@@ -101,20 +101,20 @@ void tui_root_frame() {
     w_root->px             = 0;
     w_root->py             = 0;
     w_root->parent         = NULL;
-    w_root->minsize.width  = sn_screenwidth;
-    w_root->minsize.height = sn_screenheight;
+    w_root->minsize.x  = sn_screenx;
+    w_root->minsize.y = sn_screeny;
 
     for(int i = 0; i < 16; i++)
         w_root->widget.frame.children[i] = NULL;
 }
 
-CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
-        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
+CHAR_INFO * alloc_ci_array(const int n_screenx, const int n_screeny) {
+        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenx * n_screeny, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
         tui_err("Calloc failed to allocate memory", TUI_ERROR, 1);
 
-    i_bufsize = n_screenwidth * n_screenheight;
+    i_bufsize = n_screenx * n_screeny;
 
     return ptr;
 }
@@ -161,6 +161,14 @@ void tui_draw(sWidget *a) {
                             &sr_screensize))
         win_err("WriteConsoleOutput");
 
+
+}
+
+void tui_draw__(sWidget *a) {
+
+}
+
+void widget_positioner(sWidget *a) {
 
 }
 

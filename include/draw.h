@@ -8,7 +8,7 @@
 
 void reset_buf();
 
-void draw_box(int x, int y, const int width, const int height, const bool fill);
+void draw_box(int x, int y, const int x, const int y, const bool fill);
 
 void draw_str(const wchar_t *str, int x, int y);
 

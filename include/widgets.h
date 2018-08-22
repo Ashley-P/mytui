@@ -13,19 +13,19 @@ enum eType {
     BUTTON = 1 << 1
 };
 
-/* sMinsize exists so I can return 2 variables from calculate_min_size() */
-typedef struct tMinSize {
-    int width;
-    int height;
-} sMinSize;
+/* sSize exists so I can return 2 variables from calculate_min_size() */
+typedef struct tSize {
+    int x;
+    int y;
+} sSize;
 
 typedef struct tFrame {
     void (*draw)();     // Drawing function
     int numch;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
-    struct tMinSize cols_size[MAX_GRID_COLS];
-    struct tMinSize rows_size[MAX_GRID_ROWS];
+    struct tSize cols_size[MAX_GRID_COLS];
+    struct tSize rows_size[MAX_GRID_ROWS];
 } sFrame, *pFrame;
 
 typedef struct tButton {
@@ -38,7 +38,7 @@ typedef struct tWidget {
     int px;
     int py;
     enum eType type; 
-    struct tMinSize minsize;
+    struct tSize minsize;
     struct tWidget *parent;
     union {
         struct tButton button;
@@ -50,11 +50,11 @@ sWidget * tui_frame(sWidget *parent);
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
-sMinSize calculate_min_size(sWidget *widget);
+sSize calculate_min_size(sWidget *widget);
 
-sMinSize add_sMinSize(sMinSize a, sMinSize b);
+sSize add_sSize(sSize a, sSize b);
 
-sMinSize max_sMinSize(sMinSize a, sMinSize b);
+sSize max_sSize(sSize a, sSize b);
 
 int parent_widget_type(sWidget *widget);
 

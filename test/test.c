@@ -10,11 +10,11 @@
 
 
 int main() {
-    // Screen width and height for testing purposes
-    int n_screenwidth = 180;
-    int n_screenheight = 50;
+    // Screen x and y for testing purposes
+    int n_screenx = 180;
+    int n_screeny = 50;
 
-    tui_init(n_screenwidth, n_screenheight);
+    tui_init(n_screenx, n_screeny);
 
     pWidget test_button1 = tui_button(w_root, L"TEST 1", NULL);
     pWidget test_button2 = tui_button(w_root, L"TEST 2", NULL);

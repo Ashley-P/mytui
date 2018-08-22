@@ -25,8 +25,8 @@ The variables here are for internal use by the library
     CHAR_INFO *ci_screen            CHAR_INFO array that gets passed to the console
     CHAR_INFO **tui_current_screen  A pointer to the current screen being used
     int i_bufsize                   size of *wc_screen in elements
-    int sn_screenwidth              global screenwidth
-    int sn_screenheight             global screenheight
+    int sn_screenx              global screenx
+    int sn_screeny             global screeny
     sWidget *w_root                 root widget struct
     COORD c_screensize              initialises the buffer size
     SMALL_RECT sr_screensize        initialises the window size
@@ -40,9 +40,9 @@ The variables here are for internal use by the library
 
 #### Synopsis
 
-    int init_tui(const int n_screenwidth, const int n_screenheight);
+    int init_tui(const int n_screenx, const int n_screeny);
     void tui_root_frame();
-    CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
+    CHAR_INFO * alloc_ci_array(const int n_screenx, const int n_screeny);
     void tui_handle_input();
     void tui_draw(sWidget *a);
     void tui_draw__(sWidget *a);
@@ -68,6 +68,9 @@ The variables here are for internal use by the library
 
     tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
+
+    void widget_positioner() sets the value for the two structs in each widget that
+    set the coordinates and the real size (not the minimum size) for the widget
 
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
 
@@ -131,7 +134,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 #### Synopsis
 
     void reset_buf();
-    void draw_box(int x, int y, const int width, const int height, const bool fill);
+    void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
     void draw_button(sButton * button);
 
@@ -141,7 +144,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     reset_buf() Fills the buffer with spaces.
     Used after every draw to the screen
 
-    draw_box() Draws a box of the desired width and height at the provided co-ordinates x and y.
+    draw_box() Draws a box of the desired x and y at the provided co-ordinates x and y.
     The character used is the hash '#'. The box can be filled or just left with the borders
 
     draw_str() Draws a string to the screen at the desired position.
@@ -161,18 +164,18 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         BUTTON = 1 << 1
     };
 
-    typedef struct tMinSize {
-        int width;
-        int height;
-    } sMinSize;
+    typedef struct tSize {
+        int x;
+        int y;
+    } sSize;
 
     typedef struct tFrame {
         void (*draw)();
         int numch;
         struct tWidget *children[MAX_CHILDREN];
-        struct tWidget *grid[MAX_GRID_WIDTH][MAX_GRID_HEIGHT];
-        struct tMinSize *cols_size[MAX_GRID_COLS];
-        struct tMinSize *rows_size[MAX_GRID_ROWS];
+        struct tWidget *grid[MAX_GRID_x][MAX_GRID_y];
+        struct tSize *cols_size[MAX_GRID_COLS];
+        struct tSize *rows_size[MAX_GRID_ROWS];
     } sFrame, *pFrame;
 
     typedef struct tButton {
@@ -185,7 +188,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         enum eType type;
         int px;
         int py;
-        struct tMinSize minsize;
+        struct tSize minsize;
         struct tWidget *parent;
         union {
             struct tButton button;
@@ -211,11 +214,11 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
 
-    sMinSize calculate_min_size(sWidget *widget);
+    sSize calculate_min_size(sWidget *widget);
 
-    sMinSize add_sMinSize(sMinSize a, sMinSize b);
+    sSize add_sSize(sSize a, sSize b);
 
-    sMinSize max_sMinSize(sMinSize a, sMinSize b);
+    sSize max_sSize(sSize a, sSize b);
 
     int parent_widget_type(sWidget *widget);
 
@@ -227,12 +230,12 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
-    calculate_min_size calculates the minimum size for each widget. It returns a sMinSize struct so it can be
+    calculate_min_size calculates the minimum size for each widget. It returns a sSize struct so it can be
     used recursively if the case is FRAME.
 
-    add_sMinSize adds to sMinSize structs together and returns the resulting struct
+    add_sSize adds to sSize structs together and returns the resulting struct
 
-    max_sMinSize compares two sMinSize structs and returns a struct with the largest of each variables
+    max_sSize compares two sSize structs and returns a struct with the largest of each variables
     
     parent_widget_type checks the type of the widget. If it is not of a type that can have children then it
     invokes tui_err and quits with program with an error.
