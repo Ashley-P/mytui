@@ -167,7 +167,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     typedef struct tSize {
         int x;
         int y;
-    } sSize;
+    } sSize, sPos;
 
     typedef struct tFrame {
         void (*draw)();

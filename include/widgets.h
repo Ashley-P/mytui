@@ -17,7 +17,7 @@ enum eType {
 typedef struct tSize {
     int x;
     int y;
-} sSize;
+} sSize, sPos;  // Two names just for less confusion because the same struct is used for coords
 
 typedef struct tFrame {
     void (*draw)();     // Drawing function
