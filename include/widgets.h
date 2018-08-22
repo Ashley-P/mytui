@@ -35,10 +35,10 @@ typedef struct tButton {
 } sButton, *pButton;
 
 typedef struct tWidget {
-    int px;
-    int py;
     enum eType type; 
-    struct tSize minsize;
+    sPos  pos;
+    sSize realsize;
+    sSize minsize;
     struct tWidget *parent;
     union {
         struct tButton button;

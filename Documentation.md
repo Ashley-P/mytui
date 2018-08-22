@@ -184,11 +184,14 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         void (*callback)();
     } sButton, *pButton;
 
+
     typedef struct tWidget {
-        enum eType type;
         int px;
         int py;
-        struct tSize minsize;
+        enum eType type; 
+        sPos  pos;
+        sSize realsize;
+        sSize minsize;
         struct tWidget *parent;
         union {
             struct tButton button;
