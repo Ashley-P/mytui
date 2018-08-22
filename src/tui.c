@@ -12,8 +12,8 @@ static HANDLE h_stdin;
 static HANDLE h_inpthr;
 static CHAR_INFO *ci_screen;        // Buffer to write characters to
 CHAR_INFO **tui_current_screen;     // Pointer to the current screen
-int sn_screenx;
-int sn_screeny;
+int sn_screenwidth;
+int sn_screenheight;
 int i_bufsize;                      // Size of *ci_screen in elements
 
 // Specially created root widget
@@ -25,7 +25,7 @@ static COORD c_screensize;
 static SMALL_RECT sr_screensize;
 
 
-int tui_init(const int n_screenx, const int n_screeny) {
+int tui_init(const int n_screenwidth, const int n_screenheight) {
     // setting up error logging
     init_stderr();
 
@@ -47,18 +47,18 @@ int tui_init(const int n_screenx, const int n_screeny) {
     
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
-    ci_screen = alloc_ci_array(n_screenx, n_screeny);
+    ci_screen = alloc_ci_array(n_screenwidth, n_screenheight);
     tui_current_screen = &ci_screen;
-    sn_screenx = n_screenx;
-    sn_screeny = n_screeny;
+    sn_screenwidth = n_screenwidth;
+    sn_screenheight = n_screenheight;
     
     /*
      * Slightly hacky way of setting up the console.
      * Sets the console window size to be very small, then scales it back
      * up to the size of the buffer
      */
-    c_screensize = (COORD) {(short)n_screenx, (short)n_screeny};
-    sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenx - 1, (short)n_screeny - 1};
+    c_screensize = (COORD) {(short)n_screenwidth, (short)n_screenheight};
+    sr_screensize = (SMALL_RECT) {0, 0, (short)n_screenwidth - 1, (short)n_screenheight - 1};
 
     if (!SetConsoleWindowInfo(h_console, TRUE, &((SMALL_RECT) {0, 0, 1, 1})))
         win_err("SetConsoleWindowInfo 1");
@@ -98,23 +98,23 @@ void tui_root_frame() {
     w_root = (sWidget *)malloc(sizeof(sWidget));
 
     w_root->type           = FRAME;
-    w_root->px             = 0;
-    w_root->py             = 0;
+    w_root->pos.x          = 0;
+    w_root->pos.y          = 0;
     w_root->parent         = NULL;
-    w_root->minsize.x  = sn_screenx;
-    w_root->minsize.y = sn_screeny;
+    w_root->minsize.x      = sn_screenwidth;
+    w_root->minsize.y      = sn_screenheight;
 
     for(int i = 0; i < 16; i++)
         w_root->widget.frame.children[i] = NULL;
 }
 
-CHAR_INFO * alloc_ci_array(const int n_screenx, const int n_screeny) {
-        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenx * n_screeny, sizeof(CHAR_INFO));
+CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
+        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
         tui_err("Calloc failed to allocate memory", TUI_ERROR, 1);
 
-    i_bufsize = n_screenx * n_screeny;
+    i_bufsize = n_screenwidth * n_screenheight;
 
     return ptr;
 }
@@ -169,7 +169,33 @@ void tui_draw__(sWidget *a) {
 }
 
 void widget_positioner(sWidget *a) {
+    /*
+     * Sets up realsize and pos structs in the widget recursively. Generally the top level widget of
+     * the window should be given as the argument.
+     * Called when the program starts and when windows are created or resized.
+     * This relies on previous calls to set the cursor into position;
+     */
 
+    /* Struct for the position of the "cursor" that places everything down */
+    static sSize cursor = {0, 0};
+
+    /* Right now this function just does realsize = minsize until more options are implemented */
+    switch (a->type) {
+        case FRAME:
+            // w_root size is preset so we don't change it
+            if (a != w_root)
+                a->pos = cursor;
+            a->realsize = a->minsize;
+            
+            /* Cursor movement happens here, this is where extra movement due to margins would occur */
+            cursor = add_sSize(cursor, (sSize) {1, 1});
+            break;
+        case BUTTON:
+            break;
+        default:
+            tui_err("widget positioner default", 1, 0);
+            break;
+    }
 }
 
 void inpthr_loop() {
@@ -179,7 +205,12 @@ void inpthr_loop() {
 }
 
 void tui_loop() {
+    /* Stuff that needs to happen after setup but before the loop starts */
+    /* Even though calculate_min_size returns sSize, it's not used for the top level
+     * frame because it comes preset.
+     */
     calculate_min_size(w_root);
+    widget_positioner(w_root);
 
     while(1) {
         tui_draw(w_root);

@@ -8,8 +8,8 @@ sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
     sWidget *ptr            = (sWidget *)malloc(sizeof(sWidget));
     ptr->type               = FRAME;
-    ptr->minsize.x      = 0;
-    ptr->minsize.y     = 0;
+    ptr->minsize.x          = 0;
+    ptr->minsize.y          = 0;
     ptr->widget.frame.numch = 0;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
@@ -41,8 +41,8 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
     sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
     ptr->type           = BUTTON;
-    ptr->minsize.x  = 1;
-    ptr->minsize.y = 1;
+    ptr->minsize.x      = 1;
+    ptr->minsize.y      = 1;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
         /* Adding the ptr to the array of children and using the counter as a position indicator */
@@ -71,10 +71,12 @@ sSize calculate_min_size(sWidget *widget) {
     sSize s_temp = {0, 0};
     switch(widget->type) {
         case FRAME:
-            // Calculate y with the formula (2 + minimum of miny of each row)
-            // Calculate x with the formula (2 + minimum of minx of each row)
-            // Margins can get integrated into the formula later
-            /* y */
+            /* Calculate y with the formula (2 + minimum of miny of each row)
+             * Calculate x with the formula (2 + minimum of minx of each row)
+             * Margins can get integrated into the formula later.
+             */
+
+            /* HEIGHT */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     if (widget->widget.frame.grid[i][j])
@@ -86,7 +88,7 @@ sSize calculate_min_size(sWidget *widget) {
                 s_return.y += 2;
             }
 
-            /* x */
+            /* WIDTH */
             for(int k = 0; k < MAX_GRID_ROWS; k++) {
                 for(int l = 0; l < MAX_GRID_COLS; l++) {
                     if (widget->widget.frame.grid[l][k])
@@ -113,7 +115,7 @@ sSize calculate_min_size(sWidget *widget) {
 sSize add_sSize(sSize a, sSize b) {
     sSize s_return;
     s_return.x = a.x + b.x;
-    s_return.y = a.y = b.y;
+    s_return.y = a.y + b.y;
     return s_return;
 }
 
