@@ -97,15 +97,22 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 void tui_root_frame() {
     w_root = (sWidget *)malloc(sizeof(sWidget));
 
-    w_root->type           = FRAME;
-    w_root->pos.x          = 0;
-    w_root->pos.y          = 0;
-    w_root->parent         = NULL;
-    w_root->minsize.x      = sn_screenwidth;
-    w_root->minsize.y      = sn_screenheight;
+    w_root->type               = FRAME;
+    w_root->pos.x              = 0;
+    w_root->pos.y              = 0;
+    w_root->parent             = NULL;
+    w_root->minsize.x          = sn_screenwidth;
+    w_root->minsize.y          = sn_screenheight;
+    w_root->widget.frame.numch = 0;
 
-    for(int i = 0; i < 16; i++)
+    for(int i = 0; i < MAX_CHILDREN; i++)
         w_root->widget.frame.children[i] = NULL;
+
+    for(int j = 0; j < MAX_GRID_COLS; j++) {
+        for(int k = 0; k < MAX_GRID_COLS; k++) {
+            w_root->widget.frame.grid[j][k] = NULL;
+        }
+    }
 }
 
 CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
@@ -177,20 +184,36 @@ void widget_positioner(sWidget *a) {
      */
 
     /* Struct for the position of the "cursor" that places everything down */
-    static sSize cursor = {0, 0};
+    static sSize s_cursor = {0, 0};
 
-    /* Right now this function just does realsize = minsize until more options are implemented */
     switch (a->type) {
         case FRAME:
-            // w_root size is preset so we don't change it
+            /* w_root size is preset so we don't change it */
             if (a != w_root)
-                a->pos = cursor;
+                a->pos = s_cursor;
+            /* Right now realsize = minsize until more options are implemented */
             a->realsize = a->minsize;
-            
+
             /* Cursor movement happens here, this is where extra movement due to margins would occur */
-            cursor = add_sSize(cursor, (sSize) {1, 1});
+            s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
+
+            /* Iterating through the frame's children */
+            for(int i = 0; i < MAX_GRID_COLS; i++) {
+                for(int j = 0; j < MAX_GRID_ROWS; j++) {
+                    if(a->widget.frame.grid[i][j])
+                    widget_positioner(a->widget.frame.grid[i][j]);
+                }
+            }
+
+            s_cursor = a->pos;
+                
             break;
         case BUTTON:
+            a->pos = s_cursor;
+            /* Right now realsize = minsize until more options are implemented */
+            a->realsize = a->minsize;
+
+            s_cursor = add_sSize(s_cursor, (sSize) {a->realsize.x + 1, a->realsize.y + 1});
             break;
         default:
             tui_err("widget positioner default", 1, 0);
