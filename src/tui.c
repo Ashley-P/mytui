@@ -197,11 +197,13 @@ void widget_positioner(sWidget *a) {
             /* Cursor movement happens here, this is where extra movement due to margins would occur */
             s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
 
+            sFrame *af = &a->widget.frame;
             /* Iterating through the frame's children */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if(a->widget.frame.grid[i][j])
-                    widget_positioner(a->widget.frame.grid[i][j]);
+                    if(af->grid[i][j])
+                        widget_positioner(af->grid[i][j]);
+                    //s_cursor = add_sSize(s_cursor, (sSize) {a->widget.frame.rows_size[j] - 1});
                 }
             }
 
@@ -212,8 +214,6 @@ void widget_positioner(sWidget *a) {
             a->pos = s_cursor;
             /* Right now realsize = minsize until more options are implemented */
             a->realsize = a->minsize;
-
-            s_cursor = add_sSize(s_cursor, (sSize) {a->realsize.x + 1, a->realsize.y + 1});
             break;
         default:
             tui_err("widget positioner default", 1, 0);

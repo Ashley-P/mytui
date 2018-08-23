@@ -76,13 +76,15 @@ sSize calculate_min_size(sWidget *widget) {
              * Margins can get integrated into the formula later.
              */
 
+            ; // Empty statement because labels cannot precede declarations
+            sFrame *af = &widget->widget.frame;
             /* HEIGHT */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if (widget->widget.frame.grid[i][j])
-                        s_temp = add_sSize(calculate_min_size(widget->widget.frame.grid[i][j]), s_temp);
+                    if (af->grid[i][j])
+                        s_temp = add_sSize(calculate_min_size(af->grid[i][j]), s_temp);
                 }
-                widget->widget.frame.cols_size[i].y = s_temp.y;
+                af->cols_size[i].y = s_temp.y;
                 s_temp.x = 0;
                 s_return = max_sSize(s_return, s_temp);
                 s_return.y += 2;
@@ -91,10 +93,10 @@ sSize calculate_min_size(sWidget *widget) {
             /* WIDTH */
             for(int k = 0; k < MAX_GRID_ROWS; k++) {
                 for(int l = 0; l < MAX_GRID_COLS; l++) {
-                    if (widget->widget.frame.grid[l][k])
-                        s_temp = add_sSize(calculate_min_size(widget->widget.frame.grid[l][k]), s_temp);
+                    if (af->grid[l][k])
+                        s_temp = add_sSize(calculate_min_size(af->grid[l][k]), s_temp);
                 }
-                widget->widget.frame.rows_size[k].x = s_temp.x;
+                af->rows_size[k].x = s_temp.x;
                 s_temp.y = 0;
                 s_return = max_sSize(s_return, s_temp);
                 s_return.x += 2;
