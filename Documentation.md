@@ -44,8 +44,8 @@ The variables here are for internal use by the library
     void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
-    void tui_draw(const sWidget *a);
-    void tui_draw__(const sWidget *a);
+    void tui_draw(sWidget *a);
+    void tui_draw__(sWidget *a);
     void inpthr_loop();
     void tui_loop();
     
