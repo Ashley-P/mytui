@@ -28,5 +28,9 @@ clean:
 test:
 	gcc -o test test/test.c -L. -lmytui -Iinclude
 
+test2:
+	gcc -o test2 test/test2.c -L. -lmytui -Iinclude
+
 cleantest:
 	del ".\test.exe"
+	del ".\test2.exe"
