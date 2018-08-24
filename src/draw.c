@@ -11,7 +11,7 @@ void reset_buf() {
     }
 }
 
-void draw_box(int x, int y, const int width, const int height, const bool fill) {
+void draw_box(int x, int y, const int width, const int height, const bool fill, int colour) {
     // Shifting the coords by -1, -1 to make sense on the screen
     x = x - 1;
     y = y - 1;
@@ -26,7 +26,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill) 
     if (fill == true) {
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++) {
-                (*tui_current_screen + (x + j) + ((y + i) * sn_screenwidth ))->Char.UnicodeChar = L'#';
+                (*tui_current_screen + (x + j) + ((y + i) * sn_screenwidth ))->Attributes = colour;
             }
         }
     }
@@ -35,16 +35,16 @@ void draw_box(int x, int y, const int width, const int height, const bool fill) 
     if (fill == false) {
         for(int i = 0; i < height; i++) {
             // Left Border
-            (*tui_current_screen + x + ((y + i) * sn_screenwidth))->Char.UnicodeChar = L'#';
+            (*tui_current_screen + x + ((y + i) * sn_screenwidth))->Attributes = colour;
             // Right Border
-            (*tui_current_screen + (x + width - 1) + ((y + i) * sn_screenwidth))->Char.UnicodeChar = L'#';
+            (*tui_current_screen + (x + width - 1) + ((y + i) * sn_screenwidth))->Attributes = colour;
         }
 
         for(int j = 0; j < width; j++) {
             // Top Border
-            (*tui_current_screen + (x + j) + (y * sn_screenwidth))->Char.UnicodeChar = L'#';
+            (*tui_current_screen + (x + j) + (y * sn_screenwidth))->Attributes = colour;
             // Bottom Border
-            (*tui_current_screen + (x + j) + ((y + height - 1) * sn_screenwidth))->Char.UnicodeChar = L'#';
+            (*tui_current_screen + (x + j) + ((y + height - 1) * sn_screenwidth))->Attributes = colour;
         }
     }
 }
@@ -56,5 +56,7 @@ void draw_str(const wchar_t *str, int x, int y) {
     }
 }
 
-void draw_button(sButton * button) {
+void draw_button(const wchar_t *str, int x, int y, int width, int height) {
+    draw_str(str, x, y);
+    draw_box(x, y, width, height, 1, 0x40);
 }

@@ -160,7 +160,7 @@ void tui_draw(sWidget *a) {
     // Basic drawing for now
     // Resetting each element
     reset_buf(*tui_current_screen);   
-
+    tui_draw__(a);
     if(!WriteConsoleOutputW(h_console,
                             *tui_current_screen,
                             c_screensize,
@@ -172,7 +172,25 @@ void tui_draw(sWidget *a) {
 }
 
 void tui_draw__(sWidget *a) {
-
+    switch (a->type) {
+        case FRAME:
+            /* Just draw a box then iterate through children */
+            draw_box(a->pos.x, a->pos.y, a->realsize.x, a->realsize.y, 0, 0x80);
+            sFrame *af = &a->widget.frame;
+            for(int i = 0; i < MAX_CHILDREN; i++) {
+                if (af->children[i])
+                    tui_draw__(af->children[i]);
+            }
+            break;
+        case BUTTON:
+            /* Just draw a string and change background for now */
+            ; // Empty statement because labels cannot precede declarations
+            sButton *ab = &a->widget.button;
+            draw_button(ab->text, a->pos.x, a->pos.y, a->realsize.x, a->realsize.y);
+            break;
+        default:
+            break;
+    }
 }
 
 void widget_positioner(sWidget *a) {
@@ -196,6 +214,7 @@ void widget_positioner(sWidget *a) {
 
             /* Cursor movement happens here, this is where extra movement due to margins would occur */
             s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
+            sSize s_temp = s_cursor;
 
             sFrame *af = &a->widget.frame;
             /* Iterating through the frame's children */
@@ -203,11 +222,14 @@ void widget_positioner(sWidget *a) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     if(af->grid[i][j])
                         widget_positioner(af->grid[i][j]);
-                    //s_cursor = add_sSize(s_cursor, (sSize) {a->widget.frame.rows_size[j] - 1});
+                    s_cursor = add_sSize(s_cursor, (sSize) {0, af->rows_size[j] + 1});
                 }
+                /* Moving back to the top */
+                s_cursor = s_temp;
+                s_cursor = add_sSize(s_cursor, (sSize) {af->cols_size[i] + 1, 0});
             }
 
-            s_cursor = a->pos;
+            s_cursor = add_sSize(a->pos, (sSize) {1, 1});
                 
             break;
         case BUTTON:

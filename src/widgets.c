@@ -84,7 +84,7 @@ sSize calculate_min_size(sWidget *widget) {
                     if (af->grid[i][j])
                         s_temp = add_sSize(calculate_min_size(af->grid[i][j]), s_temp);
                 }
-                af->cols_size[i].y = s_temp.y;
+                af->cols_size[i] = s_temp.y;
                 s_temp.x = 0;
                 s_return = max_sSize(s_return, s_temp);
                 s_return.y += 2;
@@ -96,7 +96,7 @@ sSize calculate_min_size(sWidget *widget) {
                     if (af->grid[l][k])
                         s_temp = add_sSize(calculate_min_size(af->grid[l][k]), s_temp);
                 }
-                af->rows_size[k].x = s_temp.x;
+                af->rows_size[k] = s_temp.x;
                 s_temp.y = 0;
                 s_return = max_sSize(s_return, s_temp);
                 s_return.x += 2;

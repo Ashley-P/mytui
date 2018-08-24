@@ -44,8 +44,8 @@ The variables here are for internal use by the library
     void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
-    void tui_draw(sWidget *a);
-    void tui_draw__(sWidget *a);
+    void tui_draw(const sWidget *a);
+    void tui_draw__(const sWidget *a);
     void inpthr_loop();
     void tui_loop();
     
@@ -136,7 +136,6 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
-    void draw_button(sButton * button);
 
 
 #### Description
@@ -148,9 +147,6 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     The character used is the hash '#'. The box can be filled or just left with the borders
 
     draw_str() Draws a string to the screen at the desired position.
-
-    draw_button() Draws a button to the screen. Really it's just calling draw_box() and 
-    draw_str() together.
 
 
 ## The \<widgets.h\> Header
