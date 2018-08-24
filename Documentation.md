@@ -210,17 +210,11 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 #### Synopsis
     
     sWidget * tui_frame(const sWidget *parent);
-
     sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
-
-    sSize calculate_min_size(sWidget *widget);
-
+    void widget_sizer(sWidget *a);
     sSize add_sSize(sSize a, sSize b);
-
     sSize max_sSize(sSize a, sSize b);
-
     int parent_widget_type(sWidget *widget);
-
     void grid_set(sWidget *widget, int col, int row);
 
 #### Description
@@ -228,6 +222,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
     tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
+
+    widget_sizer fills out the sSize struct in frames and other widgets that can have children
 
     add_sSize adds to sSize structs together and returns the resulting struct
 

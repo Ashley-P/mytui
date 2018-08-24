@@ -184,8 +184,6 @@ void tui_draw__(sWidget *a) {
             break;
         case BUTTON:
             /* Just draw a string and change background for now */
-            ; // Empty statement because labels cannot precede declarations
-            sButton *ab = &a->widget.button;
             draw_button(a);
             break;
         default:
@@ -222,7 +220,7 @@ void widget_positioner(sWidget *a) {
                     s_cursor = add_sSize(s_cursor, (sSize) {0, af->rows_size[j] + 1});
                 }
                 /* Moving back to the top */
-                s_cursor = s_temp;
+                s_cursor.y = s_temp.y;
                 s_cursor = add_sSize(s_cursor, (sSize) {af->cols_size[i] + 1, 0});
             }
 
@@ -249,6 +247,7 @@ void tui_loop() {
     /* Even though calculate_min_size returns sSize, it's not used for the top level
      * frame because it comes preset.
      */
+    widget_sizer(w_root);
     widget_positioner(w_root);
 
     while(1) {

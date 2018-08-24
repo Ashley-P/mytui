@@ -64,6 +64,42 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
+void widget_sizer(sWidget *a) {
+    switch (a->type) {
+        case FRAME:
+            for(int p = 0; p < MAX_CHILDREN; p++) {
+                if(a->widget.frame.children[p])
+                    widget_sizer(a->widget.frame.children[p]);
+            }
+            int temp1, temp2;
+
+            sFrame *af = &a->widget.frame;
+            /* WIDTH */
+            for(int i = 0; i < MAX_GRID_COLS; i++) {
+                temp1 = 0;
+                for(int j = 0; j < MAX_GRID_ROWS; j++) {
+                    /* Finding the largest width of each element in the column */
+                    if(af->grid[i][j])
+                        temp1 = af->grid[i][j]->size.x > temp1 ? af->grid[i][j]->size.x : temp1;
+                }
+                a->widget.frame.cols_size[i] = temp1;
+            }
+
+            for(int k = 0; k < MAX_GRID_ROWS; k++) {
+                temp2 = 0;
+                for(int l = 0; l < MAX_GRID_COLS; l++) {
+                    /* Finding the largest height of each element in the column */
+                    if(af->grid[l][k])
+                        temp2 = af->grid[l][k]->size.y > temp2 ? af->grid[l][k]->size.y : temp2;
+                }
+                a->widget.frame.rows_size[k] = temp2;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 sSize add_sSize(sSize a, sSize b) {
     sSize s_return;
     s_return.x = a.x + b.x;
