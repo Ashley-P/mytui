@@ -37,8 +37,7 @@ typedef struct tButton {
 typedef struct tWidget {
     enum eType type; 
     sPos  pos;
-    sSize realsize;
-    sSize minsize;
+    sSize size;
     struct tWidget *parent;
     union {
         struct tButton button;
@@ -49,8 +48,6 @@ typedef struct tWidget {
 sWidget * tui_frame(sWidget *parent);
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
-
-sSize calculate_min_size(sWidget *widget);
 
 sSize add_sSize(sSize a, sSize b);
 

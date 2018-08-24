@@ -12,6 +12,6 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
 
 void draw_str(const wchar_t *str, int x, int y);
 
-void draw_button(const wchar_t *str, int x, int y, int width, int height);
+void draw_button(sWidget *a);
 
 #endif

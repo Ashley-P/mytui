@@ -12,9 +12,11 @@ void reset_buf() {
 }
 
 void draw_box(int x, int y, const int width, const int height, const bool fill, int colour) {
+    /*
     // Shifting the coords by -1, -1 to make sense on the screen
     x = x - 1;
     y = y - 1;
+    */
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + width > sn_screenheight) {
@@ -56,7 +58,7 @@ void draw_str(const wchar_t *str, int x, int y) {
     }
 }
 
-void draw_button(const wchar_t *str, int x, int y, int width, int height) {
-    draw_str(str, x, y);
-    draw_box(x, y, width, height, 1, 0x40);
+void draw_button(sWidget *a) {
+    draw_str(a->widget.button.text, a->pos.x, a->pos.y);
+    draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
 }

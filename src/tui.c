@@ -101,8 +101,8 @@ void tui_root_frame() {
     w_root->pos.x              = 0;
     w_root->pos.y              = 0;
     w_root->parent             = NULL;
-    w_root->minsize.x          = sn_screenwidth;
-    w_root->minsize.y          = sn_screenheight;
+    w_root->size.x             = sn_screenwidth;
+    w_root->size.y             = sn_screenheight;
     w_root->widget.frame.numch = 0;
 
     for(int i = 0; i < MAX_CHILDREN; i++)
@@ -175,7 +175,7 @@ void tui_draw__(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            draw_box(a->pos.x, a->pos.y, a->realsize.x, a->realsize.y, 0, 0x80);
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x80);
             sFrame *af = &a->widget.frame;
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (af->children[i])
@@ -186,7 +186,7 @@ void tui_draw__(sWidget *a) {
             /* Just draw a string and change background for now */
             ; // Empty statement because labels cannot precede declarations
             sButton *ab = &a->widget.button;
-            draw_button(ab->text, a->pos.x, a->pos.y, a->realsize.x, a->realsize.y);
+            draw_button(a);
             break;
         default:
             break;
@@ -209,9 +209,6 @@ void widget_positioner(sWidget *a) {
             /* w_root size is preset so we don't change it */
             if (a != w_root)
                 a->pos = s_cursor;
-            /* Right now realsize = minsize until more options are implemented */
-            a->realsize = a->minsize;
-
             /* Cursor movement happens here, this is where extra movement due to margins would occur */
             s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
             sSize s_temp = s_cursor;
@@ -234,8 +231,6 @@ void widget_positioner(sWidget *a) {
             break;
         case BUTTON:
             a->pos = s_cursor;
-            /* Right now realsize = minsize until more options are implemented */
-            a->realsize = a->minsize;
             break;
         default:
             tui_err("widget positioner default", 1, 0);
@@ -254,7 +249,6 @@ void tui_loop() {
     /* Even though calculate_min_size returns sSize, it's not used for the top level
      * frame because it comes preset.
      */
-    calculate_min_size(w_root);
     widget_positioner(w_root);
 
     while(1) {

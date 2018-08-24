@@ -8,8 +8,8 @@ sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
     sWidget *ptr            = (sWidget *)malloc(sizeof(sWidget));
     ptr->type               = FRAME;
-    ptr->minsize.x          = 0;
-    ptr->minsize.y          = 0;
+    ptr->size.x          = 0;
+    ptr->size.y          = 0;
     ptr->widget.frame.numch = 0;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
@@ -39,10 +39,10 @@ sWidget * tui_frame(sWidget *parent) {
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
-    sWidget *ptr        = (sWidget *)malloc(sizeof(sWidget));
-    ptr->type           = BUTTON;
-    ptr->minsize.x      = 1;
-    ptr->minsize.y      = 1;
+    sWidget *ptr     = (sWidget *)malloc(sizeof(sWidget));
+    ptr->size.x      = wcslen(text);
+    ptr->size.y      = 1;
+    ptr->type        = BUTTON;
     if (parent_widget_type(parent)) {
         ptr->parent = parent;
         /* Adding the ptr to the array of children and using the counter as a position indicator */
@@ -61,57 +61,7 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->widget.button.draw     = &draw_button;
     ptr->widget.button.callback = callback;
 
-
     return ptr;
-}
-
-sSize calculate_min_size(sWidget *widget) {
-    // Empty struct is used so it can be returned later
-    sSize s_return = {0, 0};
-    sSize s_temp = {0, 0};
-    switch(widget->type) {
-        case FRAME:
-            /* Calculate y with the formula (2 + minimum of miny of each row)
-             * Calculate x with the formula (2 + minimum of minx of each row)
-             * Margins can get integrated into the formula later.
-             */
-
-            ; // Empty statement because labels cannot precede declarations
-            sFrame *af = &widget->widget.frame;
-            /* HEIGHT */
-            for(int i = 0; i < MAX_GRID_COLS; i++) {
-                for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if (af->grid[i][j])
-                        s_temp = add_sSize(calculate_min_size(af->grid[i][j]), s_temp);
-                }
-                af->cols_size[i] = s_temp.y;
-                s_temp.x = 0;
-                s_return = max_sSize(s_return, s_temp);
-                s_return.y += 2;
-            }
-
-            /* WIDTH */
-            for(int k = 0; k < MAX_GRID_ROWS; k++) {
-                for(int l = 0; l < MAX_GRID_COLS; l++) {
-                    if (af->grid[l][k])
-                        s_temp = add_sSize(calculate_min_size(af->grid[l][k]), s_temp);
-                }
-                af->rows_size[k] = s_temp.x;
-                s_temp.y = 0;
-                s_return = max_sSize(s_return, s_temp);
-                s_return.x += 2;
-            }
-            break;
-        case BUTTON:
-            s_return.y = 1;
-            s_return.x  = wcslen(widget->widget.button.text);
-            break;
-        default:
-            s_return.y = 0;
-            s_return.x  = 0;
-            break;
-    }
-    return s_return;
 }
 
 sSize add_sSize(sSize a, sSize b) {

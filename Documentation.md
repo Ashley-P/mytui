@@ -69,8 +69,7 @@ The variables here are for internal use by the library
     tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
 
-    void widget_positioner() sets the value for the two structs in each widget that
-    set the coordinates and the real size (not the minimum size) for the widget
+    void widget_positioner sets the coords for each widget which tui_draw uses
 
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
 
@@ -136,7 +135,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
-
+    void draw_button(sWidget *a) {
 
 #### Description
     
@@ -147,6 +146,8 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     The character used is the hash '#'. The box can be filled or just left with the borders
 
     draw_str() Draws a string to the screen at the desired position.
+
+    draw_button() Draws a button to the screen at the desired position
 
 
 ## The \<widgets.h\> Header
@@ -186,8 +187,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         int py;
         enum eType type; 
         sPos  pos;
-        sSize realsize;
-        sSize minsize;
+        sSize size;
         struct tWidget *parent;
         union {
             struct tButton button;
@@ -228,9 +228,6 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
     tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
-
-    calculate_min_size calculates the minimum size for each widget. It returns a sSize struct so it can be
-    used recursively if the case is FRAME.
 
     add_sSize adds to sSize structs together and returns the resulting struct
 
