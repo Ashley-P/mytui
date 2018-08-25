@@ -27,19 +27,12 @@ clean:
 
 test:
 	gcc -o test test/test.c -L. -lmytui -Iinclude
-
-test2:
-	gcc -o test2 test/test2.c -L. -lmytui -Iinclude
-
-test3:
-	gcc -o test3 test/test3.c -L. -lmytui -Iinclude
-
-alltest:
-	gcc -o test test/test.c -L. -lmytui -Iinclude
 	gcc -o test2 test/test2.c -L. -lmytui -Iinclude
 	gcc -o test3 test/test3.c -L. -lmytui -Iinclude
+	gcc -o test4 test/test4.c -L. -lmytui -Iinclude
 
 cleantest:
 	del ".\test.exe"
 	del ".\test2.exe"
 	del ".\test3.exe"
+	del ".\test4.exe"
