@@ -24,8 +24,6 @@ void tui_draw(sWidget *a);
 
 void tui_draw__(sWidget *a);
 
-void widget_positioner(sWidget *a);
-
 void inpthr_loop();
 
 void tui_loop();

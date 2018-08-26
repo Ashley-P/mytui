@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <windows.h>
+#include <stdlib.h>
 #include "utils.h"
 
 
@@ -76,5 +77,15 @@ void tui_err(const char *msg, const int err_type, const int quit_prog) {
         exit(-1);
 }
 
+/* Generating random strings */
+wchar_t *rand_str() {
+    wchar_t charset[] = L"abcdefghijklmnopqrstuvwxyz";
+    int strsize = (1 + rand()/((RAND_MAX) % 15));
+    wchar_t *ptr = (wchar_t *)malloc(sizeof(wchar_t) * strsize);
+    for(int i = 0; i < strsize; i++) {
+        *(ptr + i) = charset[rand()/((RAND_MAX) % 25)];
+    }
 
+    return ptr;
+}
 

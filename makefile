@@ -26,10 +26,7 @@ clean:
 	del *.a
 
 test:
-	gcc -o test test/test.c -L. -lmytui -Iinclude
-	gcc -o test2 test/test2.c -L. -lmytui -Iinclude
-	gcc -o test3 test/test3.c -L. -lmytui -Iinclude
-	gcc -o test4 test/test4.c -L. -lmytui -Iinclude
+	$(MAKE) -C test
 
 cleantest:
 	del ".\test.exe"

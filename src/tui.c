@@ -175,7 +175,7 @@ void tui_draw__(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x80);
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
             sFrame *af = &a->widget.frame;
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (af->children[i])
@@ -191,50 +191,6 @@ void tui_draw__(sWidget *a) {
     }
 }
 
-void widget_positioner(sWidget *a) {
-    /*
-     * Sets up realsize and pos structs in the widget recursively. Generally the top level widget of
-     * the window should be given as the argument.
-     * Called when the program starts and when windows are created or resized.
-     * This relies on previous calls to set the cursor into position;
-     */
-
-    /* Struct for the position of the "cursor" that places everything down */
-    static sSize s_cursor = {0, 0};
-
-    switch (a->type) {
-        case FRAME:
-            /* w_root size is preset so we don't change it */
-            if (a != w_root)
-                a->pos = s_cursor;
-            /* Cursor movement happens here, this is where extra movement due to margins would occur */
-            s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
-            sSize s_temp = s_cursor;
-
-            sFrame *af = &a->widget.frame;
-            /* Iterating through the frame's children */
-            for(int i = 0; i < MAX_GRID_COLS; i++) {
-                for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if(af->grid[i][j])
-                        widget_positioner(af->grid[i][j]);
-                    s_cursor = add_sSize(s_cursor, (sSize) {0, af->rows_size[j] + 1});
-                }
-                /* Moving back to the top */
-                s_cursor.y = s_temp.y;
-                s_cursor = add_sSize(s_cursor, (sSize) {af->cols_size[i] + 1, 0});
-            }
-
-            s_cursor = add_sSize(a->pos, (sSize) {1, 1});
-                
-            break;
-        case BUTTON:
-            a->pos = s_cursor;
-            break;
-        default:
-            tui_err("widget positioner default", 1, 0);
-            break;
-    }
-}
 
 void inpthr_loop() {
     while(1) {

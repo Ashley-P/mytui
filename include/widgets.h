@@ -51,6 +51,8 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
 void widget_sizer(sWidget *a);
 
+void widget_positioner(sWidget *a);
+
 sSize add_sSize(sSize a, sSize b);
 
 sSize max_sSize(sSize a, sSize b);

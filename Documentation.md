@@ -69,8 +69,6 @@ The variables here are for internal use by the library
     tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
 
-    void widget_positioner sets the coords for each widget which tui_draw uses
-
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
 
     tui_loop() is the looping for the program, drawing and other functions are
@@ -101,6 +99,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     void init_stderr
     void win_err(const char *msg);
     void tui_err(const char *msg, const int err_type, const int quit_prog);
+    wchar_t *rand_str();
 
 
 #### Description
@@ -114,6 +113,8 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     tui_err() is similar to win_err() in that it puts a formatted error/warning/other message into
     a logging file, and also offers the opportunity to quit the program all together.
 
+    rand_str() creates a random string of lower case alphabet characters with a random length
+    between 1 and 15 characters
 
 ---
 ## The \<draw.h\> Header
@@ -212,6 +213,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     sWidget * tui_frame(const sWidget *parent);
     sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
     void widget_sizer(sWidget *a);
+    void widget_positioner(sWidget *a)
     sSize add_sSize(sSize a, sSize b);
     sSize max_sSize(sSize a, sSize b);
     int parent_widget_type(sWidget *widget);
@@ -224,6 +226,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
     widget_sizer fills out the sSize struct in frames and other widgets that can have children
+
+    void widget_positioner sets the coords for each widget which tui_draw uses
 
     add_sSize adds to sSize structs together and returns the resulting struct
 

@@ -3,11 +3,9 @@
  */
 
 #include "tui.h"
+#include "utils.h"
 #include <time.h>
 #include <stdlib.h>
-
-wchar_t *rand_str();
-
 
 int main() {
     int n_screenwidth = 180;
@@ -42,16 +40,4 @@ int main() {
 
     tui_loop();
     return 0;
-}
-
-
-wchar_t *rand_str() {
-    wchar_t charset[] = L"abcdefghijklmnopqrstuvwxyz";
-    int strsize = 1 + rand()/((RAND_MAX + 1u) % 15);
-    wchar_t *ptr = (wchar_t *)malloc(sizeof(wchar_t) * strsize);
-    for(int i = 0; i < strsize; i++) {
-        *(ptr + i) = charset[rand()/((RAND_MAX + 1u) % 25)];
-    }
-
-    return ptr;
 }
