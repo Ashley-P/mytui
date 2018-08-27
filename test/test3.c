@@ -3,6 +3,7 @@
  */
 
 #include "tui.h"
+#include "utils.h"
 
 int main() {
     int n_screenwidth = 180;
