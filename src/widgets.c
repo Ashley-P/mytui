@@ -67,11 +67,16 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
 void widget_sizer(sWidget *a) {
     switch (a->type) {
         case FRAME:
+            /* Tons of loops because I can't program */
             for(int p = 0; p < MAX_CHILDREN; p++) {
                 if(a->widget.frame.children[p])
                     widget_sizer(a->widget.frame.children[p]);
             }
-            int temp1, temp2;
+            /* temp1 is for comparing and storing the largest value */
+            int temp1;
+            /* temp2 is for setting the size of the frame itself */
+            /* temp3 is for keeping track of the number of non-zero sized elements */
+            int temp2, temp3 = 0;
 
             sFrame *af = &a->widget.frame;
             /* WIDTH */
@@ -83,17 +88,37 @@ void widget_sizer(sWidget *a) {
                         temp1 = af->grid[i][j]->size.x > temp1 ? af->grid[i][j]->size.x : temp1;
                 }
                 a->widget.frame.cols_size[i] = temp1;
+                if (temp1 > 0)
+                    ++temp3;
+                temp2 += temp1;
             }
+            /* 
+             * Formula is 2 for the side spaces + 
+             * temp3 (number of non-zero sized elements) - 1 for the inbetween spaces between widgets +
+             * temp2 (cummalative addition of widest widgets)
+             */
+            a->size.x = 2 + (temp3 - 1) + temp2;
+            /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
+            temp2 = 0;
+            temp3 = 0;
 
+
+            
+            /* HEIGHT */
             for(int k = 0; k < MAX_GRID_ROWS; k++) {
-                temp2 = 0;
+                temp1 = 0;
                 for(int l = 0; l < MAX_GRID_COLS; l++) {
                     /* Finding the largest height of each element in the column */
                     if(af->grid[l][k])
-                        temp2 = af->grid[l][k]->size.y > temp2 ? af->grid[l][k]->size.y : temp2;
+                        temp1 = af->grid[l][k]->size.y > temp1 ? af->grid[l][k]->size.y : temp1;
                 }
-                a->widget.frame.rows_size[k] = temp2;
+                a->widget.frame.rows_size[k] = temp1;
+                if (temp1 > 0)
+                    ++temp3;
+                temp2 += temp1;
             }
+            /* refer to above for formula */
+            a->size.y = 2 + (temp3 - 1) + temp2;
             break;
         case BUTTON:
             a->size.x = wcslen(a->widget.button.text);

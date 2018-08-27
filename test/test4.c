@@ -16,7 +16,7 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
     pWidget frames[1];
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < 3; i++) {
         frames[i] = tui_frame(w_root);
 
         for(int j = 0; j < 3; j++) {
@@ -28,8 +28,8 @@ int main() {
 
     grid_set(frames[0], 0, 0);
     grid_set(frames[1], 0, 1);
-    /*
     grid_set(frames[2], 0, 2);
+    /*
     grid_set(frames[3], 1, 0);
     grid_set(frames[4], 1, 1);
     grid_set(frames[5], 1, 2);
