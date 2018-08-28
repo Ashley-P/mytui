@@ -156,8 +156,8 @@ void widget_positioner(sWidget *a) {
     switch (a->type) {
         case FRAME:
             a->pos = s_cursor;
-            sSize s_topleft;
-            s_cursor = s_topleft = add_sSize(s_cursor, (sSize) {1, 1});
+            sSize s_topleft = s_cursor;
+            //s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
             sFrame *af = &a->widget.frame;
             for (int i = 0; i < MAX_GRID_COLS; i++) {
                 for (int j = 0; j < MAX_GRID_ROWS; j++) {
