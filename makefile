@@ -25,6 +25,9 @@ clean:
 	del ".\src\obj\*"
 	del *.a
 
+cleanobj:
+	del ".\src\obj\*"
+
 test:
 	$(MAKE) -C test
 

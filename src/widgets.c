@@ -87,7 +87,7 @@ void widget_sizer(sWidget *a) {
                     if(af->grid[i][j])
                         temp1 = af->grid[i][j]->size.x > temp1 ? af->grid[i][j]->size.x : temp1;
                 }
-                a->widget.frame.cols_size[i] = temp1;
+                af->cols_size[i] = temp1;
                 if (temp1 > 0)
                     ++temp3;
                 temp2 += temp1;
@@ -97,7 +97,8 @@ void widget_sizer(sWidget *a) {
              * temp3 (number of non-zero sized elements) - 1 for the inbetween spaces between widgets +
              * temp2 (cummalative addition of widest widgets)
              */
-            a->size.x = 2 + (temp3 - 1) + temp2;
+            if (a != w_root)
+                a->size.x = 2 + (temp3 - 1) + temp2;
             /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
             temp2 = 0;
             temp3 = 0;
@@ -112,13 +113,25 @@ void widget_sizer(sWidget *a) {
                     if(af->grid[l][k])
                         temp1 = af->grid[l][k]->size.y > temp1 ? af->grid[l][k]->size.y : temp1;
                 }
-                a->widget.frame.rows_size[k] = temp1;
+                af->rows_size[k] = temp1;
                 if (temp1 > 0)
                     ++temp3;
                 temp2 += temp1;
             }
             /* refer to above for formula */
-            a->size.y = 2 + (temp3 - 1) + temp2;
+            if (a != w_root)
+                a->size.y = 2 + (temp3 - 1) + temp2;
+
+            /* Filling out the empty slots of cols_size and rows_size */
+            for (int t = 0; t < MAX_GRID_ROWS; t++) {
+                if (!af->rows_size[t])
+                    af->rows_size[t] = 0;
+            }
+
+            for (int f = 0; f < MAX_GRID_ROWS; f++) {
+                if (!af->cols_size[f])
+                    af->cols_size[f] = 0;
+            }
             break;
         case BUTTON:
             a->size.x = wcslen(a->widget.button.text);
@@ -139,37 +152,29 @@ void widget_positioner(sWidget *a) {
 
     /* Struct for the position of the "cursor" that places everything down */
     static sSize s_cursor = {0, 0};
-
+    
     switch (a->type) {
         case FRAME:
-            /* w_root size is preset so we don't change it */
-            if (a != w_root)
-                a->pos = s_cursor;
-            /* Cursor movement happens here, this is where extra movement due to margins would occur */
-            s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
-            sSize s_temp = s_cursor;
-
+            a->pos = s_cursor;
+            sSize s_topleft;
+            s_cursor = s_topleft = add_sSize(s_cursor, (sSize) {1, 1});
             sFrame *af = &a->widget.frame;
-            /* Iterating through the frame's children */
-            for(int i = 0; i < MAX_GRID_COLS; i++) {
-                for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if(af->grid[i][j])
+            for (int i = 0; i < MAX_GRID_COLS; i++) {
+                for (int j = 0; j < MAX_GRID_ROWS; j++) {
+                    if (af->grid[i][j]) {
                         widget_positioner(af->grid[i][j]);
-                    s_cursor = add_sSize(s_cursor, (sSize) {0, af->rows_size[j] + 1});
+                        s_cursor.y += af->rows_size[j] + 1;
+                    }
                 }
-                /* Moving back to the top */
-                s_cursor.y = s_temp.y;
-                s_cursor = add_sSize(s_cursor, (sSize) {af->cols_size[i] + 1, 0});
+                s_cursor.x += af->cols_size[i] + 1;
+                s_cursor.y = s_topleft.y;
             }
-
-            s_cursor = add_sSize(a->pos, (sSize) {1, 1});
-                
+            s_cursor = s_topleft;
             break;
         case BUTTON:
             a->pos = s_cursor;
             break;
         default:
-            tui_err("widget positioner default", 1, 0);
             break;
     }
 }
