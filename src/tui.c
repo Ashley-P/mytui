@@ -175,7 +175,7 @@ void tui_draw__(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            if (!w_root)
+            if (a != w_root)
                 draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
             sFrame *af = &a->widget.frame;
             for(int i = 0; i < MAX_CHILDREN; i++) {

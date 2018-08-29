@@ -81,10 +81,9 @@ void tui_err(const char *msg, const int err_type, const int quit_prog) {
 /* Generating random strings */
 wchar_t *rand_str() {
     int strsize = rand_int(6, 15);
-    wchar_t *charset = L"abcdefghijklmnopqrstuvwxyz";
-    wchar_t *ptr = (wchar_t *)malloc(sizeof(wchar_t) * strsize);
+    wchar_t *ptr = (wchar_t *)calloc(sizeof(wchar_t), strsize);
     for(int i = 0; i < strsize - 1; i++) {
-        *(ptr + i) = charset[rand_int(0, 25)];
+        *(ptr + i) = L"abcdefghijklmnopqrstuvwxyz"[rand_int(0, 25)];
     }
     *(ptr + strsize - 1) = L'\0';
 
@@ -100,7 +99,7 @@ int rand_int(int min, int max) {
         flag = 1;
     }
     do {
-        x = 1 + rand() / ((RAND_MAX + 1u) / max);
+        x = 1 + rand() / ((RAND_MAX + 1u) / (max + 1));
     } while (x > max || x < min); 
-    return x % max;
+    return x;
 }
