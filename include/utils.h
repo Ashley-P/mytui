@@ -13,4 +13,6 @@ void tui_err(const char *msg, const int err_type, const int quit_prog);
 
 wchar_t *rand_str();
 
+int rand_int(int min, int max);
+
 #endif

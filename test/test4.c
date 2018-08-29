@@ -21,7 +21,7 @@ int main() {
 
         for(int j = 0; j < 3; j++) {
             for(int k = 0; k < 3; k++) {
-                grid_set(tui_button(frames[i], L"test", NULL), j, k); 
+                grid_set(tui_button(frames[i], rand_str(), NULL), j, k); 
             }
         }
     }

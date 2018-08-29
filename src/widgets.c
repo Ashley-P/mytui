@@ -98,7 +98,7 @@ void widget_sizer(sWidget *a) {
              * temp2 (cummalative addition of widest widgets)
              */
             if (a != w_root)
-                a->size.x = 2 + (temp3 - 1) + temp2;
+                a->size.x = (temp3 - 1) + temp2;
             /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
             temp2 = 0;
             temp3 = 0;
@@ -120,7 +120,7 @@ void widget_sizer(sWidget *a) {
             }
             /* refer to above for formula */
             if (a != w_root)
-                a->size.y = 2 + (temp3 - 1) + temp2;
+                a->size.y = (temp3 - 1) + temp2;
 
             /* Filling out the empty slots of cols_size and rows_size */
             for (int t = 0; t < MAX_GRID_ROWS; t++) {

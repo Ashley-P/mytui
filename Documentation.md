@@ -100,6 +100,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     void win_err(const char *msg);
     void tui_err(const char *msg, const int err_type, const int quit_prog);
     wchar_t *rand_str();
+    int rand_int(int min, int max);
 
 
 #### Description
@@ -116,6 +117,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     rand_str() creates a random string of lower case alphabet characters with a random length
     between 1 and 15 characters
 
+    rand_int() creates a non-biased int utilizing the rand() function
 ---
 ## The \<draw.h\> Header
 
