@@ -175,12 +175,13 @@ void tui_draw__(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            if (a != w_root)
-                draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
             sFrame *af = &a->widget.frame;
-            for(int i = 0; i < MAX_CHILDREN; i++) {
-                if (af->children[i])
-                    tui_draw__(af->children[i]);
+            for(int i = 0; i < MAX_GRID_COLS; i++) {
+                for(int k = 0; k < MAX_GRID_ROWS; k++) {
+                if (af->grid[i][k])
+                    tui_draw__(af->grid[i][k]);
+                }
             }
             break;
         case BUTTON:

@@ -4,19 +4,14 @@
 
 #include "tui.h"
 #include "utils.h"
-#include <time.h>
-#include <stdlib.h>
 
 int main() {
     int n_screenwidth = 180;
     int n_screenheight = 50;
 
-    /* random seed for text generation */
-    srand(time(NULL));
-
     tui_init(n_screenwidth, n_screenheight);
-    pWidget frames[8];
-    for(int i = 0; i < 9; i++) {
+    pWidget frames[9];
+    for(int i = 0; i < 10; i++) {
         frames[i] = tui_frame(w_root);
 
         for(int j = 0; j < 3; j++) {
@@ -25,8 +20,9 @@ int main() {
             }
         }
     }
-
-    grid_set(frames[0], 0, 0);
+    
+    /* Some bug that doesn't set the size of the frame properly for the frames[0] */
+    //grid_set(frames[0], 0, 0);
     grid_set(frames[1], 0, 1);
     grid_set(frames[2], 0, 2);
     grid_set(frames[3], 1, 0);
@@ -36,6 +32,7 @@ int main() {
     grid_set(frames[7], 2, 1);
     grid_set(frames[8], 2, 2);
     
+    grid_set(frames[9], 0, 0);
 
     tui_loop();
     return 0;

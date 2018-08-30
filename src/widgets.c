@@ -98,7 +98,7 @@ void widget_sizer(sWidget *a) {
              * temp2 (cummalative addition of widest widgets)
              */
             if (a != w_root)
-                a->size.x = (temp3 - 1) + temp2;
+                a->size.x = (-1) + (temp3 - 1) + temp2;
             /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
             temp2 = 0;
             temp3 = 0;
@@ -120,7 +120,7 @@ void widget_sizer(sWidget *a) {
             }
             /* refer to above for formula */
             if (a != w_root)
-                a->size.y = (temp3 - 1) + temp2;
+                a->size.y = 2 + (temp3 - 1) + temp2;
 
             /* Filling out the empty slots of cols_size and rows_size */
             for (int t = 0; t < MAX_GRID_ROWS; t++) {
@@ -156,20 +156,22 @@ void widget_positioner(sWidget *a) {
     switch (a->type) {
         case FRAME:
             a->pos = s_cursor;
-            sSize s_topleft = s_cursor;
-            //s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
+            sSize s_topleft2 = s_cursor;
+            s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
+            sSize s_topleft1 = s_cursor;
             sFrame *af = &a->widget.frame;
             for (int i = 0; i < MAX_GRID_COLS; i++) {
                 for (int j = 0; j < MAX_GRID_ROWS; j++) {
                     if (af->grid[i][j]) {
                         widget_positioner(af->grid[i][j]);
-                        s_cursor.y += af->rows_size[j] + 1;
                     }
+                    s_cursor.y += af->rows_size[j] + 1;
+                    
                 }
                 s_cursor.x += af->cols_size[i] + 1;
-                s_cursor.y = s_topleft.y;
+                s_cursor.y = s_topleft1.y;
             }
-            s_cursor = s_topleft;
+            s_cursor = s_topleft2;
             break;
         case BUTTON:
             a->pos = s_cursor;
