@@ -95,7 +95,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 }
 
 void tui_root_frame() {
-    w_root = (sWidget *)malloc(sizeof(sWidget));
+    w_root = (sWidget *)calloc(1, sizeof(sWidget));
 
     w_root->type               = FRAME;
     w_root->pos.x              = 0;
