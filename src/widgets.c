@@ -73,10 +73,11 @@ void widget_sizer(sWidget *a) {
                     widget_sizer(a->widget.frame.children[p]);
             }
             /* temp1 is for comparing and storing the largest value */
-            int temp1;
             /* temp2 is for setting the size of the frame itself */
             /* temp3 is for keeping track of the number of non-zero sized elements */
-            int temp2, temp3 = 0;
+            int temp1;
+            int temp2 = 0;
+            int temp3 = 0;
 
             sFrame *af = &a->widget.frame;
             /* WIDTH */
@@ -98,7 +99,7 @@ void widget_sizer(sWidget *a) {
              * temp2 (cummalative addition of widest widgets)
              */
             if (a != w_root)
-                a->size.x = (-1) + (temp3 - 1) + temp2;
+                a->size.x = 2 + (temp3 - 1) + temp2;
             /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
             temp2 = 0;
             temp3 = 0;
