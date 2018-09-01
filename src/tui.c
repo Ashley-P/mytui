@@ -94,26 +94,6 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     return 1;
 }
 
-void tui_root_frame() {
-    w_root = (sWidget *)calloc(1, sizeof(sWidget));
-
-    w_root->type               = FRAME;
-    w_root->pos.x              = 0;
-    w_root->pos.y              = 0;
-    w_root->parent             = NULL;
-    w_root->size.x             = sn_screenwidth;
-    w_root->size.y             = sn_screenheight;
-    w_root->widget.frame.numch = 0;
-
-    for(int i = 0; i < MAX_CHILDREN; i++)
-        w_root->widget.frame.children[i] = NULL;
-
-    for(int j = 0; j < MAX_GRID_COLS; j++) {
-        for(int k = 0; k < MAX_GRID_COLS; k++) {
-            w_root->widget.frame.grid[j][k] = NULL;
-        }
-    }
-}
 
 CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
         CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
@@ -143,7 +123,10 @@ void tui_handle_input() {
                 break;
 
             case MOUSE_EVENT:
+                /* Basic tracking of events in the error log */
                 tui_err("Mouse Event", TUI_OTHER, 0);
+                MOUSE_EVENT_RECORD *ev = &ir_inpbuf[i].Event.MouseEvent;
+
                 break;
 
             case WINDOW_BUFFER_SIZE_EVENT:
@@ -192,7 +175,6 @@ void tui_draw__(sWidget *a) {
             break;
     }
 }
-
 
 void inpthr_loop() {
     while(1) {

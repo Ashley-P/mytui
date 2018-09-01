@@ -13,6 +13,13 @@ enum eType {
     BUTTON = 1 << 1
 };
 
+enum eState {
+    NONE  = 1 << 0,
+    HOVER = 1 << 1,
+    PRESS = 1 << 2
+};
+
+
 /* sSize exists so I can return 2 variables from calculate_min_size() */
 typedef struct tSize {
     int x;
@@ -36,6 +43,7 @@ typedef struct tButton {
 
 typedef struct tWidget {
     enum eType type; 
+    enum eState state;
     sPos  pos;
     sSize size;
     struct tWidget *parent;
@@ -57,7 +65,7 @@ sSize add_sSize(sSize a, sSize b);
 
 sSize max_sSize(sSize a, sSize b);
 
-int parent_widget_type(sWidget *widget);
+void assign_to_parent(sWidget *child, sWidget *parent);
 
 void grid_set(sWidget *widget, int col, int row);
 

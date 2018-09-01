@@ -218,26 +218,26 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     void widget_positioner(sWidget *a)
     sSize add_sSize(sSize a, sSize b);
     sSize max_sSize(sSize a, sSize b);
-    int parent_widget_type(sWidget *widget);
+    void assign_to_parent(sWidget *child, sWidget *parent);
     void grid_set(sWidget *widget, int col, int row);
 
 #### Description
 
-    tui_frame creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
+    tui_frame() creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
-    tui_button creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
+    tui_button() creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
-    widget_sizer fills out the sSize struct in frames and other widgets that can have children
+    widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 
-    void widget_positioner sets the coords for each widget which tui_draw uses
+    void widget_positioner() sets the coords for each widget which tui_draw uses
 
-    add_sSize adds to sSize structs together and returns the resulting struct
+    add_sSize() adds to sSize structs together and returns the resulting struct
 
-    max_sSize compares two sSize structs and returns a struct with the largest of each variables
+    max_sSize() compares two sSize structs and returns a struct with the largest of each variables
     
-    parent_widget_type checks the type of the widget. If it is not of a type that can have children then it
-    invokes tui_err and quits with program with an error.
+    assign_to_parent() assigns the first argument (the child) to the second arguments child list. It has a check to
+    see if the second widget is of the correct type.
 
-    grid_set enters the position of the widget supplied into it's parent's grid array. Sends a warning if
+    grid_set() enters the position of the widget supplied into it's parent's grid array. Sends a warning if
     it overwrites something (aka the element is not NULL)
 ---

@@ -9,21 +9,9 @@ sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
     sWidget *ptr            = (sWidget *)calloc(1, sizeof(sWidget));
     ptr->type               = FRAME;
-    ptr->size.x          = 0;
-    ptr->size.y          = 0;
+    ptr->state              = NONE;
     ptr->widget.frame.numch = 0;
-    if (parent_widget_type(parent)) {
-        ptr->parent = parent;
-        /* Adding the ptr to the array of children and using the counter as a position indicator */
-        switch(parent->type) {
-            case FRAME:
-                parent->widget.frame.children[parent->widget.frame.numch] = ptr;
-                parent->widget.frame.numch += 1;
-                break;
-            default:
-                break;
-        }
-    }
+    assign_to_parent(ptr, parent);
 
     // sFrame setup which just makes sure each element in both arrays are set to null
     for(int i = 0; i < MAX_CHILDREN; i++)
@@ -38,22 +26,18 @@ sWidget * tui_frame(sWidget *parent) {
     return ptr;
 }
 
+void tui_root_frame() {
+    w_root = tui_frame(NULL);
+    w_root->size.x             = sn_screenwidth;
+    w_root->size.y             = sn_screenheight;
+}
+
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
     sWidget *ptr     = (sWidget *)calloc(1, sizeof(sWidget));
     ptr->type        = BUTTON;
-    if (parent_widget_type(parent)) {
-        ptr->parent = parent;
-        /* Adding the ptr to the array of children and using the counter as a position indicator */
-        switch(parent->type) {
-            case FRAME:
-                parent->widget.frame.children[parent->widget.frame.numch] = ptr;
-                parent->widget.frame.numch += 1;
-                break;
-            default:
-                break;
-        }
-    }
+    ptr->state       = NONE;
+    assign_to_parent(ptr, parent);
 
     // sButton setup
     ptr->widget.button.text     = text;
@@ -197,20 +181,28 @@ sSize max_sSize(sSize a, sSize b) {
     return s_return;
 }
 
-int parent_widget_type(sWidget *widget) {
-    /*
-     * This function checks if the widget passed is of a type that can have children 
-     * This is so the user doesn't make the wrong type of widget a parent
+void assign_to_parent(sWidget *child, sWidget *parent) {
+    /* 
+     * Assigns children to parents
+     * returns NULL if parent is NULL
      */
-    switch(widget->type) {
-        case BUTTON:
-            tui_err("Wrong widget type; got BUTTON", 1, 1);
+    if (!parent)
+        child->parent = NULL;
+
+    child->parent = parent;
+    switch (parent->type) {
+        case FRAME:
+            parent->widget.frame.children[parent->widget.frame.numch] = child;
+            parent->widget.frame.numch += 1;
             break;
-        case FRAME: default:
+        case BUTTON:
+            tui_err("Wrong type for parent: type is Button", 1, 1);
+            break;
+        default:
             break;
     }
 
-    return 1;
+
 }
 
 void grid_set(sWidget *widget, int col, int row) {
