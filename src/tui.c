@@ -126,7 +126,14 @@ void tui_handle_input() {
                 /* Basic tracking of events in the error log */
                 tui_err("Mouse Event", TUI_OTHER, 0);
                 MOUSE_EVENT_RECORD *ev = &ir_inpbuf[i].Event.MouseEvent;
+                sWidget *wid = find_widget(w_root, ev->dwMousePosition.X, ev->dwMousePosition.Y);
+                /* Cases get handled in their own function to make the code more readable */
+                switch(wid->type) {
+                    case FRAME: break;
+                    case BUTTON: button_mouse_event(wid, ev); break;
 
+                    default: break;
+                }
                 break;
 
             case WINDOW_BUFFER_SIZE_EVENT:
@@ -137,6 +144,44 @@ void tui_handle_input() {
                 break;
         }
     }
+}
+
+void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev) {
+    tui_err("ENTERED BUTTON_MOUSE_EVENT()", TUI_OTHER, 0);
+    switch (ev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            tui_err("FROM_LEFT_1ST_BUTTON_PRESSED", TUI_OTHER, 0);
+            break;
+        default:
+            tui_err("NO_BUTTON_PRESSED", TUI_OTHER, 0);
+            break;
+    }
+}
+
+sWidget * find_widget(sWidget *a, int x, int y) {
+    sWidget *temp = a;
+    switch (a->type) {
+        case FRAME:
+            for(int i = 0; i < MAX_CHILDREN; i++) {
+                if (a->widget.frame.children[i]) {
+                    if ((x >= a->pos.x && x <= (a->pos.x + a->size.x)) &&
+                        (y >= a->pos.y && y <= (a->pos.y + a->size.y))) {
+                        temp = find_widget(a->widget.frame.children[i], x, y);
+                    }
+                }
+            }
+            return temp;
+            break;
+        case BUTTON:
+            return temp;
+            break;
+        default:
+            return NULL;
+            break;
+    }
+    
+    /* So the compiler with stop giving me warnings */
+     return NULL;
 }
 
 void tui_draw(sWidget *a) {

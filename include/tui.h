@@ -20,6 +20,10 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight); /
 
 void tui_handle_input();
 
+void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
+
+sWidget * find_widget(sWidget *a, int x, int y);
+
 void tui_draw(sWidget *a);
 
 void tui_draw__(sWidget *a);

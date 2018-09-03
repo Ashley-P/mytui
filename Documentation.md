@@ -44,6 +44,8 @@ The variables here are for internal use by the library
     void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
+    void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
+    sWidget * find_widget(sWidget *a, int x, int y);
     void tui_draw(sWidget *a);
     void tui_draw__(sWidget *a);
     void inpthr_loop();
@@ -63,6 +65,10 @@ The variables here are for internal use by the library
     alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
 
     tui_handle_input() handles all the events for the program
+
+    button_mouse_event() handles the mouse events when the widget is a button
+
+    find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate
 
     tui_draw() is where all the drawing to the buffer is handled
 
