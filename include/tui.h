@@ -1,6 +1,7 @@
 #ifndef TUI_H_
 #define TUI_H_
 #include <windows.h>
+#include "utils.h"
 #include "widgets.h"
 
 extern int sn_screenwidth;
@@ -10,7 +11,6 @@ extern CHAR_INFO **tui_current_screen;
 
 // Specially created root widget
 extern sWidget *w_root;
-
 
 int tui_init(const int n_screenwidth, const int n_screenheight);
 
@@ -22,7 +22,7 @@ void tui_handle_input();
 
 void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
 
-sWidget * find_widget(sWidget *a, int x, int y);
+void find_widget(sStack *stack, sWidget *a, int x, int y);
 
 void tui_draw(sWidget *a);
 

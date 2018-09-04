@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "utils.h"
 
 
@@ -52,6 +53,7 @@ void win_err(const char *msg) {
 }
 
 void tui_err(const char *msg, const int err_type, const int quit_prog) {
+    /* TODO: rework this to accept and print addresses of objects on the heap */
     char err[256];
     memset(err, '\0', 256);
     switch (err_type) {
@@ -103,3 +105,36 @@ int rand_int(int min, int max) {
     } while (x > max || x < min); 
     return x;
 }
+
+sStack *create_stack(unsigned int capacity) {
+    sStack *stack = (sStack *)malloc(sizeof(sStack));
+    stack->capacity = capacity;
+    stack->top = -1;
+    stack->arr = (sWidget **)calloc(stack->capacity, sizeof(sWidget *));
+    return stack;
+}
+
+int is_stack_full(sStack *stack) {
+    return (stack->top == stack->capacity - 1);
+}
+
+int is_stack_empty(sStack *stack) {
+    return stack->top == -1;
+}
+
+void stack_push(sStack *stack, sWidget *a) {
+    int temp = is_stack_full(stack);
+    if (temp) {
+        tui_err("Stack full", TUI_WARNING, 0);
+        return;
+    }
+    stack->arr[++stack->top] = a;
+}
+
+sWidget * stack_pop(sStack *stack) {
+    if (is_stack_empty(stack)) {
+        tui_err("Stack empty", TUI_WARNING, 0);
+        return (sWidget *) -1;
+    }
+    return stack->arr[stack->top--];
+} 

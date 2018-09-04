@@ -45,7 +45,7 @@ The variables here are for internal use by the library
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void tui_handle_input();
     void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
-    sWidget * find_widget(sWidget *a, int x, int y);
+    void find_widget(sStack *stack, sWidget *a, int x, int y);
     void tui_draw(sWidget *a);
     void tui_draw__(sWidget *a);
     void inpthr_loop();
@@ -98,6 +98,12 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 
 ### Structs
 
+    typedef struct tStack {
+        unsigned int capacity;
+        int top;
+        sWidget **arr;
+    } sStack;
+
 ### Functions
 
 #### Synopsis
@@ -107,7 +113,12 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     void tui_err(const char *msg, const int err_type, const int quit_prog);
     wchar_t *rand_str();
     int rand_int(int min, int max);
-
+    sStack *create_stack(unsigned int capacity);
+    int is_stack_full(sStack *stack);
+    int is_stack_empty(sStack *stack);
+    void stack_push(sStack, sWidget *a);
+    sSwidget *stack_pop(sStack *stack);
+    void stack_clear(sStack *stack);
 
 #### Description
 
@@ -124,6 +135,17 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     between 1 and 15 characters
 
     rand_int() creates a non-biased int utilizing the rand() function
+    
+    create_stack() creates a stack for use in searching the widget tree
+
+    is_stack_full() checks if the stack is full
+
+    is_stack_empty() checks if the stack is empty
+    
+    stack_push appends a pointer to a widget to the top of the array
+
+    stack_pop returns the pointer at the top of the list
+
 ---
 ## The \<draw.h\> Header
 
