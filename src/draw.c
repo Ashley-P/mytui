@@ -60,5 +60,14 @@ void draw_str(const wchar_t *str, int x, int y) {
 
 void draw_button(sWidget *a) {
     draw_str(a->widget.button.text, a->pos.x, a->pos.y);
-    draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
+    switch (a->state) {
+        case NONE:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
+            break;
+        case HOVER:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x50);
+            break;
+        default:
+            break;
+    }
 }

@@ -162,6 +162,7 @@ void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev) {
             break;
         default:
             tui_err("NO_BUTTON_PRESSED", TUI_OTHER, 0);
+            a->state = HOVER;
             break;
     }
 }
@@ -185,6 +186,24 @@ void find_widget(sStack *stack, sWidget *a, int x, int y) {
         default:
             break;
     }
+}
+
+void reset_widget_state(sWidget *a) {
+    a->state = NONE;
+    switch (a->type) {
+        case FRAME:
+            for(int i = 0; i < MAX_CHILDREN; i++) {
+                if (a->widget.frame.children[i]) {
+                    reset_widget_state(a->widget.frame.children[i]);
+                }
+            }
+            break;
+        case BUTTON:
+            break;
+        default:
+            break;
+    }
+
 }
 
 void tui_draw(sWidget *a) {
@@ -226,6 +245,7 @@ void tui_draw__(sWidget *a) {
 
 void inpthr_loop() {
     while(1) {
+        reset_widget_state(w_root);
         tui_handle_input();
     }
 }

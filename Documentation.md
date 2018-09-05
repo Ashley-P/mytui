@@ -46,6 +46,7 @@ The variables here are for internal use by the library
     void tui_handle_input();
     void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
     void find_widget(sStack *stack, sWidget *a, int x, int y);
+    void reset_widget_state(sWidget *a);
     void tui_draw(sWidget *a);
     void tui_draw__(sWidget *a);
     void inpthr_loop();
@@ -69,6 +70,8 @@ The variables here are for internal use by the library
     button_mouse_event() handles the mouse events when the widget is a button
 
     find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate
+
+    reset_widget_state() sets all the widget states to NONE
 
     tui_draw() is where all the drawing to the buffer is handled
 
@@ -166,7 +169,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
-    void draw_button(sWidget *a) {
+    void draw_button(sWidget *a);
 
 #### Description
     
@@ -178,9 +181,10 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
     draw_str() Draws a string to the screen at the desired position.
 
-    draw_button() Draws a button to the screen at the desired position
+    draw_button() Draws a button to the screen at the desired position. Also reads the state
+    of the button and changes the colour accordingly.
 
-
+---
 ## The \<widgets.h\> Header
 
 The \<widgets.h\> header contains all the widgets that the user of this library should be calling.

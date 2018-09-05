@@ -24,6 +24,8 @@ void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev);
 
 void find_widget(sStack *stack, sWidget *a, int x, int y);
 
+void reset_widget_state(sWidget *a);
+
 void tui_draw(sWidget *a);
 
 void tui_draw__(sWidget *a);
