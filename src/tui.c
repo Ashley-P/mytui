@@ -172,8 +172,9 @@ void find_widget(sStack *stack, sWidget *a, int x, int y) {
         case FRAME:
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (a->widget.frame.children[i]) {
-                    if ((x >= a->pos.x && x <= (a->pos.x + a->size.x)) &&
-                        (y >= a->pos.y && y <= (a->pos.y + a->size.y))) {
+                    sWidget *b = a->widget.frame.children[i];
+                    if ((x >= b->pos.x && x <= (b->pos.x + b->size.x)) &&
+                        (y >= b->pos.y && y <= (b->pos.y + b->size.y))) {
                         find_widget(stack, a->widget.frame.children[i], x, y);
                     }
                 }
