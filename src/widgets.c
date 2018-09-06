@@ -28,20 +28,19 @@ sWidget * tui_frame(sWidget *parent) {
 
 void tui_root_frame() {
     w_root = tui_frame(NULL);
-    w_root->size.x             = sn_screenwidth;
-    w_root->size.y             = sn_screenheight;
+    w_root->size.x = sn_screenwidth;
+    w_root->size.y = sn_screenheight;
 }
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     // sWidget setup
-    sWidget *ptr     = (sWidget *)calloc(1, sizeof(sWidget));
-    ptr->type        = BUTTON;
-    ptr->state       = NONE;
+    sWidget *ptr = (sWidget *)calloc(1, sizeof(sWidget));
+    ptr->type    = BUTTON;
+    ptr->state   = NONE;
     assign_to_parent(ptr, parent);
 
     // sButton setup
     ptr->widget.button.text     = text;
-    ptr->widget.button.draw     = &draw_button;
     ptr->widget.button.callback = callback;
 
     return ptr;
@@ -56,9 +55,11 @@ void widget_sizer(sWidget *a) {
                 if(a->widget.frame.children[p])
                     widget_sizer(a->widget.frame.children[p]);
             }
-            /* temp1 is for comparing and storing the largest value */
-            /* temp2 is for setting the size of the frame itself */
-            /* temp3 is for keeping track of the number of non-zero sized elements */
+            /*
+             * temp1 is for comparing and storing the largest value
+             * temp2 is for setting the size of the frame itself
+             * temp3 is for keeping track of the number of non-zero sized elements
+             */
             int temp1;
             int temp2 = 0;
             int temp3 = 0;

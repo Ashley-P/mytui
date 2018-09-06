@@ -27,7 +27,6 @@ typedef struct tSize {
 } sSize, sPos;  // Two names just for less confusion because the same struct is used for coords
 
 typedef struct tFrame {
-    void (*draw)();     // Drawing function
     int numch;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
@@ -37,7 +36,6 @@ typedef struct tFrame {
 
 typedef struct tButton {
     wchar_t *text;
-    void (*draw)();     // Drawing function
     void (*callback)(); // Callback for the button
 } sButton, *pButton;
 

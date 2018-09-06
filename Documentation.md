@@ -65,24 +65,23 @@ The variables here are for internal use by the library
 
     alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
 
-    tui_handle_input() handles all the events for the program
+    tui_handle_input() handles all the events for the program.
 
-    frame_mouse_event() handles the mouse events when the widget is a frame 
+    frame_mouse_event() handles the mouse events when the widget is a frame.
 
-    button_mouse_event() handles the mouse events when the widget is a button
+    button_mouse_event() handles the mouse events when the widget is a button.
 
-    find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate
+    find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate.
 
-    tui_draw() is where all the drawing to the buffer is handled
+    tui_draw() is where all the drawing to the buffer is handled.
 
     tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
 
-    inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input
+    inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input.
 
     tui_loop() is the looping for the program, drawing and other functions are
-    called sequentially
-
+    called sequentially.
 
 ---
 ## The \<utils.h\> Header
@@ -135,19 +134,19 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     a logging file, and also offers the opportunity to quit the program all together.
 
     rand_str() creates a random string of lower case alphabet characters with a random length
-    between 1 and 15 characters
+    between 1 and 15 characters.
 
-    rand_int() creates a non-biased int utilizing the rand() function
+    rand_int() creates a non-biased int utilizing the rand() function.
     
-    create_stack() creates a stack for use in searching the widget tree
+    create_stack() creates a stack for use in searching the widget tree.
 
-    is_stack_full() checks if the stack is full
+    is_stack_full() checks if the stack is full.
 
-    is_stack_empty() checks if the stack is empty
+    is_stack_empty() checks if the stack is empty.
     
-    stack_push appends a pointer to a widget to the top of the array
+    stack_push appends a pointer to a widget to the top of the array.
 
-    stack_pop returns the pointer at the top of the list
+    stack_pop returns the pointer at the top of the list.
 
 ---
 ## The \<draw.h\> Header
@@ -174,10 +173,10 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 #### Description
     
     reset_buf() Fills the buffer with spaces.
-    Used after every draw to the screen
+    Used after every draw to the screen.
 
     draw_box() Draws a box of the desired x and y at the provided co-ordinates x and y.
-    The character used is the hash '#'. The box can be filled or just left with the borders
+    The character used is the hash '#'. The box can be filled or just left with the borders.
 
     draw_str() Draws a string to the screen at the desired position.
 
@@ -196,31 +195,33 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         BUTTON = 1 << 1
     };
 
+    enum eState {
+        NONE  = 1 << 0,
+        HOVER = 1 << 1,
+        PRESS = 1 << 2
+    };
+
     typedef struct tSize {
         int x;
         int y;
     } sSize, sPos;
 
     typedef struct tFrame {
-        void (*draw)();
         int numch;
         struct tWidget *children[MAX_CHILDREN];
         struct tWidget *grid[MAX_GRID_x][MAX_GRID_y];
-        struct tSize *cols_size[MAX_GRID_COLS];
-        struct tSize *rows_size[MAX_GRID_ROWS];
+        int *cols_size[MAX_GRID_COLS];
+        int *rows_size[MAX_GRID_ROWS];
     } sFrame, *pFrame;
 
     typedef struct tButton {
         wchar_t *text;
-        void (*draw)();
         void (*callback)();
     } sButton, *pButton;
 
-
     typedef struct tWidget {
-        int px;
-        int py;
         enum eType type; 
+        enum eState state;
         sPos  pos;
         sSize size;
         struct tWidget *parent;
