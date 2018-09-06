@@ -107,6 +107,7 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
 }
 
 void tui_handle_input() {
+    static sWidget *old_wid = NULL; 
     unsigned long ul_evread;
     INPUT_RECORD ir_inpbuf[256];
 
@@ -137,8 +138,8 @@ void tui_handle_input() {
                 free(wid_search);
                 /* Cases get handled in their own function to make the code more readable */
                 switch(wid->type) {
-                    case FRAME: break;
-                    case BUTTON: button_mouse_event(wid, ev); break;
+                    case FRAME:  frame_mouse_event(wid, &old_wid, ev); break;
+                    case BUTTON: button_mouse_event(wid, &old_wid, ev); break;
 
                     default: break;
                 }
@@ -154,7 +155,21 @@ void tui_handle_input() {
     }
 }
 
-void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev) {
+void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
+    /* Basic stuff just for getting highlighting buttons to work properly */
+    tui_err("ENTERED FRAME_MOUSE_EVENT", TUI_OTHER, 0);
+    if (a == *old) {
+        return;
+    } else {
+        if (*old)
+            (*old)->state = NONE;
+        a->state = HOVER;
+        *old = a;
+    }
+
+}
+
+void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
     tui_err("ENTERED BUTTON_MOUSE_EVENT()", TUI_OTHER, 0);
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
@@ -162,7 +177,16 @@ void button_mouse_event(sWidget *a, MOUSE_EVENT_RECORD *ev) {
             break;
         default:
             tui_err("NO_BUTTON_PRESSED", TUI_OTHER, 0);
-            a->state = HOVER;
+            if (a == *old) {
+                return;
+            } else {
+                /* for the first activation because you can't dereference a null pointer */
+                if (*old)
+                    (*old)->state = NONE;
+                a->state = HOVER;
+                *old = a;
+            }
+
             break;
     }
 }
@@ -174,8 +198,8 @@ void find_widget(sStack *stack, sWidget *a, int x, int y) {
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (a->widget.frame.children[i]) {
                     sWidget *b = a->widget.frame.children[i];
-                    if ((x >= b->pos.x && x <= (b->pos.x + b->size.x)) &&
-                        (y >= b->pos.y && y <= (b->pos.y + b->size.y))) {
+                    if ((x >= b->pos.x && x <= (b->pos.x + b->size.x - 1)) &&
+                        (y >= b->pos.y && y <= (b->pos.y + b->size.y - 1))) {
                         find_widget(stack, a->widget.frame.children[i], x, y);
                     }
                 }
@@ -186,24 +210,6 @@ void find_widget(sStack *stack, sWidget *a, int x, int y) {
         default:
             break;
     }
-}
-
-void reset_widget_state(sWidget *a) {
-    a->state = NONE;
-    switch (a->type) {
-        case FRAME:
-            for(int i = 0; i < MAX_CHILDREN; i++) {
-                if (a->widget.frame.children[i]) {
-                    reset_widget_state(a->widget.frame.children[i]);
-                }
-            }
-            break;
-        case BUTTON:
-            break;
-        default:
-            break;
-    }
-
 }
 
 void tui_draw(sWidget *a) {
@@ -245,7 +251,6 @@ void tui_draw__(sWidget *a) {
 
 void inpthr_loop() {
     while(1) {
-        reset_widget_state(w_root);
         tui_handle_input();
     }
 }
