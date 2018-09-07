@@ -124,8 +124,7 @@ void tui_handle_input() {
                 break;
 
             case MOUSE_EVENT:
-                /* Basic tracking of events in the error log */
-                tui_err("Mouse Event", TUI_OTHER, 0);
+                ;
                 MOUSE_EVENT_RECORD *ev = &ir_inpbuf[i].Event.MouseEvent;
                 /*
                  * Finding the widget
@@ -157,7 +156,7 @@ void tui_handle_input() {
 
 void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
     /* Basic stuff just for getting highlighting buttons to work properly */
-    tui_err("ENTERED FRAME_MOUSE_EVENT", TUI_OTHER, 0);
+    /* TODO: refactor this */
     if (a == *old) {
         return;
     } else {
@@ -170,13 +169,14 @@ void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
 }
 
 void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
-    tui_err("ENTERED BUTTON_MOUSE_EVENT()", TUI_OTHER, 0);
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
-            tui_err("FROM_LEFT_1ST_BUTTON_PRESSED", TUI_OTHER, 0);
+            /* Check probably not needed because you can't press a button before hovering over it */
+            if (a->widget.button.callback)
+                a->widget.button.callback();
             break;
         default:
-            tui_err("NO_BUTTON_PRESSED", TUI_OTHER, 0);
+            /* TODO: refactor this */
             if (a == *old) {
                 return;
             } else {
