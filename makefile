@@ -2,6 +2,7 @@
 INCLUDEDIR =include
 OBJECTSDIR =src/obj
 CFLAGS  =-I$(INCLUDEDIR) -g -Wall
+OTHERFLAGS = --always-make
 PROJECT = libmytui.a
 LIBS =
 
@@ -13,13 +14,22 @@ _OBJECTS = tui.o utils.o draw.o widgets.o
 OBJECTS = $(patsubst %, $(OBJECTSDIR)/%, $(_OBJECTS))
 
 $(OBJECTSDIR)/%.o : src/%.c $(DEPS)
-	gcc -c -o $@ $< ${LIBS} $(CFLAGS)
+	gcc -c -o $@ $< ${LIBS} $(CFLAGS) 
 
 $(PROJECT): $(OBJECTS)
 	ar -cvq $@ $^
     
 
 .PHONY: clean test
+
+test:
+	$(MAKE) -C test all $(OTHERFLAGS)
+
+visual:
+	$(MAKE) -C test visual $(OTHERFLAGS)
+
+functional:
+	$(MAKE) -C test functional $(OTHERFLAGS)
 
 clean:
 	del ".\src\obj\*"
@@ -28,11 +38,5 @@ clean:
 cleanobj:
 	del ".\src\obj\*"
 
-test:
-	$(MAKE) -C test
-
-cleantest:
-	del ".\test.exe"
-	del ".\test2.exe"
-	del ".\test3.exe"
-	del ".\test4.exe"
+cleanexe:
+	del ".\*.exe"

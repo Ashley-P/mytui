@@ -106,6 +106,7 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
     return ptr;
 }
 
+/* TODO: Move input handling to a different source file */
 void tui_handle_input() {
     static sWidget *old_wid = NULL; 
     unsigned long ul_evread;
@@ -172,6 +173,7 @@ void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* Check probably not needed because you can't press a button before hovering over it */
+
             if (a->widget.button.callback)
                 a->widget.button.callback();
             break;
