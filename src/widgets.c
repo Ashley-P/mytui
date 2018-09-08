@@ -199,7 +199,7 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
             parent->widget.frame.numch += 1;
             break;
         case BUTTON:
-            tui_err("Wrong type for parent: type is Button", TUI_ERROR, 1);
+            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is Button");
             break;
         default:
             break;
@@ -213,14 +213,11 @@ void grid_set(sWidget *widget, int col, int row) {
     /* Make sure there is a warning if a grid position gets overwritten */
     /* Basic checking for arguments */
 
-    char err[256];
     if (col >= MAX_GRID_COLS || col < 0) {
-       sprintf(err, "Error incorrect col value; Expected 0 < col < %d - Got %d", MAX_GRID_COLS, col);
-       tui_err(err, TUI_ERROR, 1);
+       tui_err(TUI_ERROR, 1, "Error incorrect col value; Expected 0 < col < %d - Got %d", MAX_GRID_COLS, col);
     }
     if (row >= MAX_GRID_ROWS || row < 0) {
-       sprintf(err, "Error incorrect row value; Expected 0 < row < %d - Got %d", MAX_GRID_ROWS, row);
-       tui_err(err, TUI_ERROR, 1);
+       tui_err(TUI_ERROR, 1, "Error incorrect row value; Expected 0 < row < %d - Got %d", MAX_GRID_ROWS, row);
     }
 
     /* Actually assigning the widget to the grid */
@@ -228,7 +225,7 @@ void grid_set(sWidget *widget, int col, int row) {
     switch(widget->parent->type) {
         case FRAME:
             if (widget->parent->widget.frame.grid[col][row])
-                tui_err("Grid position is already taken, overwritten anyway", TUI_WARNING, 0);
+                tui_err(TUI_WARNING, 0, "Grid position is already taken, overwritten anyway");
             widget->parent->widget.frame.grid[col][row] = widget;
             break;
         case BUTTON: default:

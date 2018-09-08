@@ -112,7 +112,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     
     void init_stderr
     void win_err(const char *msg);
-    void tui_err(const char *msg, const int err_type, const int quit_prog);
+    void tui_err(const char *msg, const int err_type, const int quit_prog, ...);
     wchar_t *rand_str();
     int rand_int(int min, int max);
     sStack *create_stack(unsigned int capacity);

@@ -20,7 +20,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + height > sn_screenheight) {
-        tui_err("draw_box: parameters too large", TUI_WARNING, 0);
+        tui_err(TUI_WARNING, 0, "draw_box: parameters too large");
         return;
     }
 
@@ -66,6 +66,9 @@ void draw_button(sWidget *a) {
             break;
         case HOVER:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x50);
+            break;
+        case PRESS:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x60);
             break;
         default:
             break;

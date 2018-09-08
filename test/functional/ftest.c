@@ -5,15 +5,15 @@
 #include "tui.h"
 #include "utils.h"
 
-void test1() { tui_err("button1", TUI_OTHER, 0); }
-void test2() { tui_err("button2", TUI_OTHER, 0); }
-void test3() { tui_err("button3", TUI_OTHER, 0); }
-void test4() { tui_err("button4", TUI_OTHER, 0); }
-void test5() { tui_err("button5", TUI_OTHER, 0); }
-void test6() { tui_err("button6", TUI_OTHER, 0); }
-void test7() { tui_err("button7", TUI_OTHER, 0); }
-void test8() { tui_err("button8", TUI_OTHER, 0); }
-void test9() { tui_err("button9", TUI_OTHER, 0); }
+void test1() { tui_err(TUI_OTHER, 0, "Button 1"); }
+void test2() { tui_err(TUI_OTHER, 0, "Button 2"); }
+void test3() { tui_err(TUI_OTHER, 0, "Button 3"); }
+void test4() { tui_err(TUI_OTHER, 0, "Button 4"); }
+void test5() { tui_err(TUI_OTHER, 0, "Button 5"); }
+void test6() { tui_err(TUI_OTHER, 0, "Button 6"); }
+void test7() { tui_err(TUI_OTHER, 0, "Button 7"); }
+void test8() { tui_err(TUI_OTHER, 0, "Button 8"); }
+void test9() { tui_err(TUI_OTHER, 0, "Button 9"); }
 
 int main() {
     int n_screenwidth = 180;

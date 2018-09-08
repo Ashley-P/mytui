@@ -52,32 +52,36 @@ void win_err(const char *msg) {
     free(err2);
 }
 
-void tui_err(const char *msg, const int err_type, const int quit_prog) {
-    /* TODO: rework this to accept and print addresses of objects on the heap */
-    char err[256];
-    memset(err, '\0', 256);
+void tui_err(const int err_type, const int quit_prog, const char *msg, ...) {
+    char buf[256];
+    char buf2[256];
+    memset(buf2, '\0', 256);
+
+    va_list arg;
+    va_start(arg, msg);
+    vsnprintf(buf, (size_t) 256, msg, arg);
+    va_end(arg);
+
     switch (err_type) {
         case TUI_ERROR:
-            sprintf(err, "ERROR: %s\r\n", msg);
+            sprintf(buf2, "ERROR: %s\r\n", buf);
             break;
         case TUI_WARNING:
-            sprintf(err, "WARNING: %s\r\n", msg);
+            sprintf(buf2, "WARNING: %s\r\n", buf);
             break;
         case TUI_OTHER:
-            sprintf(err, "OTHER: %s\r\n", msg);
+            sprintf(buf2, "OTHER: %s\r\n", buf);
+            break;
+        default:
             break;
     }
-    char err2[strlen(err) + 1];
-    err2[strlen(err) + 1] = '\0';
-    strcpy(err2, err);
+
+    /* Using strlen works because sizeof(char) is 1 */
     WriteFile(errlog,
-              err2,
-              sizeof(err2) - 1,
+              buf2,
+              strlen(buf2),
               &dw_bytes_written,
               NULL);
-    
-    if (quit_prog == 1)
-        exit(-1);
 }
 
 /* Generating random strings */
@@ -125,7 +129,7 @@ int is_stack_empty(sStack *stack) {
 void stack_push(sStack *stack, sWidget *a) {
     int temp = is_stack_full(stack);
     if (temp) {
-        tui_err("Stack full", TUI_WARNING, 0);
+        tui_err(TUI_WARNING, 0, "Stack Full");
         return;
     }
     stack->arr[++stack->top] = a;
@@ -133,7 +137,7 @@ void stack_push(sStack *stack, sWidget *a) {
 
 sWidget * stack_pop(sStack *stack) {
     if (is_stack_empty(stack)) {
-        tui_err("Stack empty", TUI_WARNING, 0);
+        tui_err(TUI_WARNING, 0, "Stack Empty");
         return (sWidget *) -1;
     }
     return stack->arr[stack->top--];

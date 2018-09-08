@@ -99,7 +99,7 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
         CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
-        tui_err("Calloc failed to allocate memory", TUI_ERROR, 1);
+        tui_err(TUI_ERROR, 1, "Calloc failed to allocate memory");
 
     i_bufsize = n_screenwidth * n_screenheight;
 
@@ -121,7 +121,7 @@ void tui_handle_input() {
     for(int i = 0; i < ul_evread; i++) {
         switch (ir_inpbuf[i].EventType) {
             case KEY_EVENT:
-                tui_err("Key Event", TUI_OTHER, 0);
+                tui_err(TUI_OTHER, 0, "Key Event");
                 break;
 
             case MOUSE_EVENT:
@@ -146,7 +146,7 @@ void tui_handle_input() {
                 break;
 
             case WINDOW_BUFFER_SIZE_EVENT:
-                tui_err("Window Buffer Size Event", TUI_OTHER, 0);
+                tui_err(TUI_OTHER, 0, "Window Buffer Size Event");
                 break;
 
             case FOCUS_EVENT: case MENU_EVENT: // Ignore these
@@ -169,13 +169,15 @@ void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
 
 }
 
+/* FIXME: Bug where holding down left click on a button counts as many presses */
 void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* Check probably not needed because you can't press a button before hovering over it */
-
             if (a->widget.button.callback)
                 a->widget.button.callback();
+            a->state = PRESS;
+            *old = a;
             break;
         default:
             /* TODO: refactor this */

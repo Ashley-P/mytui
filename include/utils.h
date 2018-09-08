@@ -17,7 +17,7 @@ void init_stderr();
 
 void win_err(const char *msg);
 
-void tui_err(const char *msg, const int err_type, const int quit_prog);
+void tui_err(const int err_type, const int quit_prog, const char *msg, ...);
 
 wchar_t *rand_str();
 
