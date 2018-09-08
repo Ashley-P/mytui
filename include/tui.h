@@ -7,6 +7,7 @@
 extern int sn_screenwidth;
 extern int sn_screenheight;
 extern int i_bufsize;           // Size of *ci_screen in elements
+extern HANDLE h_stdin;
 extern CHAR_INFO **tui_current_screen;
 
 // Specially created root widget
@@ -16,13 +17,8 @@ int tui_init(const int n_screenwidth, const int n_screenheight);
 
 void tui_root_frame();
 
-CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight); // Creates an array of CHAR_INFO structs 
-
-void tui_handle_input();
-
-void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
-
-void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
+// Creates an array of CHAR_INFO structs 
+CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight); 
 
 void find_widget(sStack *stack, sWidget *a, int x, int y);
 

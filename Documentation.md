@@ -43,9 +43,6 @@ The variables here are for internal use by the library
     int init_tui(const int n_screenwidth, const int n_screenheight);
     void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
-    void tui_handle_input();
-    void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
-    void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
     void find_widget(sStack *stack, sWidget *a, int x, int y);
     void tui_draw(sWidget *a);
     void tui_draw__(sWidget *a);
@@ -64,12 +61,6 @@ The variables here are for internal use by the library
     user created widgets to be a child to.
 
     alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
-
-    tui_handle_input() handles all the events for the program.
-
-    frame_mouse_event() handles the mouse events when the widget is a frame.
-
-    button_mouse_event() handles the mouse events when the widget is a button.
 
     find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate.
 
@@ -274,3 +265,31 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     grid_set() enters the position of the widget supplied into it's parent's grid array. Sends a warning if
     it overwrites something (aka the element is not NULL)
 ---
+## The \<input.h\> Header
+
+The \<input.h\> header file contains all the declarations for the functions and datatypes
+
+### Datatypes
+
+### Variables
+
+### Constants
+
+### Structs
+
+### Functions
+
+#### Synopsis
+
+    void tui_handle_input();
+    void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
+    void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
+
+#### Description
+
+    tui_handle_input() handles all the events for the program.
+
+    frame_mouse_event() handles the mouse events when the widget is a frame.
+
+    button_mouse_event() handles the mouse events when the widget is a button.
+--- 
