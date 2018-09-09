@@ -65,11 +65,14 @@ void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
 
 }
 
-/* FIXME: Bug where holding down left click on a button counts as many presses */
 void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
+    tui_err(TUI_OTHER, 0, "Widget State | Flags, 0x%x, 0x%x", ev->dwButtonState, ev->dwEventFlags);
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
-            /* Check probably not needed because you can't press a button before hovering over it */
+            /* If the state hasn't been changed since last time do nothing */
+            if (a->state == PRESS) {
+                break;
+            }
             if (a->widget.button.callback)
                 a->widget.button.callback();
             a->state = PRESS;
@@ -77,6 +80,8 @@ void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
             break;
         default:
             /* TODO: refactor this */
+            if (ev->dwEventFlags == 0)
+                a->state = HOVER;
             if (a == *old) {
                 return;
             } else {
