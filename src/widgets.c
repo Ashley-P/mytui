@@ -7,13 +7,16 @@
 
 sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
-    sWidget *ptr            = (sWidget *)calloc(1, sizeof(sWidget));
-    ptr->type               = FRAME;
-    ptr->state              = NONE;
-    ptr->widget.frame.numch = 0;
+    sWidget *ptr = (sWidget *)calloc(1, sizeof(sWidget));
+    ptr->type    = FRAME;
+    ptr->state   = NONE;
+    ptr->rowspan = 0;
+    ptr->colspan = 0;
     assign_to_parent(ptr, parent);
 
     // sFrame setup which just makes sure each element in both arrays are set to null
+    ptr->widget.frame.numch = 0;
+
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.frame.children[i] = NULL;
 
@@ -37,6 +40,8 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     sWidget *ptr = (sWidget *)calloc(1, sizeof(sWidget));
     ptr->type    = BUTTON;
     ptr->state   = NONE;
+    ptr->rowspan = 0;
+    ptr->colspan = 0;
     assign_to_parent(ptr, parent);
 
     // sButton setup

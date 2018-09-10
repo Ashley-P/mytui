@@ -44,6 +44,8 @@ typedef struct tWidget {
     enum eState state;
     sPos  pos;
     sSize size;
+    int rowspan;
+    int colspan;
     struct tWidget *parent;
     union {
         struct tButton button;

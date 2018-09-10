@@ -34,7 +34,7 @@ void tui_handle_input() {
                 free(wid_search);
                 /* Cases get handled in their own function to make the code more readable */
                 switch(wid->type) {
-                    case FRAME:  frame_mouse_event(wid, &old_wid, ev); break;
+                    case FRAME:  frame_mouse_event(wid, &old_wid, ev);  break;
                     case BUTTON: button_mouse_event(wid, &old_wid, ev); break;
 
                     default: break;
@@ -73,15 +73,17 @@ void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
             if (a->state == PRESS) {
                 break;
             }
+
             if (a->widget.button.callback)
                 a->widget.button.callback();
             a->state = PRESS;
             *old = a;
             break;
-        default:
+        case 0:
             /* TODO: refactor this */
             if (ev->dwEventFlags == 0)
                 a->state = HOVER;
+
             if (a == *old) {
                 return;
             } else {
@@ -91,7 +93,8 @@ void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
                 a->state = HOVER;
                 *old = a;
             }
-
+            break;
+        default:
             break;
     }
 }
