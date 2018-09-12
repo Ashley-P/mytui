@@ -43,6 +43,7 @@ typedef struct tWidget {
     enum eType type; 
     enum eState state;
     sPos  pos;
+    sPos  gridpos;
     sSize size;
     int rowspan;
     int colspan;
@@ -58,6 +59,8 @@ sWidget * tui_frame(sWidget *parent);
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 
 void widget_sizer(sWidget *a);
+
+void widget_span_sizer(sWidget *a);
 
 void widget_positioner(sWidget *a);
 

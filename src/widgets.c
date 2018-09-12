@@ -51,8 +51,9 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     return ptr;
 }
 
-/* Margins, paddings, borders and other things that can change size are computed here */
 void widget_sizer(sWidget *a) {
+    /* Margins, paddings, borders and other things that can change size are computed here */
+    /* TODO: Refactor this, I could probably redo this without a trillion loops */
     switch (a->type) {
         case FRAME:
             /* Tons of loops because I can't program */
@@ -75,8 +76,10 @@ void widget_sizer(sWidget *a) {
                 temp1 = 0;
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     /* Finding the largest width of each element in the column */
-                    if(af->grid[i][j])
+                    if(af->grid[i][j]) {
+                        //if(af->grid[i][j]->colspan < 2)
                         temp1 = af->grid[i][j]->size.x > temp1 ? af->grid[i][j]->size.x : temp1;
+                    }
                 }
                 af->cols_size[i] = temp1;
                 if (temp1 > 0)
@@ -101,8 +104,10 @@ void widget_sizer(sWidget *a) {
                 temp1 = 0;
                 for(int l = 0; l < MAX_GRID_COLS; l++) {
                     /* Finding the largest height of each element in the column */
-                    if(af->grid[l][k])
+                    if(af->grid[l][k]) {
+                        //if(af->grid[i][j]->colspan < 2)
                         temp1 = af->grid[l][k]->size.y > temp1 ? af->grid[l][k]->size.y : temp1;
+                    }
                 }
                 af->rows_size[k] = temp1;
                 if (temp1 > 0)
@@ -127,6 +132,32 @@ void widget_sizer(sWidget *a) {
         case BUTTON:
             a->size.x = wcslen(a->widget.button.text);
             a->size.y = 1;
+            break;
+        default:
+            break;
+    }
+}
+
+void widget_span_sizer(sWidget *a) {
+    switch(a-type) {
+        case FRAME:
+            ;
+            sFrame *af = &a->widget.frame;
+            /* Calling the sizer for children */
+            for(int p = 0; p < MAX_CHILDREN; p++) {
+                if(af->children[p])
+                    widget_sizer(af->children[p]);
+            }
+
+            for(int i = 0; i < MAX_GRID_COLS; i++) {
+                for(int j = 0; j < MAX_GRID_ROWS; j++) {
+                    if (*af->grid[i][j]) {
+
+                    }
+                }
+            }
+            break;
+        case BUTTON:
             break;
         default:
             break;
@@ -232,6 +263,8 @@ void grid_set(sWidget *widget, int col, int row) {
             if (widget->parent->widget.frame.grid[col][row])
                 tui_err(TUI_WARNING, 0, "Grid position is already taken, overwritten anyway");
             widget->parent->widget.frame.grid[col][row] = widget;
+            widget->gridpos.x = col;
+            widget->gridpos.y = row;
             break;
         case BUTTON: default:
             break;

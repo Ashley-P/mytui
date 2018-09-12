@@ -214,6 +214,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         enum eType type; 
         enum eState state;
         sPos  pos;
+        sPos  gridpos;
         sSize size;
         struct tWidget *parent;
         union {
@@ -239,6 +240,7 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
     sWidget * tui_frame(const sWidget *parent);
     sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
     void widget_sizer(sWidget *a);
+    void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a)
     sSize add_sSize(sSize a, sSize b);
     sSize max_sSize(sSize a, sSize b);
@@ -253,7 +255,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 
-    void widget_positioner() sets the coords for each widget which tui_draw uses
+    widget_span_sizer() goes through the tree similar to widget_sizer but checks the colspan and rowspan
+    of widgets and correctly sizes them.
+
+    widget_positioner() sets the coords for each widget which tui_draw uses
 
     add_sSize() adds to sSize structs together and returns the resulting struct
 
