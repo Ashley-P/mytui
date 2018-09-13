@@ -59,7 +59,12 @@ void draw_str(const wchar_t *str, int x, int y) {
 }
 
 void draw_button(sWidget *a) {
-    draw_str(a->widget.button.text, a->pos.x, a->pos.y);
+    /* Offsetting for buttons that are larger than their text size */
+    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (wcslen(a->widget.button.text) / 2));
+    int y = a->pos.y + ((int) (a->size.y / 2));
+
+    draw_str(a->widget.button.text, x, y);
+
     switch (a->state) {
         case NONE:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
