@@ -177,6 +177,7 @@ void tui_loop() {
      * frame because it comes preset.
      */
     widget_sizer(w_root);
+    widget_span_sizer(w_root);
     widget_positioner(w_root);
 
     while(1) {

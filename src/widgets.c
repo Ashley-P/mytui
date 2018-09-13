@@ -139,7 +139,7 @@ void widget_sizer(sWidget *a) {
 }
 
 void widget_span_sizer(sWidget *a) {
-    switch(a-type) {
+    switch(a->type) {
         case FRAME:
             ;
             sFrame *af = &a->widget.frame;
@@ -149,17 +149,52 @@ void widget_span_sizer(sWidget *a) {
                     widget_sizer(af->children[p]);
             }
 
+            /*
+             * Setting the widget to the right size.
+             * First we iterate through the grid to find the
+             * widgets with spans > 2.
+             * Then check if the grid positions it wants to span to exist.
+             * Then is sets its size using cols_size/rows_size of the spanned
+             * grid sections.
+             */
+            /* TODO: Refactor */
+            /* Could reduce the two top level loops to one using some maths */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if (*af->grid[i][j]) {
+                    if (af->grid[i][j]) {
 
+                        int k;
+                        sWidget *wid = af->grid[i][j];
+
+                        /* Row span */
+                        if(wid->rowspan >= 2) {
+                            wid->size.y = 0;
+                            for(k = 0; k < wid->rowspan; k++) {
+                                /*
+                                if(af->grid[i][j + k]) // Checking the next grid spaces
+                                    break;
+                                */
+                                wid->size.y += af->rows_size[j + k];
+                            }
+                            //wid->size.y += (wid->rowspan - 1);
+                        }
+                        /* Col span */
+                        if(wid->colspan >= 2) {
+                            wid->size.x = 0;
+                            for(k = 0; k < wid->colspan; k++) {
+                                /*
+                                if(af->grid[i + k][j]) // Checking the next grid spaces
+                                    break;
+                                */
+                                wid->size.x += af->cols_size[i + k];
+                            }
+                            //wid->size.x += (wid->colspan - 1);
+                        }
                     }
                 }
             }
             break;
-        case BUTTON:
-            break;
-        default:
+        case BUTTON: default:
             break;
     }
 }
