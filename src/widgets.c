@@ -176,7 +176,7 @@ void widget_span_sizer(sWidget *a) {
                                 */
                                 wid->size.y += af->rows_size[j + k];
                             }
-                            //wid->size.y += (wid->rowspan - 1);
+                            wid->size.y += (wid->rowspan - 1);
                         }
                         /* Col span */
                         if(wid->colspan >= 2) {
@@ -188,7 +188,7 @@ void widget_span_sizer(sWidget *a) {
                                 */
                                 wid->size.x += af->cols_size[i + k];
                             }
-                            //wid->size.x += (wid->colspan - 1);
+                            wid->size.x += (wid->colspan - 1);
                         }
                     }
                 }

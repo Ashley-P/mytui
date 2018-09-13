@@ -13,20 +13,25 @@ int main() {
 
     pWidget but1 = tui_button(w_root, L"ROW SPAN", NULL);
     pWidget but2 = tui_button(w_root, L"COL SPAN", NULL);
-
     pWidget but3 = tui_button(w_root, rand_str(), NULL);
     pWidget but4 = tui_button(w_root, rand_str(), NULL);
     pWidget but5 = tui_button(w_root, rand_str(), NULL);
     pWidget but6 = tui_button(w_root, rand_str(), NULL);
+    pWidget but7 = tui_button(w_root, L"COL SPAN 2", NULL);
+    pWidget but8 = tui_button(w_root, L"ROW SPAN 2", NULL);
 
 
     /* Setting the spans */
-    but1->rowspan = 2;
-    but2->colspan = 3;
+    but1->rowspan = 3;
+    but2->colspan = 2;
+    but7->colspan = 4;
+    but8->rowspan = 3;
 
     /* Wigdets to check */
     grid_set(but1, 0, 0);
     grid_set(but2, 1, 0);
+    grid_set(but7, 0, 3);
+    grid_set(but8, 3, 0);
 
     /* Other widgets for the above to work */
     grid_set(but3, 1, 1);
