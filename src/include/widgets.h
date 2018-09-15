@@ -55,21 +55,12 @@ typedef struct tWidget {
 } sWidget, *pWidget;
 
 sWidget * tui_frame(sWidget *parent);
-
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
-
+void tui_root_frame();
 void widget_sizer(sWidget *a);
-
 void widget_span_sizer(sWidget *a);
-
 void widget_positioner(sWidget *a);
-
 sSize add_sSize(sSize a, sSize b);
-
-sSize max_sSize(sSize a, sSize b);
-
-void assign_to_parent(sWidget *child, sWidget *parent);
-
 void grid_set(sWidget *widget, int col, int row);
 
 #endif

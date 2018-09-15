@@ -1,4 +1,4 @@
-INCLUDEDIR = ../../include
+INCLUDEDIR = ../../src/include
 OBJECTSDIR = ./obj
 CFLAGS =-I$(INCLUDEDIR) -g -Wall
 

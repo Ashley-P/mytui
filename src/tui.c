@@ -25,6 +25,16 @@ sWidget *w_root;
 static COORD c_screensize;
 static SMALL_RECT sr_screensize;
 
+CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
+        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
+
+    if (ptr == NULL)
+        tui_err(TUI_ERROR, 1, "Calloc failed to allocate memory");
+
+    i_bufsize = n_screenwidth * n_screenheight;
+
+    return ptr;
+}
 
 int tui_init(const int n_screenwidth, const int n_screenheight) {
     // setting up error logging
@@ -96,17 +106,6 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 }
 
 
-CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
-        CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
-
-    if (ptr == NULL)
-        tui_err(TUI_ERROR, 1, "Calloc failed to allocate memory");
-
-    i_bufsize = n_screenwidth * n_screenheight;
-
-    return ptr;
-}
-
 void find_widget(sStack *stack, sWidget *a, int x, int y) {
     stack_push(stack, a);
     switch (a->type) {
@@ -128,31 +127,16 @@ void find_widget(sStack *stack, sWidget *a, int x, int y) {
     }
 }
 
-void tui_draw(sWidget *a) {
-    // Basic drawing for now
-    // Resetting each element
-    reset_buf(*tui_current_screen);   
-    tui_draw__(a);
-    if(!WriteConsoleOutputW(h_console,
-                            *tui_current_screen,
-                            c_screensize,
-                            (COORD) {0, 0},
-                            &sr_screensize))
-        win_err("WriteConsoleOutput");
-
-
-}
-
-void tui_draw__(sWidget *a) {
+void tui_draw_helper(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
+            draw_frame(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
             sFrame *af = &a->widget.frame;
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int k = 0; k < MAX_GRID_ROWS; k++) {
                 if (af->grid[i][k])
-                    tui_draw__(af->grid[i][k]);
+                    tui_draw_helper(af->grid[i][k]);
                 }
             }
             break;
@@ -163,6 +147,21 @@ void tui_draw__(sWidget *a) {
         default:
             break;
     }
+}
+
+void tui_draw(sWidget *a) {
+    // Basic drawing for now
+    // Resetting each element
+    reset_buf(*tui_current_screen);   
+    tui_draw_helper(a);
+    if(!WriteConsoleOutputW(h_console,
+                            *tui_current_screen,
+                            c_screensize,
+                            (COORD) {0, 0},
+                            &sr_screensize))
+        win_err("WriteConsoleOutput");
+
+
 }
 
 void inpthr_loop() {

@@ -1,5 +1,5 @@
 # Macros
-INCLUDEDIR =include
+INCLUDEDIR =src/include
 OBJECTSDIR =src/obj
 CFLAGS  =-I$(INCLUDEDIR) -g -Wall
 OTHERFLAGS = --always-make
@@ -7,7 +7,7 @@ PROJECT = libmytui.a
 LIBS =
 
 
-_DEPS = tui.h utils.h draw.h widgets.h input.h
+_DEPS = tui.h utils.h draw.h widgets.h input.h const.h
 DEPS = $(patsubst %, $(INCLUDEDIR)/%, $(_DEPS))
 
 _OBJECTS = tui.o utils.o draw.o widgets.o input.o
@@ -34,9 +34,6 @@ functional:
 clean:
 	del ".\src\obj\*"
 	del *.a
-
-cleanobj:
-	del ".\src\obj\*"
 
 cleanexe:
 	del ".\*.exe"

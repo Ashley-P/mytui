@@ -58,6 +58,11 @@ void draw_str(const wchar_t *str, int x, int y) {
     }
 }
 
+void draw_frame(int x, int y, const int width, const int height, const bool fill, int colour) {
+    draw_box(x, y, width, height, fill, colour);
+}
+
+
 void draw_button(sWidget *a) {
     /* Offsetting for buttons that are larger than their text size */
     int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (wcslen(a->widget.button.text) / 2));

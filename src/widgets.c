@@ -1,9 +1,36 @@
 #include <stdlib.h>
-#include "tui.h"
+#include "const.h"
 #include "widgets.h"
 #include "draw.h"
 #include "utils.h"
 
+
+
+void assign_to_parent(sWidget *child, sWidget *parent) {
+    /* 
+     * Assigns children to parents
+     * returns NULL if parent is NULL
+     */
+    if (!parent) {
+        child->parent = NULL;
+        return;
+    }
+
+    child->parent = parent;
+    switch (parent->type) {
+        case FRAME:
+            parent->widget.frame.children[parent->widget.frame.numch] = child;
+            parent->widget.frame.numch += 1;
+            break;
+        case BUTTON:
+            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is Button");
+            break;
+        default:
+            break;
+    }
+
+
+}
 
 sWidget * tui_frame(sWidget *parent) {
     // sWidget setup
@@ -253,31 +280,6 @@ sSize max_sSize(sSize a, sSize b) {
     return s_return;
 }
 
-void assign_to_parent(sWidget *child, sWidget *parent) {
-    /* 
-     * Assigns children to parents
-     * returns NULL if parent is NULL
-     */
-    if (!parent) {
-        child->parent = NULL;
-        return;
-    }
-
-    child->parent = parent;
-    switch (parent->type) {
-        case FRAME:
-            parent->widget.frame.children[parent->widget.frame.numch] = child;
-            parent->widget.frame.numch += 1;
-            break;
-        case BUTTON:
-            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is Button");
-            break;
-        default:
-            break;
-    }
-
-
-}
 
 void grid_set(sWidget *widget, int col, int row) {
     /* This function sets the grid position in its parent */

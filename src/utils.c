@@ -84,20 +84,8 @@ void tui_err(const int err_type, const int quit_prog, const char *msg, ...) {
               NULL);
 }
 
-/* Generating random strings */
-wchar_t *rand_str() {
-    int strsize = rand_int(6, 15);
-    wchar_t *ptr = (wchar_t *)calloc(sizeof(wchar_t), strsize);
-    for(int i = 0; i < strsize - 1; i++) {
-        *(ptr + i) = L"abcdefghijklmnopqrstuvwxyz"[rand_int(0, 25)];
-    }
-    *(ptr + strsize - 1) = L'\0';
-
-    return ptr;
-}
-
-/* Provides non modulus biased integers */
 int rand_int(int min, int max) {
+    /* Provides non modulus biased integers */
     int x;
     static int flag = 0;
     if (!flag) {
@@ -108,6 +96,18 @@ int rand_int(int min, int max) {
         x = 1 + rand() / ((RAND_MAX + 1u) / (max + 1));
     } while (x > max || x < min); 
     return x;
+}
+
+wchar_t *rand_str() {
+    /* Generating random strings */
+    int strsize = rand_int(6, 15);
+    wchar_t *ptr = (wchar_t *)calloc(sizeof(wchar_t), strsize);
+    for(int i = 0; i < strsize - 1; i++) {
+        *(ptr + i) = L"abcdefghijklmnopqrstuvwxyz"[rand_int(0, 25)];
+    }
+    *(ptr + strsize - 1) = L'\0';
+
+    return ptr;
 }
 
 sStack *create_stack(unsigned int capacity) {

@@ -79,9 +79,22 @@ The variables here are for internal use by the library
 
 The \<utils.h\> header file contains declarations for some utility functions such as error handling
 
-### Datatypes
+### Functions
 
-### Variables
+    void init_stderr();
+    void win_err(const char *msg);
+    void tui_err(const int err_type, const int quit_prog, const char *msg, ...);
+    wchar_t *rand_str();
+    sStack *create_stack(unsigned int capacity);
+    int is_stack_full(sStack *stack);
+    int is_stack_empty(sStack *stack);
+    void stack_push(sStack *stack, sWidget *a);
+    sWidget * stack_pop(sStack *stack);
+
+---
+## The \<utils.c\> Source
+
+The \<utils.c\> source file contains declarations for some utility functions such as error handling
 
 ### Constants
     
@@ -101,7 +114,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 
 #### Synopsis
     
-    void init_stderr
+    void init_stderr();
     void win_err(const char *msg);
     void tui_err(const char *msg, const int err_type, const int quit_prog, ...);
     wchar_t *rand_str();
@@ -142,15 +155,18 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 ---
 ## The \<draw.h\> Header
 
-The \<draw.h\> header file contains all the declarations for the functions and datatypes
+The \<draw.h\> header file contains all the function declarations that are exposed to other files
 
-### Datatypes
+### Functions
 
-### Variables
+    void reset_buf();
+    void draw_frame(int x, int y, const int x, const int y, const bool fill);
+    void draw_button(sWidget *a);
 
-### Constants
+---
+## The \<draw.c\> Source
 
-### Structs
+The \<draw.c\> source file contains all the function implementations
 
 ### Functions
 
@@ -159,6 +175,7 @@ The \<draw.h\> header file contains all the declarations for the functions and d
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
+    void draw_frame(int x, int y, const int x, const int y, const bool fill);
     void draw_button(sWidget *a);
 
 #### Description
@@ -171,15 +188,34 @@ The \<draw.h\> header file contains all the declarations for the functions and d
 
     draw_str() Draws a string to the screen at the desired position.
 
+    draw_frame() Draws a freame to the screen at the desired location. Right now it just calls
+    draw_box().
+
     draw_button() Draws a button to the screen at the desired position. Also reads the state
     of the button and changes the colour accordingly.
 
 ---
 ## The \<widgets.h\> Header
 
-The \<widgets.h\> header contains all the widgets that the user of this library should be calling.
+The \<widgets.h\> header file contains all the struct definitions and functions that are exposed to other files
 
-### Datatypes
+### Functions
+
+    sWidget * tui_frame(sWidget *parent);
+    sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
+    void widget_sizer(sWidget *a);
+    void widget_span_sizer(sWidget *a);
+    void widget_positioner(sWidget *a);
+    sSize add_sSize(sSize a, sSize b);
+    void grid_set(sWidget *widget, int col, int row);
+
+### Constants
+
+    MAX_CHILDREN    16
+    MAX_GRID_COLS   16
+    MAX_GRID_ROWS   16
+
+### Enums
 
     enum eType {
         FRAME  = 1 << 0,
@@ -191,6 +227,8 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         HOVER = 1 << 1,
         PRESS = 1 << 2
     };
+
+### Structs
 
     typedef struct tSize {
         int x;
@@ -223,15 +261,10 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
         } widget;
     } sWidget, *pWidget;
 
-### Variables
+---
+## The \<widgets.c\> Source
 
-### Constants
-
-    MAX_CHILDREN    16
-    MAX_GRID_COLS   16
-    MAX_GRID_ROWS   16
-
-### Structs
+The \<widgets.c\> source contains all the functions including internal ones for use in the file
 
 ### Functions
 
@@ -269,18 +302,20 @@ The \<widgets.h\> header contains all the widgets that the user of this library 
 
     grid_set() enters the position of the widget supplied into it's parent's grid array. Sends a warning if
     it overwrites something (aka the element is not NULL)
+
 ---
 ## The \<input.h\> Header
 
 The \<input.h\> header file contains all the declarations for the functions and datatypes
 
-### Datatypes
+### Functions
 
-### Variables
+    void tui_handle_input();
 
-### Constants
+---
+## The \<input.c\> Source
 
-### Structs
+The \<input.c\> source file contains all the definitions for the functions and datatypes
 
 ### Functions
 
