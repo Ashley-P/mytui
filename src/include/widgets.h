@@ -19,6 +19,18 @@ enum eState {
     PRESS = 1 << 2
 };
 
+enum eAnchor {
+    NORTH = 1 << 0,
+    SOUTH = 1 << 1,
+    EAST  = 1 << 2,
+    WEST  = 1 << 3
+};
+
+typedef struct tText {
+    wchar_t *text;
+    size_t  len;
+    enum eAnchor anchor;
+} sText;
 
 /* sSize exists so I can return 2 variables from calculate_min_size() */
 typedef struct tSize {

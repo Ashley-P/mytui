@@ -228,7 +228,18 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         PRESS = 1 << 2
     };
 
+enum eAnchor {
+    NORTH = 1 << 0,
+    SOUTH = 1 << 1,
+    EAST  = 1 << 2,
+    WEST  = 1 << 3
+};
+
 ### Structs
+
+    typedef struct tText {
+        wchar_t *text;
+    } sText;
 
     typedef struct tSize {
         int x;
