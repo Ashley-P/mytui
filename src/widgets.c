@@ -72,8 +72,10 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     assign_to_parent(ptr, parent);
 
     // sButton setup
-    ptr->widget.button.text     = text;
-    ptr->widget.button.callback = callback;
+    ptr->widget.button.text.text   = text;
+    ptr->widget.button.text.len    = wcslen(text);
+    ptr->widget.button.text.anchor = C;
+    ptr->widget.button.callback    = callback;
 
     return ptr;
 }
@@ -157,7 +159,7 @@ void widget_sizer(sWidget *a) {
             }
             break;
         case BUTTON:
-            a->size.x = wcslen(a->widget.button.text);
+            a->size.x = a->widget.button.text.len;
             a->size.y = 1;
             break;
         default:
@@ -265,7 +267,7 @@ void widget_positioner(sWidget *a) {
     }
 }
 
-sSize add_sSize(sSize a, sSize b) {
+sSize add_sSize(const sSize a, const sSize b) {
     sSize s_return;
     s_return.x = a.x + b.x;
     s_return.y = a.y + b.y;
@@ -273,13 +275,12 @@ sSize add_sSize(sSize a, sSize b) {
 }
 
 // Used to return a sSize struct with the largest of each member
-sSize max_sSize(sSize a, sSize b) {
+sSize max_sSize(const sSize a, const sSize b) {
     sSize s_return;
     s_return.x = a.x > b.x ? a.x : b.x;
     s_return.y = a.y > b.y ? a.y : b.y;
     return s_return;
 }
-
 
 void grid_set(sWidget *widget, int col, int row) {
     /* This function sets the grid position in its parent */

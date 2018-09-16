@@ -4,7 +4,7 @@
 
 
 
-void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
+void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     /* Basic stuff just for getting highlighting buttons to work properly */
     /* TODO: refactor this */
     if (a == *old) {
@@ -18,7 +18,7 @@ void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
 
 }
 
-void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev) {
+void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     tui_err(TUI_OTHER, 0, "Widget State | Flags, 0x%x, 0x%x", ev->dwButtonState, ev->dwEventFlags);
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:

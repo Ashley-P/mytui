@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stddef.h>
 #include "draw.h"
 #include "tui.h"
 #include "utils.h"
@@ -51,9 +52,9 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
     }
 }
 
-void draw_str(const wchar_t *str, int x, int y) {
-    int str_len = wcslen(str);
-    for(int i = 0; i < str_len; i++) {
+void draw_str(const wchar_t *str, const size_t len, int x, int y) {
+    //int str_len = wcslen(str);
+    for(int i = 0; i < len; i++) {
         (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Char.UnicodeChar = *(str + i);
     }
 }
@@ -63,12 +64,14 @@ void draw_frame(int x, int y, const int width, const int height, const bool fill
 }
 
 
-void draw_button(sWidget *a) {
+void draw_button(const sWidget *a) {
+    /* TODO: Rewrite to work with anchoring */
     /* Offsetting for buttons that are larger than their text size */
-    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (wcslen(a->widget.button.text) / 2));
+    //int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (wcslen(a->widget.button.text) / 2));
+    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.button.text.len / 2));
     int y = a->pos.y + ((int) (a->size.y / 2));
 
-    draw_str(a->widget.button.text, x, y);
+    draw_str(a->widget.button.text.text, a->widget.button.text.len, x, y);
 
     switch (a->state) {
         case NONE:

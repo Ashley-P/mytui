@@ -106,7 +106,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 }
 
 
-void find_widget(sStack *stack, sWidget *a, int x, int y) {
+void find_widget(sStack *stack, sWidget *a, const int x, const int y) {
     stack_push(stack, a);
     switch (a->type) {
         case FRAME:

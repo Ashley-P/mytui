@@ -2,10 +2,19 @@
 #define WIDGETS_H_
 
 #include <stdio.h>
+#include <stddef.h>
 
+/* For the grid system */
 #define MAX_CHILDREN    16
 #define MAX_GRID_COLS   16
 #define MAX_GRID_ROWS   16
+
+/* For eAnchor */
+#define C CENTRE
+#define N NORTH
+#define S SOUTH
+#define E EAST
+#define W WEST
 
 
 enum eType {
@@ -20,10 +29,11 @@ enum eState {
 };
 
 enum eAnchor {
-    NORTH = 1 << 0,
-    SOUTH = 1 << 1,
-    EAST  = 1 << 2,
-    WEST  = 1 << 3
+    CENTRE = 0,
+    NORTH  = 1 << 0,
+    SOUTH  = 1 << 1,
+    EAST   = 1 << 2,
+    WEST   = 1 << 3
 };
 
 typedef struct tText {
@@ -47,7 +57,7 @@ typedef struct tFrame {
 } sFrame, *pFrame;
 
 typedef struct tButton {
-    wchar_t *text;
+    sText text;
     void (*callback)(); // Callback for the button
 } sButton, *pButton;
 
@@ -72,7 +82,7 @@ void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);
 void widget_positioner(sWidget *a);
-sSize add_sSize(sSize a, sSize b);
-void grid_set(sWidget *widget, int col, int row);
+sSize add_sSize(const sSize a, const sSize b);
+void grid_set(sWidget *widget, const int col, const int row);
 
 #endif

@@ -174,9 +174,9 @@ The \<draw.c\> source file contains all the function implementations
 
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
-    void draw_str(const wchar_t *str, const size_t str_len, int x, int y);
+    void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
     void draw_frame(int x, int y, const int x, const int y, const bool fill);
-    void draw_button(sWidget *a);
+    void draw_button(const sWidget *a);
 
 #### Description
     
@@ -206,8 +206,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a);
-    sSize add_sSize(sSize a, sSize b);
-    void grid_set(sWidget *widget, int col, int row);
+    sSize add_sSize(const sSize a, const sSize b);
+    void grid_set(sWidget *widget, const int col, const int row);
 
 ### Constants
 
@@ -215,6 +215,12 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     MAX_GRID_COLS   16
     MAX_GRID_ROWS   16
 
+    C CENTRE
+    N NORTH
+    S SOUTH
+    E EAST
+    W WEST
+    
 ### Enums
 
     enum eType {
@@ -228,12 +234,12 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         PRESS = 1 << 2
     };
 
-enum eAnchor {
-    NORTH = 1 << 0,
-    SOUTH = 1 << 1,
-    EAST  = 1 << 2,
-    WEST  = 1 << 3
-};
+    enum eAnchor {
+        NORTH = 1 << 0,
+        SOUTH = 1 << 1,
+        EAST  = 1 << 2,
+        WEST  = 1 << 3
+    };
 
 ### Structs
 
@@ -255,7 +261,7 @@ enum eAnchor {
     } sFrame, *pFrame;
 
     typedef struct tButton {
-        wchar_t *text;
+        sText text;
         void (*callback)();
     } sButton, *pButton;
 
@@ -281,13 +287,13 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
 #### Synopsis
     
-    sWidget * tui_frame(const sWidget *parent);
-    sWidget * tui_button(const sWidget *parent, wchar_t *text, void (*callback)());
+    sWidget * tui_frame(sWidget *parent);
+    sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a)
-    sSize add_sSize(sSize a, sSize b);
-    sSize max_sSize(sSize a, sSize b);
+    sSize add_sSize(const sSize a, const sSize b);
+    sSize max_sSize(const sSize a, const sSize b);
     void assign_to_parent(sWidget *child, sWidget *parent);
     void grid_set(sWidget *widget, int col, int row);
 
@@ -333,8 +339,8 @@ The \<input.c\> source file contains all the definitions for the functions and d
 #### Synopsis
 
     void tui_handle_input();
-    void frame_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
-    void button_mouse_event(sWidget *a, sWidget **old, MOUSE_EVENT_RECORD *ev);
+    void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
+    void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
 
 #### Description
 
