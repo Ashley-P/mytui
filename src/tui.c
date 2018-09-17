@@ -91,7 +91,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     // Threading setup for input handling
     h_inpthr = CreateThread(NULL,
                             0,
-                            inpthr_loop,
+                            (LPTHREAD_START_ROUTINE) inpthr_loop,
                             NULL,
                             0,
                             NULL);

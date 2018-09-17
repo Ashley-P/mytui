@@ -229,9 +229,10 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     };
 
     enum eState {
-        NONE  = 1 << 0,
-        HOVER = 1 << 1,
-        PRESS = 1 << 2
+        NONE     = 0,
+        DISABLED = 1 << 0,
+        HOVER    = 1 << 1,
+        PRESS    = 1 << 2
     };
 
     enum eAnchor {

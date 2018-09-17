@@ -36,4 +36,4 @@ clean:
 	del *.a
 
 cleanexe:
-	del ".\*.exe"
+	del ".\bin\*.exe"

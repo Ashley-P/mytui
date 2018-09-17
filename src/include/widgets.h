@@ -23,9 +23,10 @@ enum eType {
 };
 
 enum eState {
-    NONE  = 1 << 0,
-    HOVER = 1 << 1,
-    PRESS = 1 << 2
+    NONE     = 0,
+    DISABLED = 1 << 0,
+    HOVER    = 1 << 1,
+    PRESS    = 1 << 2
 };
 
 enum eAnchor {
@@ -42,7 +43,6 @@ typedef struct tText {
     enum eAnchor anchor;
 } sText;
 
-/* sSize exists so I can return 2 variables from calculate_min_size() */
 typedef struct tSize {
     int x;
     int y;
