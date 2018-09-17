@@ -246,6 +246,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     typedef struct tText {
         wchar_t *text;
+        size_t  len;
+        enum eAnchor anchor;
     } sText;
 
     typedef struct tSize {
@@ -267,8 +269,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     } sButton, *pButton;
 
     typedef struct tWidget {
-        enum eType type; 
-        enum eState state;
+        enum eType   type; 
+        enum eState  state;
+        enum eAnchor anchor
         sPos  pos;
         sPos  gridpos;
         sSize size;

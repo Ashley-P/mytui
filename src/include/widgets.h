@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include "const.h"
 
 /* For the grid system */
 #define MAX_CHILDREN    16
@@ -15,7 +16,6 @@
 #define S SOUTH
 #define E EAST
 #define W WEST
-
 
 enum eType {
     FRAME  = 1 << 0,
@@ -62,8 +62,9 @@ typedef struct tButton {
 } sButton, *pButton;
 
 typedef struct tWidget {
-    enum eType type; 
-    enum eState state;
+    enum eType   type; 
+    enum eState  state;
+    enum eAnchor anchor;
     sPos  pos;
     sPos  gridpos;
     sSize size;

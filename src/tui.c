@@ -5,6 +5,7 @@
 #include "draw.h"
 #include "widgets.h"
 #include "input.h"
+#include "const.h"
 
 
 // Variables : Everything is static because it shouldn't be used outside this file (could change)
@@ -19,7 +20,6 @@ int i_bufsize;                      // Size of *ci_screen in elements
 
 // Specially created root widget
 sWidget *w_root;
-
 
 // Needed for initialisation
 static COORD c_screensize;

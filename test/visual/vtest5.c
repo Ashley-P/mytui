@@ -21,6 +21,12 @@ int main() {
     pWidget but8 = tui_button(w_root, L"ROW SPAN 2", NULL);
 
 
+    /* Testing out anchoring */
+    but1->anchor = N;
+    but2->anchor = E;
+    but7->anchor = W;
+    but8->anchor = S;
+
     /* Setting the spans */
     but1->rowspan = 3;
     but2->colspan = 2;

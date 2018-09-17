@@ -71,6 +71,23 @@ void draw_button(const sWidget *a) {
     int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.button.text.len / 2));
     int y = a->pos.y + ((int) (a->size.y / 2));
 
+    switch (a->anchor) {
+        case NORTH:
+            y = a->pos.y;
+            break;
+        case SOUTH:
+            y = a->pos.y + a->size.y - 1;
+            break;
+        case EAST:
+            x = a->pos.x + a->size.x - a->widget.button.text.len;
+            break;
+        case WEST:
+            x = a->pos.x;
+            break;
+        default:
+            break;
+    }
+
     draw_str(a->widget.button.text.text, a->widget.button.text.len, x, y);
 
     switch (a->state) {

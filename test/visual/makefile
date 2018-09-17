@@ -9,3 +9,4 @@ all:
 	gcc -o ../../bin/vtest3 vtest3.c -L../.. -lmytui  $(CFLAGS)
 	gcc -o ../../bin/vtest4 vtest4.c -L../.. -lmytui  $(CFLAGS)
 	gcc -o ../../bin/vtest5 vtest5.c -L../.. -lmytui  $(CFLAGS)
+	gcc -o ../../bin/vtest6 vtest6.c -L../.. -lmytui  $(CFLAGS)
