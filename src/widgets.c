@@ -228,6 +228,20 @@ void widget_span_sizer(sWidget *a) {
     }
 }
 
+void widget_anchorer(sWidget *a, int *pcols, int *prows) {
+    int mask = 0b1111;
+    enum eAnchor anchor = a->anchor;
+    if (anchor == C) {
+        a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
+        a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
+    }
+    /*
+    if (anchor & N)
+    if ((N | S) == (anchor & (N | S)))
+    */
+
+}
+
 void widget_positioner(sWidget *a) {
     /*
      * Sets up realsize and pos structs in the widget recursively. Generally the top level widget of
@@ -263,6 +277,18 @@ void widget_positioner(sWidget *a) {
             a->pos = s_cursor;
             break;
         default:
+            break;
+    }
+
+    /* Calling anchorer here to prevent a bunch of recursion. Also skip w_root */
+    if (a == w_root)
+        return;
+
+    switch (a->parent->type) {
+        case FRAME:
+            widget_anchorer(a, a->parent->widget.frame.cols_size, a->parent->widget.frame.rows_size);
+            break;
+        case BUTTON: default:
             break;
     }
 }
