@@ -175,9 +175,12 @@ void tui_loop() {
     /* Even though calculate_min_size returns sSize, it's not used for the top level
      * frame because it comes preset.
      */
+    /*
     widget_sizer(w_root);
     widget_span_sizer(w_root);
     widget_positioner(w_root);
+    */
+    redraw_widgets(w_root);
 
     while(1) {
         tui_draw(w_root);

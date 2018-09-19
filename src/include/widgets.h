@@ -83,6 +83,7 @@ void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);
 void widget_positioner(sWidget *a);
+void redraw_widgets(sWidget *a);
 sSize add_sSize(const sSize a, const sSize b);
 void grid_set(sWidget *widget, const int col, const int row);
 

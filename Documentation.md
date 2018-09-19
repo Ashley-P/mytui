@@ -206,7 +206,6 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a);
-    void widget_anchorer(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
     void grid_set(sWidget *widget, const int col, const int row);
 
@@ -296,8 +295,9 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
-    void widget_positioner(sWidget *a)
     void widget_anchorer(sWidget *a);
+    void widget_positioner(sWidget *a)
+    void redraw_widgets(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
     sSize max_sSize(const sSize a, const sSize b);
     void assign_to_parent(sWidget *child, sWidget *parent);
@@ -314,9 +314,11 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     widget_span_sizer() goes through the tree similar to widget_sizer but checks the colspan and rowspan
     of widgets and correctly sizes them.
 
+    widget_anchorer() Refines the position and size of the widget according to it's anchor variable
+
     widget_positioner() sets the coords for each widget which tui_draw uses
     
-    widget_anchorer() Refines the position and size of the widget according to it's anchor variable
+    redraw_widgets() 
 
     add_sSize() adds to sSize structs together and returns the resulting struct
 

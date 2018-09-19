@@ -231,12 +231,15 @@ void widget_span_sizer(sWidget *a) {
 void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     int mask = 0b1111;
     enum eAnchor anchor = a->anchor;
-    if (anchor == C) {
-        a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
-        a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
-    }
+    /* Centres the widget */
+    a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
+    a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
+
+    if (anchor & N) a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2);
+    if (anchor & S) a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2);
+    if (anchor & E) a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
+    if (anchor & W) a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
     /*
-    if (anchor & N)
     if ((N | S) == (anchor & (N | S)))
     */
 
@@ -291,6 +294,12 @@ void widget_positioner(sWidget *a) {
         case BUTTON: default:
             break;
     }
+}
+
+void redraw_widgets(sWidget *a) {
+    widget_sizer(a);
+    widget_span_sizer(a);
+    widget_positioner(a);
 }
 
 sSize add_sSize(const sSize a, const sSize b) {
