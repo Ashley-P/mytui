@@ -229,20 +229,35 @@ void widget_span_sizer(sWidget *a) {
 }
 
 void widget_anchorer(sWidget *a, int *pcols, int *prows) {
-    int mask = 0b1111;
     enum eAnchor anchor = a->anchor;
     /* Centres the widget */
     a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
     a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
 
+    /* Questionable usage of goto */
+    /* Widget gets moved back up or left if either of these conditionals are true */
+    if ((N | S) == (anchor & (N | S))) {
+        a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2);
+        a->size.y = prows[a->gridpos.y];
+    }
+    if ((E | W) == (anchor & (E | W))) {
+        a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
+        a->size.x = pcols[a->gridpos.x];
+    }
+    if ((N | S | E | W) == (anchor & (N | S | E | W))) return;
+
+    if ((N | S) == (anchor & (N | S))) goto l2;
+    if ((E | W) == (anchor & (E | W))) goto l1;
+
+    l1:
     if (anchor & N) a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2);
     if (anchor & S) a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2);
+    if (anchor ^ (E | W)) goto l2;
+    return;
+    l2:
     if (anchor & E) a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
     if (anchor & W) a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
-    /*
-    if ((N | S) == (anchor & (N | S)))
-    */
-
+    return;
 }
 
 void widget_positioner(sWidget *a) {
