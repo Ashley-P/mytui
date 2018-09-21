@@ -71,7 +71,7 @@ void draw_button(const sWidget *a) {
     int y = a->pos.y + ((int) (a->size.y / 2));
 
     /* TODO: Update to work with diagonals e.g NE, SW) */
-    switch (a->anchor) {
+    switch (a->widget.button.text.anchor) {
         case NORTH:
             y = a->pos.y;
             break;

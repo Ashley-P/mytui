@@ -17,20 +17,19 @@ int main() {
     pWidget but4 = tui_button(w_root, rand_str(), NULL);
     pWidget but5 = tui_button(w_root, rand_str(), NULL);
     pWidget but6 = tui_button(w_root, rand_str(), NULL);
-    pWidget but7 = tui_button(w_root, L"COL SPAN 2", NULL);
+    pWidget but7 = tui_button(w_root, L"AAAAAAAAAAAAAAAAAAA", NULL);
     pWidget but8 = tui_button(w_root, L"ROW SPAN 2", NULL);
 
 
     /* Testing out anchoring */
-    but1->anchor = N;
+    but1->anchor = N | E | W;
     but2->anchor = E;
     but7->anchor = W;
-    but8->anchor = S;
+    but8->anchor = N | S | E | W;
 
     /* Setting the spans */
     but1->rowspan = 3;
     but2->colspan = 2;
-    but7->colspan = 4;
     but8->rowspan = 3;
 
     /* Wigdets to check */
