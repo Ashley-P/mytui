@@ -50,7 +50,7 @@ int main() {
     pWidget but11  = tui_button(frame2, L"nsw", nsw);
     pWidget but12  = tui_button(frame2, L"nsew", nsew);
     pWidget but13  = tui_button(frame2, L"nse", nse);
-    pWidget but14  = tui_button(frame2, L"sew", nsw);
+    pWidget but14  = tui_button(frame2, L"sew", sew);
 
 
     grid_set(test, 0, 0);
