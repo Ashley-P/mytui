@@ -59,8 +59,15 @@ void draw_str(const wchar_t *str, const size_t len, int x, int y) {
     }
 }
 
-void draw_frame(int x, int y, const int width, const int height, const bool fill, int colour) {
-    draw_box(x, y, width, height, fill, colour);
+void draw_frame(sWidget *a, const bool fill, int colour) {
+    switch (a->state) {
+        case DISABLED:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+            break;
+        default:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, fill, colour);
+            break;
+    }
 }
 
 
@@ -90,9 +97,24 @@ void draw_button(const sWidget *a) {
 
     draw_str(a->widget.button.text.text, a->widget.button.text.len, x, y);
 
+    /* Traversing up the tree to see if any parents have the DISABLED state */
+    sWidget *p = a->parent;
+    int isDisabled = 0;
+    while (p != NULL) {
+        if (p->state == DISABLED) {isDisabled = 1; return;}
+        else {p = p->parent;}
+    }
+    if (isDisabled) {
+        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+        return;
+    }
+
     switch (a->state) {
         case NONE:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
+            break;
+        case DISABLED:
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
             break;
         case HOVER:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x50);

@@ -160,7 +160,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
 ### Functions
 
     void reset_buf();
-    void draw_frame(int x, int y, const int x, const int y, const bool fill);
+    void draw_frame(sWidget *a, const bool fill, int colour);
     void draw_button(sWidget *a);
 
 ---
@@ -175,7 +175,7 @@ The \<draw.c\> source file contains all the function implementations
     void reset_buf();
     void draw_box(int x, int y, const int x, const int y, const bool fill);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
-    void draw_frame(int x, int y, const int x, const int y, const bool fill);
+    void draw_frame(sWidget *a, const bool fill, int colour);
     void draw_button(const sWidget *a);
 
 #### Description
@@ -188,8 +188,8 @@ The \<draw.c\> source file contains all the function implementations
 
     draw_str() Draws a string to the screen at the desired position.
 
-    draw_frame() Draws a freame to the screen at the desired location. Right now it just calls
-    draw_box().
+    draw_frame() Draws a frame to the screen at the desired location. Also reads the state
+    of the frame and changes the colour accordingly.
 
     draw_button() Draws a button to the screen at the desired position. Also reads the state
     of the button and changes the colour accordingly.

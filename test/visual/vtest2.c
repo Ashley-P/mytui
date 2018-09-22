@@ -5,6 +5,8 @@
 #include "tui.h"
 
 pWidget test;
+pWidget frame;
+pWidget frame2;
 
 void centre() {test->anchor = C;  redraw_widgets(w_root);}
 void north()  {test->anchor = N;  redraw_widgets(w_root);}
@@ -22,6 +24,16 @@ void sew()    {test->anchor = S | E | W; redraw_widgets(w_root);}
 void nsew()   {test->anchor = N | S | E | W; redraw_widgets(w_root);}
 
 void testanchor() {tui_err(TUI_OTHER, 0, "Anchor == %d", test->anchor);}
+void disable_wid() {
+    if (frame->state != DISABLED) {
+        frame->state = DISABLED;
+        frame2->state = DISABLED;
+    } else {
+        frame->state = NONE;
+        frame2->state = NONE;
+    }
+}
+        
 
 int main() {
     int n_screenwidth = 180;
@@ -33,8 +45,9 @@ int main() {
 
     /* This is to get the button to stretch because padding isn't implemented yet */
     pWidget other = tui_button(w_root, L"AAAAAAAAAAAAAA", NULL);
+    pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
-    pWidget frame = tui_frame(w_root);
+    frame = tui_frame(w_root);
     pWidget but1  = tui_button(frame, L" ", nw);
     pWidget but2  = tui_button(frame, L"^", north);
     pWidget but3  = tui_button(frame, L" ", ne);
@@ -45,16 +58,16 @@ int main() {
     pWidget but8  = tui_button(frame, L"V", south);
     pWidget but9  = tui_button(frame, L" ", se);
 
-    pWidget frame2 = tui_frame(w_root);
+    frame2 = tui_frame(w_root);
     pWidget but10  = tui_button(frame2, L"new", new);
     pWidget but11  = tui_button(frame2, L"nsw", nsw);
     pWidget but12  = tui_button(frame2, L"nsew", nsew);
     pWidget but13  = tui_button(frame2, L"nse", nse);
     pWidget but14  = tui_button(frame2, L"sew", sew);
 
-
     grid_set(test, 0, 0);
     grid_set(other, 0, 1);
+    grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
 

@@ -131,7 +131,7 @@ void tui_draw_helper(sWidget *a) {
     switch (a->type) {
         case FRAME:
             /* Just draw a box then iterate through children */
-            draw_frame(a->pos.x, a->pos.y, a->size.x, a->size.y, 0, 0x90);
+            draw_frame(a, 0, 0x90);
             sFrame *af = &a->widget.frame;
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int k = 0; k < MAX_GRID_ROWS; k++) {
