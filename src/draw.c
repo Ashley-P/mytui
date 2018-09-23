@@ -73,12 +73,11 @@ void draw_frame(sWidget *a, const bool fill, int colour) {
 
 void draw_button(const sWidget *a) {
     /* Offsetting for buttons that are larger than their text size */
-    //int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (wcslen(a->widget.button.text) / 2));
-    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.button.text.len / 2));
+    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.button.label.len / 2));
     int y = a->pos.y + ((int) (a->size.y / 2));
 
     /* TODO: Update to work with diagonals e.g NE, SW) */
-    switch (a->widget.button.text.anchor) {
+    switch (a->widget.button.label.anchor) {
         case NORTH:
             y = a->pos.y;
             break;
@@ -86,7 +85,7 @@ void draw_button(const sWidget *a) {
             y = a->pos.y + a->size.y - 1;
             break;
         case EAST:
-            x = a->pos.x + a->size.x - a->widget.button.text.len;
+            x = a->pos.x + a->size.x - a->widget.button.label.len;
             break;
         case WEST:
             x = a->pos.x;
@@ -95,7 +94,7 @@ void draw_button(const sWidget *a) {
             break;
     }
 
-    draw_str(a->widget.button.text.text, a->widget.button.text.len, x, y);
+    draw_str(a->widget.button.label.text, a->widget.button.label.len, x, y);
 
     /* Traversing up the tree to see if any parents have the DISABLED state */
     sWidget *p = a->parent;

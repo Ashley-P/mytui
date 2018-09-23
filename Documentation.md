@@ -244,11 +244,11 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
 ### Structs
 
-    typedef struct tText {
+    typedef struct tLabel {
         wchar_t *text;
         size_t  len;
         enum eAnchor anchor;
-    } sText;
+    } sLabel;
 
     typedef struct tSize {
         int x;
@@ -264,7 +264,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     } sFrame, *pFrame;
 
     typedef struct tButton {
-        sText text;
+        sLabel text;
         void (*callback)();
     } sButton, *pButton;
 

@@ -37,11 +37,11 @@ enum eAnchor {
     WEST   = 1 << 3
 };
 
-typedef struct tText {
+typedef struct tLabel {
     wchar_t *text;
     size_t  len;
     enum eAnchor anchor;
-} sText;
+} sLabel;
 
 typedef struct tSize {
     int x;
@@ -57,7 +57,7 @@ typedef struct tFrame {
 } sFrame, *pFrame;
 
 typedef struct tButton {
-    sText text;
+    sLabel label;
     void (*callback)(); // Callback for the button
 } sButton, *pButton;
 

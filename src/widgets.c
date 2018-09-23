@@ -72,9 +72,9 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     assign_to_parent(ptr, parent);
 
     // sButton setup
-    ptr->widget.button.text.text   = text;
-    ptr->widget.button.text.len    = wcslen(text);
-    ptr->widget.button.text.anchor = C;
+    ptr->widget.button.label.text   = text;
+    ptr->widget.button.label.len    = wcslen(text);
+    ptr->widget.button.label.anchor = C;
     ptr->widget.button.callback    = callback;
 
     return ptr;
@@ -159,7 +159,7 @@ void widget_sizer(sWidget *a) {
             }
             break;
         case BUTTON:
-            a->size.x = a->widget.button.text.len;
+            a->size.x = a->widget.button.label.len;
             a->size.y = 1;
             break;
         default:
