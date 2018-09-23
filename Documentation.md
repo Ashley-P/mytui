@@ -260,8 +260,10 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 ### Enums
 
     enum eType {
-        FRAME  = 1 << 0,
-        BUTTON = 1 << 1
+        FRAME    = 1,
+        BUTTON   = 1,
+        LABEL    = 1,
+        CHECKBOX = 1
     };
 
     enum eState {
@@ -280,16 +282,16 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
 ### Structs
 
+    typedef struct tSize {
+        int x;
+        int y;
+    } sSize, sPos;
+
     typedef struct tLabel {
         wchar_t *text;
         size_t  len;
         enum eAnchor anchor;
     } sLabel;
-
-    typedef struct tSize {
-        int x;
-        int y;
-    } sSize, sPos;
 
     typedef struct tFrame {
         int numch;
@@ -305,6 +307,11 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         void (*callback)();
     } sButton, *pButton;
 
+    typedef struct tCheckbox {
+        struct tLabel label;
+        unsigned char active;
+    } sCheckbox;
+
     typedef struct tWidget {
         enum eType   type; 
         enum eState  state;
@@ -314,9 +321,10 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         sSize size;
         struct tWidget *parent;
         union {
-            struct tButton button;
-            struct tFrame  frame;
-            struct tLabel  label;
+            struct tButton   button;
+            struct tFrame    frame;
+            struct tLabel    label;
+            struct tCheckbox cbox;
         } widget;
     } sWidget, *pWidget;
 

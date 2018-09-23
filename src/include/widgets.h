@@ -29,9 +29,10 @@
 
 /* Might not use bitwise operations on the widget types so just keeping them sequential */
 enum eType {
-    FRAME  = /*1 <<*/ 0,
-    BUTTON = /*1 <<*/ 1,
-    LABEL  = /*1 <<*/ 2
+    FRAME     = /*1 <<*/ 1,
+    BUTTON    = /*1 <<*/ 2,
+    LABEL     = /*1 <<*/ 3,
+    CHECKBOX  = /*1 <<*/ 4
 };
 
 enum eState {
@@ -49,16 +50,16 @@ enum eAnchor {
     WEST   = 1 << 3
 };
 
+typedef struct tSize {
+    int x;
+    int y;
+} sSize, sPos;  // Two names just for less confusion because the same struct is used for coords
+
 typedef struct tLabel {
     wchar_t *text;
     size_t  len;
     enum eAnchor anchor; /* This anchor is used when tLabel is used inside another widget */
 } sLabel;
-
-typedef struct tSize {
-    int x;
-    int y;
-} sSize, sPos;  // Two names just for less confusion because the same struct is used for coords
 
 typedef struct tFrame {
     int numch;
@@ -74,6 +75,11 @@ typedef struct tButton {
     void (*callback)(); // Callback for the button
 } sButton, *pButton;
 
+typedef struct tCheckbox {
+    struct tLabel label;
+    unsigned char active;
+} sCheckbox;
+
 typedef struct tWidget {
     enum eType   type; 
     enum eState  state;
@@ -85,9 +91,10 @@ typedef struct tWidget {
     int colspan;
     struct tWidget *parent;
     union {
-        struct tButton button;
-        struct tFrame  frame;
-        struct tLabel  label;
+        struct tButton   button;
+        struct tFrame    frame;
+        struct tLabel    label;
+        struct tCheckbox cbox;
     } widget;
 } sWidget, *pWidget;
 
