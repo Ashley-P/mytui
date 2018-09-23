@@ -5,6 +5,7 @@
 #include "tui.h"
 
 pWidget test;
+pWidget cbox;
 pWidget frame;
 pWidget frame2;
 
@@ -17,6 +18,8 @@ void ne()     {test->anchor = N | E; redraw_widgets(w_root);}
 void nw()     {test->anchor = N | W; redraw_widgets(w_root);}
 void se()     {test->anchor = S | E; redraw_widgets(w_root);}
 void sw()     {test->anchor = S | W; redraw_widgets(w_root);}
+void ns()     {test->anchor = N | S; redraw_widgets(w_root);}
+void ew()     {test->anchor = E | W; redraw_widgets(w_root);}
 void nse()    {test->anchor = N | S | E; redraw_widgets(w_root);}
 void nsw()    {test->anchor = N | S | W; redraw_widgets(w_root);}
 void new()    {test->anchor = N | E | W; redraw_widgets(w_root);}
@@ -28,9 +31,11 @@ void disable_wid() {
     if (frame->state != DISABLED) {
         frame->state = DISABLED;
         frame2->state = DISABLED;
+        cbox->state = DISABLED;
     } else {
         frame->state = NONE;
         frame2->state = NONE;
+        cbox->state = NONE;
     }
 }
         
@@ -44,8 +49,8 @@ int main() {
     test = tui_button(w_root, L"TEST", testanchor); 
 
     /* This is to get the button to stretch because padding isn't implemented yet */
-    pWidget label = tui_label(w_root, L"AAAAAAAAAAAAAA");
-    pWidget label2 = tui_label(w_root, L"Label");
+    pWidget label = tui_label(w_root, L"AAAAAAA\u25A0AAAAA");
+    cbox = tui_checkbox(w_root, L"Checkbox Test");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
     frame = tui_frame(w_root, L"");
@@ -66,9 +71,12 @@ int main() {
     pWidget but13  = tui_button(frame2, L"nse", nse);
     pWidget but14  = tui_button(frame2, L"sew", sew);
 
+    pWidget but15  = tui_button(frame2, L"ew", ew);
+    pWidget but16  = tui_button(frame2, L"ns", ns);
+
     grid_set(test, 0, 0);
     grid_set(label, 0, 1);
-    grid_set(label2, 0, 2);
+    grid_set(cbox, 0, 2);
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
@@ -89,8 +97,11 @@ int main() {
     grid_set(but13, 2, 1);
     grid_set(but14, 1, 2);
 
-    label2->anchor = C;
-    frame2->widget.frame.label.anchor = SW;
+    grid_set(but15, 0, 0);
+    grid_set(but16, 0, 2);
+
+    cbox->widget.cbox.label.anchor = W;
+    frame2->widget.frame.label.anchor = N;
 
     tui_loop();
 }

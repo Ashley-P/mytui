@@ -59,14 +59,14 @@ void draw_str(const wchar_t *str, const size_t len, int x, int y) {
     }
 }
 
-void draw_frame(sWidget *a, const bool fill, int colour) {
+void draw_frame(sWidget *a, const bool fill) {
     /* Drawing the frame border */
     switch (a->state) {
         case DISABLED:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
             break;
         default:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, fill, colour);
+            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, fill, 0x90);
             break;
     }
     
@@ -166,4 +166,37 @@ void draw_button(const sWidget *a) {
 
 void draw_label(const sWidget *a) {
     draw_str(a->widget.label.text, a->widget.label.len, a->pos.x, a->pos.y);
+}
+
+void draw_checkbox(const sWidget *a) {
+    switch (a->widget.cbox.label.anchor) {
+        case E:
+            if (a->state == HOVER || a->state == PRESS) {
+                draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0x80);
+            } else {
+                draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0xF0);
+            }
+            /* drawing checkbox */
+            if (a->widget.cbox.active)
+                draw_str(L"\u25A0", 1, a->pos.x, a->pos.y);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->pos.x + 2), a->pos.y);
+            break;
+        case W:
+            if (a->state == HOVER || a->state == PRESS) {
+                draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0x80);
+            } else {
+                draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0xF0);
+            }
+            /* drawing checkbox */
+            if (a->widget.cbox.active)
+                draw_str(L"\u25A0", 1, (a->pos.x + a->widget.cbox.label.len + 1), a->pos.y);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->pos.x, a->pos.y);
+            break;
+        default:
+            tui_err(TUI_ERROR, 0, "Error in draw_checkbox(): a->widget.checkbox.label.anchor is incorrect");
+            break;
+    }
+
+    if (a->state == DISABLED)
+        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
 }

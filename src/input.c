@@ -61,6 +61,47 @@ void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev)
     }
 }
 
+void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    /* Not doing anything if the widget is disabled */
+    sWidget *p = a->parent;
+    int isDisabled = 0;
+    while (p != NULL) {
+        if (p->state == DISABLED) {isDisabled = 1; return;}
+        else {p = p->parent;}
+    }
+    if (a->state == DISABLED || isDisabled) return;
+
+    switch (ev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            /* If the state hasn't been changed since last time do nothing */
+            if (a->state == PRESS) {
+                break;
+            }
+
+            a->state = PRESS;
+            a->widget.cbox.active = !a->widget.cbox.active;
+            *old = a;
+            break;
+        case 0:
+            /* TODO: refactor this */
+            if (ev->dwEventFlags == 0)
+                a->state = HOVER;
+
+            if (a == *old) {
+                return;
+            } else {
+                /* for the first activation because you can't dereference a null pointer */
+                if (*old)
+                    (*old)->state = NONE;
+                a->state = HOVER;
+                *old = a;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void tui_handle_input() {
     static sWidget *old_wid = NULL; 
     unsigned long ul_evread;
@@ -92,8 +133,9 @@ void tui_handle_input() {
                 free(wid_search);
                 /* Cases get handled in their own function to make the code more readable */
                 switch(wid->type) {
-                    case FRAME:  frame_mouse_event(wid, &old_wid, ev);  break;
-                    case BUTTON: button_mouse_event(wid, &old_wid, ev); break;
+                    case FRAME:    frame_mouse_event(wid, &old_wid, ev);  break;
+                    case BUTTON:   button_mouse_event(wid, &old_wid, ev); break;
+                    case CHECKBOX: cbox_mouse_event(wid, &old_wid, ev);   break;
                     case LABEL: break;
 
                     default: break;

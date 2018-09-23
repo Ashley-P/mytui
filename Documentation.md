@@ -181,9 +181,10 @@ The \<draw.h\> header file contains all the function declarations that are expos
 ### Functions
 
     void reset_buf();
-    void draw_frame(sWidget *a, const bool fill, int colour);
-    void draw_button(sWidget *a);
-    void draw_label(sWidget *a);
+    void draw_frame(const sWidget *a, const bool fill);
+    void draw_button(const sWidget *a);
+    void draw_label(const sWidget *a);
+    void draw_checkbox(const sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -195,11 +196,12 @@ The \<draw.c\> source file contains all the function implementations
 #### Synopsis
 
     void reset_buf();
-    void draw_box(int x, int y, const int x, const int y, const bool fill);
+    void draw_box(int x, int y, const int width, const int height, const bool fill, int colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
-    void draw_frame(sWidget *a, const bool fill, int colour);
+    void draw_frame(sWidget *a, const bool fill);
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
+    void draw_checkbox(const sWidget *a);
 
 #### Description
     
@@ -219,6 +221,9 @@ The \<draw.c\> source file contains all the function implementations
 
     draw_label() Draws a label to the screen at the desired position.
 
+    draw_checkbox() Draws a checkbox widget to the screen at the desired position. Anchoring of
+    the label decides whether the label is on the left or right.
+
 ---
 ## The \<widgets.h\> Header
 
@@ -229,6 +234,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sWidget * tui_frame(sWidget *parent, wchar_t *text);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
+    sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a);
@@ -340,6 +346,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sWidget * tui_frame(sWidget *parent, wchar_t *text);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
+    sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_anchorer(sWidget *a);
@@ -357,6 +364,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_button() creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
     tui_label() creates an sWidget struct with the internal type of LABEL and returns a pointer to it.
+
+    tui_checkbox() creates an sWidget struct with the internal type of CHECKBOX and returns a pointer to it.
 
     widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 
@@ -400,12 +409,15 @@ The \<input.c\> source file contains all the definitions for the functions and d
     void tui_handle_input();
     void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
+    void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
 
 #### Description
 
     tui_handle_input() handles all the events for the program.
 
-    frame_mouse_event() handles the mouse events when the widget is a frame.
+    frame_mouse_event() handles the mouse events when the widget is of type FRAME.
 
-    button_mouse_event() handles the mouse events when the widget is a button.
+    button_mouse_event() handles the mouse events when the widget is of type BUTTON.
+
+    cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
 --- 

@@ -15,6 +15,8 @@
 #define NE   N | E
 #define SW   S | W
 #define SE   S | E
+#define NS   N | S
+#define EW   E | W
 #define NSE  N | S | E
 #define NSW  N | S | W
 #define SEW  S | E | W
@@ -101,6 +103,7 @@ typedef struct tWidget {
 sWidget * tui_frame(sWidget *parent, wchar_t *text);
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 sWidget * tui_label(sWidget *parent, wchar_t *text);
+sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
 void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);

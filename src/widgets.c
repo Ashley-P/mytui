@@ -28,6 +28,9 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
         case LABEL:
             tui_err(TUI_ERROR, 1, "Wrong type for parent: type is LABEL");
             break;
+        case CHECKBOX:
+            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is CHECKBOX");
+            break;
         default:
             break;
     }
@@ -40,6 +43,7 @@ sWidget * init_sWidget(sWidget *parent) {
     ptr->state   = NONE;
     ptr->rowspan = 0;
     ptr->colspan = 0;
+    ptr->anchor  = C;
     assign_to_parent(ptr, parent);
 
     return ptr;
@@ -97,6 +101,18 @@ sWidget * tui_label(sWidget *parent, wchar_t *text) {
     ptr->widget.label.text   = text;
     ptr->widget.label.len    = wcslen(text);
     ptr->widget.label.anchor = C;
+
+    return ptr;
+}
+
+sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type     = CHECKBOX;
+    
+    ptr->widget.cbox.label.text   = text;
+    ptr->widget.cbox.label.len    = wcslen(text);
+    ptr->widget.cbox.label.anchor = W;
+    ptr->widget.cbox.active       = 0;
 
     return ptr;
 }
@@ -184,9 +200,12 @@ void widget_sizer(sWidget *a) {
             a->size.y = 1;
             break;
         case LABEL:
-            a->size.x = a->widget.button.label.len;
+            a->size.x = a->widget.label.len;
             a->size.y = 1;
             break;
+        case CHECKBOX:
+            a->size.x = a->widget.cbox.label.len + 2;
+            a->size.y = 1;
         default:
             break;
     }
@@ -248,7 +267,7 @@ void widget_span_sizer(sWidget *a) {
                 }
             }
             break;
-        case BUTTON: case LABEL: default:
+        case BUTTON: case LABEL: case CHECKBOX: default:
             break;
     }
 }
@@ -324,7 +343,7 @@ void widget_positioner(sWidget *a) {
             }
             s_cursor = s_topleft2;
             break;
-        case BUTTON: case LABEL:
+        case BUTTON: case LABEL: case CHECKBOX:
             a->pos = s_cursor;
             break;
         default:
@@ -339,7 +358,7 @@ void widget_positioner(sWidget *a) {
         case FRAME:
             widget_anchorer(a, a->parent->widget.frame.cols_size, a->parent->widget.frame.rows_size);
             break;
-        case BUTTON: case LABEL: default:
+        case BUTTON: case LABEL: case CHECKBOX: default:
             break;
     }
 }
@@ -387,7 +406,7 @@ void grid_set(sWidget *widget, int col, int row) {
             widget->gridpos.x = col;
             widget->gridpos.y = row;
             break;
-        case BUTTON: case LABEL: default:
+        case BUTTON: case LABEL: case CHECKBOX: default:
             break;
 
     }
