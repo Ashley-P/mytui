@@ -17,9 +17,11 @@
 #define E EAST
 #define W WEST
 
+/* Might not use bitwise operations on the widget types so just keeping them sequential */
 enum eType {
-    FRAME  = 1 << 0,
-    BUTTON = 1 << 1
+    FRAME  = /*1 <<*/ 0,
+    BUTTON = /*1 <<*/ 1,
+    LABEL  = /*1 <<*/ 2
 };
 
 enum eState {
@@ -40,7 +42,7 @@ enum eAnchor {
 typedef struct tLabel {
     wchar_t *text;
     size_t  len;
-    enum eAnchor anchor;
+    enum eAnchor anchor; /* This anchor is used when tLabel is used inside another widget */
 } sLabel;
 
 typedef struct tSize {
@@ -74,11 +76,13 @@ typedef struct tWidget {
     union {
         struct tButton button;
         struct tFrame  frame;
+        struct tLabel  label;
     } widget;
 } sWidget, *pWidget;
 
 sWidget * tui_frame(sWidget *parent);
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
+sWidget * tui_label(sWidget *parent, wchar_t *text);
 void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);

@@ -44,7 +44,8 @@ int main() {
     test = tui_button(w_root, L"TEST", testanchor); 
 
     /* This is to get the button to stretch because padding isn't implemented yet */
-    pWidget other = tui_button(w_root, L"AAAAAAAAAAAAAA", NULL);
+    pWidget label = tui_label(w_root, L"AAAAAAAAAAAAAA");
+    pWidget label2 = tui_label(w_root, L"Label");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
     frame = tui_frame(w_root);
@@ -66,7 +67,8 @@ int main() {
     pWidget but14  = tui_button(frame2, L"sew", sew);
 
     grid_set(test, 0, 0);
-    grid_set(other, 0, 1);
+    grid_set(label, 0, 1);
+    grid_set(label2, 0, 2);
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
@@ -86,6 +88,8 @@ int main() {
     grid_set(but12, 1, 1);
     grid_set(but13, 2, 1);
     grid_set(but14, 1, 2);
+
+    label2->anchor = C;
 
     tui_loop();
 }

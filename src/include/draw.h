@@ -9,5 +9,6 @@
 void reset_buf();
 void draw_frame(sWidget *a, const bool fill, int colour);
 void draw_button(const sWidget *a);
+void draw_label(const sWidget *a);
 
 #endif

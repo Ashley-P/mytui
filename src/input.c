@@ -94,6 +94,7 @@ void tui_handle_input() {
                 switch(wid->type) {
                     case FRAME:  frame_mouse_event(wid, &old_wid, ev);  break;
                     case BUTTON: button_mouse_event(wid, &old_wid, ev); break;
+                    case LABEL: break;
 
                     default: break;
                 }

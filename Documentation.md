@@ -9,11 +9,36 @@ mytui is an effort by the author to create a text based user interface using the
 There isn't one yet
 
 ---
+## The \<const.h\> Header
+
+The \<const.h\> header file contains all the declarations for the functions and datatypes
+
+### Variables
+
+
+    extern int sn_screenwidth;
+    extern int sn_screenheight;
+    extern int i_bufsize;
+    extern HANDLE h_stdin;
+    extern CHAR_INFO **tui_current_screen;
+
+    extern struct tWidget *w_root;
+--
 ## The \<tui.h\> Header
 
 The \<tui.h\> header file contains all the declarations for the functions and datatypes
 
-### Datatypes
+### Functions
+
+    int tui_init(const int n_screenwidth, const int n_screenheight);
+    void find_widget(sStack *stack, sWidget *a, const int x, const int y);
+    void inpthr_loop();
+    void tui_loop();
+
+---
+## The \<tui.c\> Header
+
+The \<tui.c\> header file contains all the declarations for the functions and datatypes
 
 ### Variables
 
@@ -45,7 +70,7 @@ The variables here are for internal use by the library
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void find_widget(sStack *stack, sWidget *a, int x, int y);
     void tui_draw(sWidget *a);
-    void tui_draw__(sWidget *a);
+    void tui_draw_helper(sWidget *a);
     void inpthr_loop();
     void tui_loop();
     
@@ -66,7 +91,7 @@ The variables here are for internal use by the library
 
     tui_draw() is where all the drawing to the buffer is handled.
 
-    tui_draw__() is a helper for tui_draw. It's purpose is to be called recursively
+    tui_draw_helper() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
 
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input.
@@ -162,6 +187,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
     void reset_buf();
     void draw_frame(sWidget *a, const bool fill, int colour);
     void draw_button(sWidget *a);
+    void draw_label(sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -177,6 +203,7 @@ The \<draw.c\> source file contains all the function implementations
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
     void draw_frame(sWidget *a, const bool fill, int colour);
     void draw_button(const sWidget *a);
+    void draw_label(const sWidget *a);
 
 #### Description
     
@@ -194,6 +221,8 @@ The \<draw.c\> source file contains all the function implementations
     draw_button() Draws a button to the screen at the desired position. Also reads the state
     of the button and changes the colour accordingly.
 
+    draw_label() Draws a label to the screen at the desired position.
+
 ---
 ## The \<widgets.h\> Header
 
@@ -203,6 +232,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     sWidget * tui_frame(sWidget *parent);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
+    sWidget * tui_label(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a);
@@ -279,6 +309,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         union {
             struct tButton button;
             struct tFrame  frame;
+            struct tLabel  label;
         } widget;
     } sWidget, *pWidget;
 
@@ -293,6 +324,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     
     sWidget * tui_frame(sWidget *parent);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
+    sWidget * tui_label(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_anchorer(sWidget *a);
@@ -308,6 +340,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_frame() creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
     tui_button() creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
+
+    tui_label() creates an sWidget struct with the internal type of LABEL and returns a pointer to it.
 
     widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 

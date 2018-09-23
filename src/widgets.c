@@ -23,7 +23,10 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
             parent->widget.frame.numch += 1;
             break;
         case BUTTON:
-            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is Button");
+            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is BUTTON");
+            break;
+        case LABEL:
+            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is LABEL");
             break;
         default:
             break;
@@ -32,14 +35,20 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
 
 }
 
-sWidget * tui_frame(sWidget *parent) {
-    // sWidget setup
+sWidget * init_sWidget(sWidget *parent) {
     sWidget *ptr = (sWidget *)calloc(1, sizeof(sWidget));
-    ptr->type    = FRAME;
     ptr->state   = NONE;
     ptr->rowspan = 0;
     ptr->colspan = 0;
     assign_to_parent(ptr, parent);
+
+    return ptr;
+}
+
+sWidget * tui_frame(sWidget *parent) {
+    // sWidget setup
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type    = FRAME;
 
     // sFrame setup which just makes sure each element in both arrays are set to null
     ptr->widget.frame.numch = 0;
@@ -63,19 +72,27 @@ void tui_root_frame() {
 }
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
-    // sWidget setup
-    sWidget *ptr = (sWidget *)calloc(1, sizeof(sWidget));
+    /* sWidget setup */
+    sWidget *ptr = init_sWidget(parent);
     ptr->type    = BUTTON;
-    ptr->state   = NONE;
-    ptr->rowspan = 0;
-    ptr->colspan = 0;
-    assign_to_parent(ptr, parent);
 
     // sButton setup
     ptr->widget.button.label.text   = text;
     ptr->widget.button.label.len    = wcslen(text);
     ptr->widget.button.label.anchor = C;
     ptr->widget.button.callback    = callback;
+
+    return ptr;
+}
+
+sWidget * tui_label(sWidget *parent, wchar_t *text) {
+    /* sWidget setup */
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type    = LABEL;
+
+    ptr->widget.label.text   = text;
+    ptr->widget.label.len    = wcslen(text);
+    ptr->widget.label.anchor = C;
 
     return ptr;
 }
@@ -162,6 +179,10 @@ void widget_sizer(sWidget *a) {
             a->size.x = a->widget.button.label.len;
             a->size.y = 1;
             break;
+        case LABEL:
+            a->size.x = a->widget.button.label.len;
+            a->size.y = 1;
+            break;
         default:
             break;
     }
@@ -223,7 +244,7 @@ void widget_span_sizer(sWidget *a) {
                 }
             }
             break;
-        case BUTTON: default:
+        case BUTTON: case LABEL: default:
             break;
     }
 }
@@ -299,7 +320,7 @@ void widget_positioner(sWidget *a) {
             }
             s_cursor = s_topleft2;
             break;
-        case BUTTON:
+        case BUTTON: case LABEL:
             a->pos = s_cursor;
             break;
         default:
@@ -314,7 +335,7 @@ void widget_positioner(sWidget *a) {
         case FRAME:
             widget_anchorer(a, a->parent->widget.frame.cols_size, a->parent->widget.frame.rows_size);
             break;
-        case BUTTON: default:
+        case BUTTON: case LABEL: default:
             break;
     }
 }
@@ -362,7 +383,7 @@ void grid_set(sWidget *widget, int col, int row) {
             widget->gridpos.x = col;
             widget->gridpos.y = row;
             break;
-        case BUTTON: default:
+        case BUTTON: case LABEL: default:
             break;
 
     }

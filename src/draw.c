@@ -125,3 +125,7 @@ void draw_button(const sWidget *a) {
             break;
     }
 }
+
+void draw_label(const sWidget *a) {
+    draw_str(a->widget.label.text, a->widget.label.len, a->pos.x, a->pos.y);
+}

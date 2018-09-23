@@ -144,6 +144,9 @@ void tui_draw_helper(sWidget *a) {
             /* Just draw a string and change background for now */
             draw_button(a);
             break;
+        case LABEL:
+            draw_label(a);
+            break;
         default:
             break;
     }
