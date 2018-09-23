@@ -48,7 +48,7 @@ int main() {
     pWidget label2 = tui_label(w_root, L"Label");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
-    frame = tui_frame(w_root);
+    frame = tui_frame(w_root, L"");
     pWidget but1  = tui_button(frame, L" ", nw);
     pWidget but2  = tui_button(frame, L"^", north);
     pWidget but3  = tui_button(frame, L" ", ne);
@@ -59,7 +59,7 @@ int main() {
     pWidget but8  = tui_button(frame, L"V", south);
     pWidget but9  = tui_button(frame, L" ", se);
 
-    frame2 = tui_frame(w_root);
+    frame2 = tui_frame(w_root, L"Controls");
     pWidget but10  = tui_button(frame2, L"new", new);
     pWidget but11  = tui_button(frame2, L"nsw", nsw);
     pWidget but12  = tui_button(frame2, L"nsew", nsew);
@@ -90,6 +90,7 @@ int main() {
     grid_set(but14, 1, 2);
 
     label2->anchor = C;
+    frame2->widget.frame.label.anchor = SW;
 
     tui_loop();
 }

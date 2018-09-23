@@ -45,14 +45,18 @@ sWidget * init_sWidget(sWidget *parent) {
     return ptr;
 }
 
-sWidget * tui_frame(sWidget *parent) {
+sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     // sWidget setup
     sWidget *ptr = init_sWidget(parent);
     ptr->type    = FRAME;
 
-    // sFrame setup which just makes sure each element in both arrays are set to null
-    ptr->widget.frame.numch = 0;
+    // sFrame setup
+    ptr->widget.frame.numch        = 0;
+    ptr->widget.frame.label.text   = text;
+    ptr->widget.frame.label.len    = wcslen(text);
+    ptr->widget.frame.label.anchor = N | W;
 
+    /* Making sure each element is set to null in both arrays */
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.frame.children[i] = NULL;
 
@@ -66,7 +70,7 @@ sWidget * tui_frame(sWidget *parent) {
 }
 
 void tui_root_frame() {
-    w_root = tui_frame(NULL);
+    w_root = tui_frame(NULL, L"");
     w_root->size.x = sn_screenwidth;
     w_root->size.y = sn_screenheight;
 }

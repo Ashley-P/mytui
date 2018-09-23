@@ -57,10 +57,6 @@ The variables here are for internal use by the library
     SMALL_RECT sr_screensize        initialises the window size
 
 
-### Constants
-
-### Structs
-
 ### Functions
 
 #### Synopsis
@@ -121,7 +117,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
 
 The \<utils.c\> source file contains declarations for some utility functions such as error handling
 
-### Constants
+### Constants/Defines
     
     TUI_ERROR   1
     TUI_WARNING 2
@@ -230,7 +226,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
 ### Functions
 
-    sWidget * tui_frame(sWidget *parent);
+    sWidget * tui_frame(sWidget *parent, wchar_t *text);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);
@@ -239,11 +235,21 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sSize add_sSize(const sSize a, const sSize b);
     void grid_set(sWidget *widget, const int col, const int row);
 
-### Constants
+### Constants/Defines
 
     MAX_CHILDREN    16
     MAX_GRID_COLS   16
     MAX_GRID_ROWS   16
+
+    NW   N | W
+    NE   N | E
+    SW   S | W
+    SE   S | E
+    NSE  N | S | E
+    NSW  N | S | W
+    SEW  S | E | W
+    NEW  N | E | W
+    NSEW N | S | E | W
 
     C CENTRE
     N NORTH
@@ -287,6 +293,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     typedef struct tFrame {
         int numch;
+        struct tLabel label;
         struct tWidget *children[MAX_CHILDREN];
         struct tWidget *grid[MAX_GRID_x][MAX_GRID_y];
         int *cols_size[MAX_GRID_COLS];
@@ -294,7 +301,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     } sFrame, *pFrame;
 
     typedef struct tButton {
-        sLabel text;
+        struct tLabel label;
         void (*callback)();
     } sButton, *pButton;
 
@@ -322,7 +329,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
 #### Synopsis
     
-    sWidget * tui_frame(sWidget *parent);
+    sWidget * tui_frame(sWidget *parent, wchar_t *text);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     void widget_sizer(sWidget *a);

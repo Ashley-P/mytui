@@ -60,6 +60,7 @@ void draw_str(const wchar_t *str, const size_t len, int x, int y) {
 }
 
 void draw_frame(sWidget *a, const bool fill, int colour) {
+    /* Drawing the frame border */
     switch (a->state) {
         case DISABLED:
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
@@ -68,6 +69,43 @@ void draw_frame(sWidget *a, const bool fill, int colour) {
             draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, fill, colour);
             break;
     }
+    
+    /* Drawing the text */
+    /* Return if no text */
+    if (!wcscmp(L"", a->widget.frame.label.text)) return;
+
+    int strx; int stry;
+    int x = a->widget.frame.label.anchor;
+    switch (x) {
+        case N:
+            strx = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.frame.label.len / 2));
+            stry = a->pos.y;
+            break;
+        case S:
+            strx = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.frame.label.len / 2));
+            stry = a->pos.y + a->size.y - 1;
+            break;
+        case N | E:
+            strx = a->pos.x + a->size.x - a->widget.frame.label.len - 1;
+            stry = a->pos.y;
+            break;
+        case N | W:
+            strx = a->pos.x + 1;
+            stry = a->pos.y;
+            break;
+        case S | E:
+            strx = a->pos.x + a->size.x - a->widget.frame.label.len - 1;
+            stry = a->pos.y + a->size.y - 1;
+            break;
+        case S | W:
+            strx = a->pos.x + 1;
+            stry = a->pos.y + a->size.y - 1;
+            break;
+        case E: case W: case N|S|E: case N|S|W: case S|E|W: case N|E|W: case N|S|E|W: default:
+            /* Just skip drawing the text */
+            return;
+    }
+    draw_str(a->widget.frame.label.text, a->widget.frame.label.len, strx, stry);
 }
 
 

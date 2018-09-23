@@ -11,6 +11,16 @@
 #define MAX_GRID_ROWS   16
 
 /* For eAnchor */
+#define NW   N | W
+#define NE   N | E
+#define SW   S | W
+#define SE   S | E
+#define NSE  N | S | E
+#define NSW  N | S | W
+#define SEW  S | E | W
+#define NEW  N | E | W
+#define NSEW N | S | E | W
+
 #define C CENTRE
 #define N NORTH
 #define S SOUTH
@@ -52,6 +62,7 @@ typedef struct tSize {
 
 typedef struct tFrame {
     int numch;
+    struct tLabel label;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
     int cols_size[MAX_GRID_COLS];
@@ -59,7 +70,7 @@ typedef struct tFrame {
 } sFrame, *pFrame;
 
 typedef struct tButton {
-    sLabel label;
+    struct tLabel label;
     void (*callback)(); // Callback for the button
 } sButton, *pButton;
 
@@ -80,7 +91,7 @@ typedef struct tWidget {
     } widget;
 } sWidget, *pWidget;
 
-sWidget * tui_frame(sWidget *parent);
+sWidget * tui_frame(sWidget *parent, wchar_t *text);
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 sWidget * tui_label(sWidget *parent, wchar_t *text);
 void tui_root_frame();
