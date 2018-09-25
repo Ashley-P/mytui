@@ -62,7 +62,6 @@ The variables here are for internal use by the library
 #### Synopsis
 
     int init_tui(const int n_screenwidth, const int n_screenheight);
-    void tui_root_frame();
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void find_widget(sStack *stack, sWidget *a, int x, int y);
     void tui_draw(sWidget *a);
@@ -77,9 +76,6 @@ The variables here are for internal use by the library
     is redirected to an output file and an array is created to fit the desired
     screen size. Then the screen buffer is linked to the console and the screen
     size is changed.
-
-    tui_root_frame() creates a special root frame and widget struct for all the
-    user created widgets to be a child to.
 
     alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
 
@@ -235,10 +231,13 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+    void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_positioner(sWidget *a);
+    void redraw_widgets(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
+    void checkbox_add(sWidget *a, sWidget *b);
     void grid_set(sWidget *widget, const int col, const int row);
 
 ### Constants/Defines
@@ -267,9 +266,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     enum eType {
         FRAME    = 1,
-        BUTTON   = 1,
-        LABEL    = 1,
-        CHECKBOX = 1
+        BUTTON   = 2,
+        LABEL    = 3,
+        CHECKBOX = 4
     };
 
     enum eState {
@@ -315,6 +314,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     typedef struct tCheckbox {
         struct tLabel label;
+        struct tWidget *children[MAX_CHILDREN];
+        struct tWidget *parent;
         unsigned char active;
     } sCheckbox;
 
@@ -343,10 +344,12 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
 #### Synopsis
     
+    void assign_to_parent(sWidget *child, sWidget *parent);
     sWidget * tui_frame(sWidget *parent, wchar_t *text);
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+    void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_anchorer(sWidget *a);
@@ -354,10 +357,13 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     void redraw_widgets(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
     sSize max_sSize(const sSize a, const sSize b);
-    void assign_to_parent(sWidget *child, sWidget *parent);
+    void checkbox_add(sWidget *a, sWidget *b);
     void grid_set(sWidget *widget, int col, int row);
 
 #### Description
+
+    assign_to_parent() assigns the first argument (the child) to the second arguments child list. It has a check to
+    see if the second widget is of the correct type.
 
     tui_frame() creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
 
@@ -366,6 +372,9 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_label() creates an sWidget struct with the internal type of LABEL and returns a pointer to it.
 
     tui_checkbox() creates an sWidget struct with the internal type of CHECKBOX and returns a pointer to it.
+
+    tui_root_frame() creates a special root frame and widget struct for all the
+    user created widgets to be a child to.
 
     widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 
@@ -376,14 +385,14 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
     widget_positioner() sets the coords for each widget which tui_draw uses
     
-    redraw_widgets() 
+    redraw_widgets() Calls widget_sizer(), widget_span_sizer() and widget_positioner() in order.
 
     add_sSize() adds to sSize structs together and returns the resulting struct
 
     max_sSize() compares two sSize structs and returns a struct with the largest of each variables
     
-    assign_to_parent() assigns the first argument (the child) to the second arguments child list. It has a check to
-    see if the second widget is of the correct type.
+    checkbox_add() adds the second checkbox to the first ones children array and sets the first checkbox
+    as the second checkbox's parent.
 
     grid_set() enters the position of the widget supplied into it's parent's grid array. Sends a warning if
     it overwrites something (aka the element is not NULL)
@@ -406,18 +415,33 @@ The \<input.c\> source file contains all the definitions for the functions and d
 
 #### Synopsis
 
-    void tui_handle_input();
+    void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    int check_disable(sWidget *a);
+    void cbox_set_active(sWidget *a, int active);
+    void cbox_check_parent_active(sWidget *a) {
     void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    void tui_handle_input();
 
 #### Description
 
-    tui_handle_input() handles all the events for the program.
+    mouse_hover() exists for some code reuse in the *_mouse_event functions.
+
+    check_disable() is for some code reuse to propagate the effects of the DISABLED
+    state without actually applying it to the widget.
+
+    cbox_set_active() traverses the tree of checkboxes and sets them all to
+    the same active variable.
+
+    cbox_check_parent_active() goes up the tree from the child and checks if the
+    parent active type needs to be set.
 
     frame_mouse_event() handles the mouse events when the widget is of type FRAME.
 
     button_mouse_event() handles the mouse events when the widget is of type BUTTON.
 
     cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
+
+    tui_handle_input() handles all the events for the program.
 --- 

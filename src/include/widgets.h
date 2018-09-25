@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include "const.h"
 
 /* For the grid system */
@@ -64,7 +65,7 @@ typedef struct tLabel {
 } sLabel;
 
 typedef struct tFrame {
-    int numch;
+    int numch;          /* TODO: Rename this to size_t len */
     struct tLabel label;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];
@@ -79,6 +80,9 @@ typedef struct tButton {
 
 typedef struct tCheckbox {
     struct tLabel label;
+    struct tWidget *children[MAX_CHILDREN];
+    struct tWidget *parent;
+    size_t len;
     unsigned char active;
 } sCheckbox;
 
@@ -110,6 +114,7 @@ void widget_span_sizer(sWidget *a);
 void widget_positioner(sWidget *a);
 void redraw_widgets(sWidget *a);
 sSize add_sSize(const sSize a, const sSize b);
+void checkbox_add(sWidget *a, sWidget *b);
 void grid_set(sWidget *widget, const int col, const int row);
 
 #endif

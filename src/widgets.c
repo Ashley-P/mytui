@@ -23,13 +23,13 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
             parent->widget.frame.numch += 1;
             break;
         case BUTTON:
-            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is BUTTON");
+            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is BUTTON");
             break;
         case LABEL:
-            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is LABEL");
+            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is LABEL");
             break;
         case CHECKBOX:
-            tui_err(TUI_ERROR, 1, "Wrong type for parent: type is CHECKBOX");
+            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is CHECKBOX");
             break;
         default:
             break;
@@ -88,7 +88,7 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->widget.button.label.text   = text;
     ptr->widget.button.label.len    = wcslen(text);
     ptr->widget.button.label.anchor = C;
-    ptr->widget.button.callback    = callback;
+    ptr->widget.button.callback     = callback;
 
     return ptr;
 }
@@ -107,12 +107,16 @@ sWidget * tui_label(sWidget *parent, wchar_t *text) {
 
 sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
     sWidget *ptr = init_sWidget(parent);
-    ptr->type     = CHECKBOX;
+    ptr->type    = CHECKBOX;
     
     ptr->widget.cbox.label.text   = text;
     ptr->widget.cbox.label.len    = wcslen(text);
     ptr->widget.cbox.label.anchor = W;
     ptr->widget.cbox.active       = 0;
+    ptr->widget.cbox.len          = 0;
+
+    for(int i = 0; i < MAX_CHILDREN; i++)
+        ptr->widget.cbox.children[i] = NULL;
 
     return ptr;
 }
@@ -384,16 +388,38 @@ sSize max_sSize(const sSize a, const sSize b) {
     return s_return;
 }
 
+void checkbox_add(sWidget *a, sWidget *b) {
+    if (a->type != CHECKBOX || a->type != CHECKBOX) {
+        tui_err(TUI_WARNING, 0, "Error in function checkbox_add. Wrong widget type: Expected CHECKBOX");
+        return;
+    }
+
+    if (a->widget.cbox.len == MAX_CHILDREN) {
+        tui_err(TUI_WARNING, 0, "Error in function checkbox_add. Too many children");
+    }
+
+    a->widget.cbox.children[a->widget.cbox.len++] = b;
+    b->widget.cbox.parent = a;
+}
+
 void grid_set(sWidget *widget, int col, int row) {
     /* This function sets the grid position in its parent */
     /* Make sure there is a warning if a grid position gets overwritten */
     /* Basic checking for arguments */
 
     if (col >= MAX_GRID_COLS || col < 0) {
-       tui_err(TUI_ERROR, 1, "Error incorrect col value; Expected 0 < col < %d - Got %d", MAX_GRID_COLS, col);
+       tui_err(TUI_ERROR,
+               1,
+               "Error in function grid_set. Error incorrect col value; Expected 0 < col < %d - Got %d",
+               MAX_GRID_COLS,
+               col);
     }
     if (row >= MAX_GRID_ROWS || row < 0) {
-       tui_err(TUI_ERROR, 1, "Error incorrect row value; Expected 0 < row < %d - Got %d", MAX_GRID_ROWS, row);
+       tui_err(TUI_ERROR,
+               1,
+               "Error in function grid_set. Error incorrect row value; Expected 0 < row < %d - Got %d",
+               MAX_GRID_ROWS,
+               row);
     }
 
     /* Actually assigning the widget to the grid */
@@ -401,7 +427,9 @@ void grid_set(sWidget *widget, int col, int row) {
     switch(widget->parent->type) {
         case FRAME:
             if (widget->parent->widget.frame.grid[col][row])
-                tui_err(TUI_WARNING, 0, "Grid position is already taken, overwritten anyway");
+                tui_err(TUI_WARNING,
+                        0,
+                        "Error in function grid_set. Grid position is already taken, overwritten anyway");
             widget->parent->widget.frame.grid[col][row] = widget;
             widget->gridpos.x = col;
             widget->gridpos.y = row;

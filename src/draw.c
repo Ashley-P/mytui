@@ -21,7 +21,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + height > sn_screenheight) {
-        tui_err(TUI_WARNING, 0, "draw_box: parameters too large");
+        tui_err(TUI_WARNING, 0, "Error in function draw_box: {arameters too large");
         return;
     }
 
@@ -171,29 +171,35 @@ void draw_label(const sWidget *a) {
 void draw_checkbox(const sWidget *a) {
     switch (a->widget.cbox.label.anchor) {
         case E:
-            if (a->state == HOVER || a->state == PRESS) {
+            if (a->state == HOVER || a->state == PRESS)
                 draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0x80);
-            } else {
+            else
                 draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0xF0);
-            }
+
             /* drawing checkbox */
-            if (a->widget.cbox.active)
+            if (a->widget.cbox.active == 1)
                 draw_str(L"\u25A0", 1, a->pos.x, a->pos.y);
+            else if (a->widget.cbox.active == 2)
+                draw_str(L"~", 1, a->pos.x, a->pos.y);
             draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->pos.x + 2), a->pos.y);
             break;
         case W:
-            if (a->state == HOVER || a->state == PRESS) {
+            if (a->state == HOVER || a->state == PRESS)
                 draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0x80);
-            } else {
+            else
                 draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0xF0);
-            }
+
             /* drawing checkbox */
-            if (a->widget.cbox.active)
+            if (a->widget.cbox.active == 1)
                 draw_str(L"\u25A0", 1, (a->pos.x + a->widget.cbox.label.len + 1), a->pos.y);
+            else if (a->widget.cbox.active == 2)
+                draw_str(L"~", 1, (a->pos.x + a->widget.cbox.label.len + 1), a->pos.y);
             draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->pos.x, a->pos.y);
             break;
         default:
-            tui_err(TUI_ERROR, 0, "Error in draw_checkbox(): a->widget.checkbox.label.anchor is incorrect");
+            tui_err(TUI_ERROR,
+                    0,
+                    "Error in function draw_checkbox: a->widget.checkbox.label.anchor is incorrect");
             break;
     }
 

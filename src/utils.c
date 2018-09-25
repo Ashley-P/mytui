@@ -129,7 +129,7 @@ int is_stack_empty(sStack *stack) {
 void stack_push(sStack *stack, sWidget *a) {
     int temp = is_stack_full(stack);
     if (temp) {
-        tui_err(TUI_WARNING, 0, "Stack Full");
+        tui_err(TUI_WARNING, 0, "Error in function stack_push. Stack Full");
         return;
     }
     stack->arr[++stack->top] = a;
@@ -137,7 +137,7 @@ void stack_push(sStack *stack, sWidget *a) {
 
 sWidget * stack_pop(sStack *stack) {
     if (is_stack_empty(stack)) {
-        tui_err(TUI_WARNING, 0, "Stack Empty");
+        tui_err(TUI_WARNING, 0, "Error in function stack_pop. Stack Empty");
         return (sWidget *) -1;
     }
     return stack->arr[stack->top--];

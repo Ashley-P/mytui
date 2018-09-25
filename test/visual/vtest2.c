@@ -5,7 +5,6 @@
 #include "tui.h"
 
 pWidget test;
-pWidget cbox;
 pWidget frame;
 pWidget frame2;
 
@@ -31,11 +30,9 @@ void disable_wid() {
     if (frame->state != DISABLED) {
         frame->state = DISABLED;
         frame2->state = DISABLED;
-        cbox->state = DISABLED;
     } else {
         frame->state = NONE;
         frame2->state = NONE;
-        cbox->state = NONE;
     }
 }
         
@@ -49,9 +46,16 @@ int main() {
     test = tui_button(w_root, L"TEST", testanchor); 
 
     /* This is to get the button to stretch because padding isn't implemented yet */
-    pWidget label = tui_label(w_root, L"AAAAAAA\u25A0AAAAA");
-    cbox = tui_checkbox(w_root, L"Checkbox Test");
+    pWidget label = tui_label(w_root, L"AAAAAAAAAAAAA");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
+
+    pWidget cbox1 = tui_checkbox(w_root, L"Checkbox Test");
+    pWidget cbox2 = tui_checkbox(w_root, L"Parent 1");
+    pWidget cbox3 = tui_checkbox(w_root, L"Child 1");
+    pWidget cbox4 = tui_checkbox(w_root, L"Child 2");
+    pWidget cbox5 = tui_checkbox(w_root, L"Parent 2");
+    pWidget cbox6 = tui_checkbox(w_root, L"Child 1");
+    pWidget cbox7 = tui_checkbox(w_root, L"Child 2");
 
     frame = tui_frame(w_root, L"");
     pWidget but1  = tui_button(frame, L" ", nw);
@@ -76,10 +80,17 @@ int main() {
 
     grid_set(test, 0, 0);
     grid_set(label, 0, 1);
-    grid_set(cbox, 0, 2);
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
+
+    grid_set(cbox1, 0, 2);
+    grid_set(cbox2, 0, 3);
+    grid_set(cbox3, 0, 4);
+    grid_set(cbox4, 0, 5);
+    grid_set(cbox5, 0, 6);
+    grid_set(cbox6, 0, 7);
+    grid_set(cbox7, 0, 8);
 
     grid_set(but1, 0, 0);
     grid_set(but2, 1, 0);
@@ -100,8 +111,20 @@ int main() {
     grid_set(but15, 0, 0);
     grid_set(but16, 0, 2);
 
-    cbox->widget.cbox.label.anchor = W;
     frame2->widget.frame.label.anchor = N;
+
+    /* Testing out checkboxes */
+    checkbox_add(cbox1, cbox2);
+    checkbox_add(cbox1, cbox5);
+
+    checkbox_add(cbox2, cbox3);
+    checkbox_add(cbox2, cbox4);
+
+    checkbox_add(cbox5, cbox6);
+    checkbox_add(cbox5, cbox7);
+
+    cbox2->anchor = W; 
+    cbox5->anchor = W; 
 
     tui_loop();
 }

@@ -29,7 +29,7 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
         CHAR_INFO *ptr = (CHAR_INFO *)calloc(n_screenwidth * n_screenheight, sizeof(CHAR_INFO));
 
     if (ptr == NULL)
-        tui_err(TUI_ERROR, 1, "Calloc failed to allocate memory");
+        tui_err(TUI_ERROR, 1, "Error in alloc_ci_array. Calloc failed to allocate memory");
 
     i_bufsize = n_screenwidth * n_screenheight;
 
