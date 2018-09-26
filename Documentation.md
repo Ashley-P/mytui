@@ -265,10 +265,11 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 ### Enums
 
     enum eType {
-        FRAME    = 1,
-        BUTTON   = 2,
-        LABEL    = 3,
-        CHECKBOX = 4
+        FRAME       = 1,
+        BUTTON      = 2,
+        LABEL       = 3,
+        CHECKBOX    = 4,
+        RADIOBUTTON = 5
     };
 
     enum eState {
@@ -319,6 +320,16 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         unsigned char active;
     } sCheckbox;
 
+    typedef struct tRadiobutton {
+        struct tLabel label;
+        unsigned char active;
+    } sRadiobutton;
+
+    typedef struct tRadiobutton {
+        struct tRadiobuttonNode *children[MAX_CHILDREN];
+        size_t len;
+    } sRadiobuttonNode;
+
     typedef struct tWidget {
         enum eType   type; 
         enum eState  state;
@@ -328,10 +339,11 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         sSize size;
         struct tWidget *parent;
         union {
-            struct tButton   button;
-            struct tFrame    frame;
-            struct tLabel    label;
-            struct tCheckbox cbox;
+            struct tButton      button;
+            struct tFrame       frame;
+            struct tLabel       label;
+            struct tCheckbox    cbox;
+            struct tRadiobutton rbutton;
         } widget;
     } sWidget, *pWidget;
 

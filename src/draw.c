@@ -5,6 +5,13 @@
 #include "utils.h"
 
 
+/* 
+ * Unicode chars
+ * \u25A0 == Black Square
+ * \u25CB == White Circle
+ * \u25CF == Black Circle
+ */
+
 void reset_buf() {
     for(int i = 0; i < i_bufsize; i++) {
         (*tui_current_screen + i)->Char.UnicodeChar = L' ';

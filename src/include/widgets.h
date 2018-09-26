@@ -86,6 +86,16 @@ typedef struct tCheckbox {
     unsigned char active;
 } sCheckbox;
 
+typedef struct tRadiobuttonNode {
+    struct tLabel label;
+    unsigned char active;
+} sRadiobuttonNode;
+
+typedef struct tRadiobutton {
+    struct tRadiobuttonNode *children[MAX_CHILDREN];
+    size_t len;
+} sRadiobutton;
+
 typedef struct tWidget {
     enum eType   type; 
     enum eState  state;
@@ -97,10 +107,11 @@ typedef struct tWidget {
     int colspan;
     struct tWidget *parent;
     union {
-        struct tButton   button;
-        struct tFrame    frame;
-        struct tLabel    label;
-        struct tCheckbox cbox;
+        struct tButton      button;
+        struct tFrame       frame;
+        struct tLabel       label;
+        struct tCheckbox    cbox;
+        struct tRadiobutton rbutton;
     } widget;
 } sWidget, *pWidget;
 
