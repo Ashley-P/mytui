@@ -123,6 +123,8 @@ int main() {
 
     frame2->widget.frame.label.anchor = N;
 
+    frame->anchor = W;
+
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);
     checkbox_add(cbox1, cbox5);

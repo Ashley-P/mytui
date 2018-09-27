@@ -377,7 +377,7 @@ void widget_positioner(sWidget *a) {
         case FRAME:
             widget_anchorer(a, a->parent->widget.frame.cols_size, a->parent->widget.frame.rows_size);
             break;
-        case BUTTON: case LABEL: case CHECKBOX: default:
+        default:
             break;
     }
 }

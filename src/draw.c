@@ -237,7 +237,7 @@ void draw_radiobutton(const sWidget *a) {
         default:
             tui_err(TUI_ERROR,
                     0,
-                    "Error in function draw_checkbox: a->widget.radiobutton.label.anchor is incorrect");
+                    "Error in function draw_radiobutton: a->widget.radiobutton.label.anchor is incorrect");
             break;
     }
 
