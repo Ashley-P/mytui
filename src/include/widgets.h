@@ -32,10 +32,11 @@
 
 /* Might not use bitwise operations on the widget types so just keeping them sequential */
 enum eType {
-    FRAME     = /*1 <<*/ 1,
-    BUTTON    = /*1 <<*/ 2,
-    LABEL     = /*1 <<*/ 3,
-    CHECKBOX  = /*1 <<*/ 4
+    FRAME        = /*1 <<*/ 1,
+    BUTTON       = /*1 <<*/ 2,
+    LABEL        = /*1 <<*/ 3,
+    CHECKBOX     = /*1 <<*/ 4,
+    RADIOBUTTON  = /*1 <<*/ 5
 };
 
 enum eState {
@@ -86,14 +87,15 @@ typedef struct tCheckbox {
     unsigned char active;
 } sCheckbox;
 
-typedef struct tRadiobuttonNode {
-    struct tLabel label;
+typedef struct tRadiobuttonLink {
+    struct tRadiobutton *children[MAX_CHILDREN];
+    size_t len;
     unsigned char active;
-} sRadiobuttonNode;
+} sRadiobuttonLink;
 
 typedef struct tRadiobutton {
-    struct tRadiobuttonNode *children[MAX_CHILDREN];
-    size_t len;
+    struct tLabel label;
+    unsigned char active;
 } sRadiobutton;
 
 typedef struct tWidget {
@@ -119,6 +121,7 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text);
 sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 sWidget * tui_label(sWidget *parent, wchar_t *text);
 sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
 void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);

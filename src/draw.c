@@ -213,3 +213,34 @@ void draw_checkbox(const sWidget *a) {
     if (a->state == DISABLED)
         draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
 }
+
+void draw_radiobutton(const sWidget *a) {
+    switch (a->widget.rbutton.label.anchor) {
+        case E:
+            /* Drawing the label */
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, (a->pos.x + 2), a->pos.y);
+            /* Drawing the dot */
+            if (a->widget.rbutton.active == 0)
+                draw_str(L"\u25CB", 1, a->pos.x, a->pos.y);
+            else if (a->widget.rbutton.active == 1)
+                draw_str(L"\u25CF", 1, a->pos.x, a->pos.y);
+            break;
+        case W:
+            /* Drawing the label */
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, a->pos.x, a->pos.y);
+            /* Drawing the dot */
+            if (a->widget.rbutton.active == 0)
+                draw_str(L"\u25CB", 1, (a->pos.x + a->widget.rbutton.label.len + 1), a->pos.y);
+            else if (a->widget.rbutton.active == 1)
+                draw_str(L"\u25CF", 1, (a->pos.x + a->widget.rbutton.label.len + 1), a->pos.y);
+            break;
+        default:
+            tui_err(TUI_ERROR,
+                    0,
+                    "Error in function draw_checkbox: a->widget.radiobutton.label.anchor is incorrect");
+            break;
+    }
+
+    if (a->state == DISABLED)
+        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+}

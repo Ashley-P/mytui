@@ -181,6 +181,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
     void draw_checkbox(const sWidget *a);
+    void draw_radiobutton(const sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -198,6 +199,7 @@ The \<draw.c\> source file contains all the function implementations
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
     void draw_checkbox(const sWidget *a);
+    void draw_radiobutton(const sWidget *a);
 
 #### Description
     
@@ -218,6 +220,9 @@ The \<draw.c\> source file contains all the function implementations
     draw_label() Draws a label to the screen at the desired position.
 
     draw_checkbox() Draws a checkbox widget to the screen at the desired position. Anchoring of
+    the label decides whether the label is on the left or right.
+
+    draw_radiobutton() Draws a radiobutton widget to the screen at the desired position. Anchoring of
     the label decides whether the label is on the left or right.
 
 ---
@@ -320,15 +325,16 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         unsigned char active;
     } sCheckbox;
 
+    typedef struct tRadiobuttonLink {
+        struct tRadiobuttonNode *children[MAX_CHILDREN];
+        size_t len;
+        unsigned char active;
+    } sRadiobuttonLink;
+
     typedef struct tRadiobutton {
         struct tLabel label;
         unsigned char active;
     } sRadiobutton;
-
-    typedef struct tRadiobutton {
-        struct tRadiobuttonNode *children[MAX_CHILDREN];
-        size_t len;
-    } sRadiobuttonNode;
 
     typedef struct tWidget {
         enum eType   type; 
@@ -361,6 +367,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+    sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
@@ -384,6 +391,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_label() creates an sWidget struct with the internal type of LABEL and returns a pointer to it.
 
     tui_checkbox() creates an sWidget struct with the internal type of CHECKBOX and returns a pointer to it.
+
+    tui_radiobutton() creates an sWidget struct with the internal type of RADIOBUTTON and returns a pointer to it.
 
     tui_root_frame() creates a special root frame and widget struct for all the
     user created widgets to be a child to.

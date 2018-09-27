@@ -11,5 +11,6 @@ void draw_frame(sWidget *a, const bool fill);
 void draw_button(const sWidget *a);
 void draw_label(const sWidget *a);
 void draw_checkbox(const sWidget *a);
+void draw_radiobutton(const sWidget *a);
 
 #endif

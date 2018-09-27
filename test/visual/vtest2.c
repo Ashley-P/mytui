@@ -49,6 +49,11 @@ int main() {
     pWidget label = tui_label(w_root, L"AAAAAAAAAAAAA");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
+    pWidget rbut1 = tui_radiobutton(w_root, L"Radio Button 1");
+    pWidget rbut2 = tui_radiobutton(w_root, L"Radio Button 2");
+    pWidget rbut3 = tui_radiobutton(w_root, L"Radio Button 3");
+    pWidget rbut4 = tui_radiobutton(w_root, L"Radio Button 4");
+
     pWidget cbox1 = tui_checkbox(w_root, L"Checkbox Test");
     pWidget cbox2 = tui_checkbox(w_root, L"Parent 1");
     pWidget cbox3 = tui_checkbox(w_root, L"Child 1");
@@ -83,6 +88,11 @@ int main() {
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
+
+    grid_set(rbut1, 1, 2);
+    grid_set(rbut2, 1, 3);
+    grid_set(rbut3, 1, 4);
+    grid_set(rbut4, 1, 5);
 
     grid_set(cbox1, 0, 2);
     grid_set(cbox2, 0, 3);
@@ -125,6 +135,13 @@ int main() {
 
     cbox2->anchor = W; 
     cbox5->anchor = W; 
+
+    rbut1->widget.rbutton.label.anchor = W;
+    rbut2->widget.rbutton.label.anchor = W;
+    rbut3->widget.rbutton.label.anchor = W;
+    rbut4->widget.rbutton.label.anchor = W;
+
+    rbut4->widget.rbutton.active = 1;
 
     tui_loop();
 }

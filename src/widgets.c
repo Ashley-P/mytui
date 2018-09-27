@@ -121,6 +121,18 @@ sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
     return ptr;
 }
 
+sWidget * tui_radiobutton(sWidget *parent, wchar_t *text) {
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type    = RADIOBUTTON;
+
+    ptr->widget.rbutton.label.text   = text;
+    ptr->widget.rbutton.label.len    = wcslen(text);
+    ptr->widget.rbutton.label.anchor = W;
+    ptr->widget.rbutton.active       = 0;
+
+    return ptr;
+}
+
 void widget_sizer(sWidget *a) {
     /* Margins, paddings, borders and other things that can change size are computed here */
     /* TODO: Refactor this, I could probably redo this without a trillion loops */
@@ -210,6 +222,9 @@ void widget_sizer(sWidget *a) {
         case CHECKBOX:
             a->size.x = a->widget.cbox.label.len + 2;
             a->size.y = 1;
+        case RADIOBUTTON:
+            a->size.x = a->widget.rbutton.label.len + 2;
+            a->size.y = 1;
         default:
             break;
     }
@@ -271,7 +286,7 @@ void widget_span_sizer(sWidget *a) {
                 }
             }
             break;
-        case BUTTON: case LABEL: case CHECKBOX: default:
+        default:
             break;
     }
 }
@@ -347,7 +362,7 @@ void widget_positioner(sWidget *a) {
             }
             s_cursor = s_topleft2;
             break;
-        case BUTTON: case LABEL: case CHECKBOX:
+        case BUTTON: case LABEL: case CHECKBOX: case RADIOBUTTON:
             a->pos = s_cursor;
             break;
         default:
@@ -434,7 +449,7 @@ void grid_set(sWidget *widget, int col, int row) {
             widget->gridpos.x = col;
             widget->gridpos.y = row;
             break;
-        case BUTTON: case LABEL: case CHECKBOX: default:
+        default:
             break;
 
     }

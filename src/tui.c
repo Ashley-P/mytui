@@ -140,18 +140,11 @@ void tui_draw_helper(sWidget *a) {
                 }
             }
             break;
-        case BUTTON:
-            /* Just draw a string and change background for now */
-            draw_button(a);
-            break;
-        case LABEL:
-            draw_label(a);
-            break;
-        case CHECKBOX:
-            draw_checkbox(a);
-            break;
-        default:
-            break;
+        case BUTTON:      draw_button(a);      break;
+        case LABEL:       draw_label(a);       break;
+        case CHECKBOX:    draw_checkbox(a);    break;
+        case RADIOBUTTON: draw_radiobutton(a); break;
+        default: break;
     }
 }
 
