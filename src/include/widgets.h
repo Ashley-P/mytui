@@ -90,12 +90,14 @@ typedef struct tCheckbox {
 typedef struct tRadiobuttonLink {
     struct tRadiobutton *children[MAX_CHILDREN];
     size_t len;
-    unsigned char active;
-} sRadiobuttonLink;
+    unsigned char active; /* Active is the position of the active widget in the array */
+    struct tRadiobutton *old;
+} sRadiobuttonLink, *pRadiobuttonLink;
 
 typedef struct tRadiobutton {
     struct tLabel label;
     unsigned char active;
+    struct tRadiobuttonLink *parent;
 } sRadiobutton;
 
 typedef struct tWidget {
@@ -122,6 +124,7 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 sWidget * tui_label(sWidget *parent, wchar_t *text);
 sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
 sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
+sRadiobuttonLink * tui_radiobutton_link();
 void tui_root_frame();
 void widget_sizer(sWidget *a);
 void widget_span_sizer(sWidget *a);
@@ -129,6 +132,7 @@ void widget_positioner(sWidget *a);
 void redraw_widgets(sWidget *a);
 sSize add_sSize(const sSize a, const sSize b);
 void checkbox_add(sWidget *a, sWidget *b);
+void radiobutton_link(sRadiobuttonLink *link, int count, ...); 
 void grid_set(sWidget *widget, const int col, const int row);
 
 #endif

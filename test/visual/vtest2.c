@@ -8,6 +8,8 @@ pWidget test;
 pWidget frame;
 pWidget frame2;
 
+pRadiobuttonLink link;
+
 void centre() {test->anchor = C;  redraw_widgets(w_root);}
 void north()  {test->anchor = N;  redraw_widgets(w_root);}
 void south()  {test->anchor = S;  redraw_widgets(w_root);}
@@ -25,7 +27,8 @@ void new()    {test->anchor = N | E | W; redraw_widgets(w_root);}
 void sew()    {test->anchor = S | E | W; redraw_widgets(w_root);}
 void nsew()   {test->anchor = N | S | E | W; redraw_widgets(w_root);}
 
-void testanchor() {tui_err(TUI_OTHER, 0, "Anchor == %d", test->anchor);}
+void testrbutton() {tui_err(TUI_OTHER, 0, "Radiobutton pressed = %d", link->active);}
+
 void disable_wid() {
     if (frame->state != DISABLED) {
         frame->state = DISABLED;
@@ -43,16 +46,20 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
 
-    test = tui_button(w_root, L"TEST", testanchor); 
+    test = tui_button(w_root, L"TEST", testrbutton); 
 
     /* This is to get the button to stretch because padding isn't implemented yet */
     pWidget label = tui_label(w_root, L"AAAAAAAAAAAAA");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
+    link = tui_radiobutton_link();
+
     pWidget rbut1 = tui_radiobutton(w_root, L"Radio Button 1");
     pWidget rbut2 = tui_radiobutton(w_root, L"Radio Button 2");
     pWidget rbut3 = tui_radiobutton(w_root, L"Radio Button 3");
     pWidget rbut4 = tui_radiobutton(w_root, L"Radio Button 4");
+
+    radiobutton_link(link, 4, rbut1, rbut2, rbut3, rbut4);
 
     pWidget cbox1 = tui_checkbox(w_root, L"Checkbox Test");
     pWidget cbox2 = tui_checkbox(w_root, L"Parent 1");
@@ -142,8 +149,6 @@ int main() {
     rbut2->widget.rbutton.label.anchor = W;
     rbut3->widget.rbutton.label.anchor = W;
     rbut4->widget.rbutton.label.anchor = W;
-
-    rbut4->widget.rbutton.active = 1;
 
     tui_loop();
 }

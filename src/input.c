@@ -25,13 +25,6 @@ int check_disable(sWidget *a) {
     return 0;
 }
 
-void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    /* Basic stuff just for getting highlighting buttons to work properly */
-    if (a->state == DISABLED || check_disable(a)) return;
-    mouse_hover(a, old, ev);
-
-}
-
 void cbox_set_active(sWidget *a, int active) {
     /* Travelling down the tree */
     for (int i = 0; i < a->widget.cbox.len; i++) cbox_set_active(a->widget.cbox.children[i], active);
@@ -80,6 +73,13 @@ void cbox_check_parent_active(sWidget *a) {
     if ((on == 1 && off == 1) || mid == 1) parent->active = 2; 
 
     cbox_check_parent_active(a->widget.cbox.parent);
+}
+
+void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    /* Basic stuff just for getting highlighting buttons to work properly */
+    if (a->state == DISABLED || check_disable(a)) return;
+    mouse_hover(a, old, ev);
+
 }
 
 void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
@@ -133,6 +133,39 @@ void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     }
 }
 
+void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    /* Not doing anything if the widget is disabled */
+    if (a->state == DISABLED || check_disable(a)) return;
+
+    switch (ev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            /* If the state hasn't been changed since last time do nothing */
+            if (a->state == PRESS) {
+                break;
+            }
+
+            sRadiobuttonLink *p = a->widget.rbutton.parent;
+
+            if (a->widget.rbutton.active == 0) {
+                a->widget.rbutton.active = 1;
+                for (int i = 0; i < p->len; i++) {
+                    if (&a->widget.rbutton == p->children[i]) {
+                        p->active = i;
+                        break;
+                    }
+                }
+                if (p->old) p->old->active = 0;
+                p->old = &a->widget.rbutton;
+            }
+            break;
+        case 0:
+            mouse_hover(a, old, ev);
+            break;
+        default:
+            break;
+    }
+}
+
 void tui_handle_input() {
     static sWidget *old_wid = NULL; 
     unsigned long ul_evread;
@@ -164,9 +197,10 @@ void tui_handle_input() {
                 free(wid_search);
                 /* Cases get handled in their own function to make the code more readable */
                 switch(wid->type) {
-                    case FRAME:    frame_mouse_event(wid, &old_wid, ev);  break;
-                    case BUTTON:   button_mouse_event(wid, &old_wid, ev); break;
-                    case CHECKBOX: cbox_mouse_event(wid, &old_wid, ev);   break;
+                    case FRAME:       frame_mouse_event(wid, &old_wid, ev);   break;
+                    case BUTTON:      button_mouse_event(wid, &old_wid, ev);  break;
+                    case CHECKBOX:    cbox_mouse_event(wid, &old_wid, ev);    break;
+                    case RADIOBUTTON: rbutton_mouse_event(wid, &old_wid, ev); break;
                     case LABEL: break;
 
                     default: break;

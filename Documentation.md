@@ -236,6 +236,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+    sRadiobuttonLink * tui_radiobutton_link();
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
@@ -243,6 +244,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     void redraw_widgets(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
     void checkbox_add(sWidget *a, sWidget *b);
+    void radiobutton_link(sRadiobuttonLink *link, int count, ...); 
     void grid_set(sWidget *widget, const int col, const int row);
 
 ### Constants/Defines
@@ -329,6 +331,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         struct tRadiobuttonNode *children[MAX_CHILDREN];
         size_t len;
         unsigned char active;
+        sRadiobutton *old;
     } sRadiobuttonLink;
 
     typedef struct tRadiobutton {
@@ -368,6 +371,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
+    sRadiobuttonLink * tui_radiobutton_link();
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
@@ -377,6 +381,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sSize add_sSize(const sSize a, const sSize b);
     sSize max_sSize(const sSize a, const sSize b);
     void checkbox_add(sWidget *a, sWidget *b);
+    void radiobutton_link(sRadiobuttonLink *link, int count, ...); 
     void grid_set(sWidget *widget, int col, int row);
 
 #### Description
@@ -393,6 +398,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_checkbox() creates an sWidget struct with the internal type of CHECKBOX and returns a pointer to it.
 
     tui_radiobutton() creates an sWidget struct with the internal type of RADIOBUTTON and returns a pointer to it.
+
+    tui_radiobutton_link() creates an sRadiobuttonLink struct.
 
     tui_root_frame() creates a special root frame and widget struct for all the
     user created widgets to be a child to.
@@ -414,6 +421,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     
     checkbox_add() adds the second checkbox to the first ones children array and sets the first checkbox
     as the second checkbox's parent.
+
+    radiobutton_link() links the radio buttons together with the provide sRadiobutton struct.
 
     grid_set() enters the position of the widget supplied into it's parent's grid array. Sends a warning if
     it overwrites something (aka the element is not NULL)
@@ -443,6 +452,7 @@ The \<input.c\> source file contains all the definitions for the functions and d
     void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     void tui_handle_input();
 
 #### Description
@@ -463,6 +473,8 @@ The \<input.c\> source file contains all the definitions for the functions and d
     button_mouse_event() handles the mouse events when the widget is of type BUTTON.
 
     cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
+
+    rbutton_mouse_event() handles the mouse events when the widget is of type RADIOBUTTON.
 
     tui_handle_input() handles all the events for the program.
 --- 

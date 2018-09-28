@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdarg.h>
 #include "const.h"
 #include "widgets.h"
 #include "draw.h"
@@ -129,6 +131,17 @@ sWidget * tui_radiobutton(sWidget *parent, wchar_t *text) {
     ptr->widget.rbutton.label.len    = wcslen(text);
     ptr->widget.rbutton.label.anchor = W;
     ptr->widget.rbutton.active       = 0;
+
+    return ptr;
+}
+
+sRadiobuttonLink * tui_radiobutton_link() {
+    sRadiobuttonLink *ptr = (sRadiobuttonLink *)calloc(1, sizeof(sRadiobuttonLink));
+    
+    ptr->len    = 0;
+    ptr->active = 0;
+    ptr->old    = NULL;
+    for(int i = 0; i < MAX_CHILDREN; i++) ptr->children[i] = NULL;
 
     return ptr;
 }
@@ -415,6 +428,26 @@ void checkbox_add(sWidget *a, sWidget *b) {
 
     a->widget.cbox.children[a->widget.cbox.len++] = b;
     b->widget.cbox.parent = a;
+}
+
+void radiobutton_link(sRadiobuttonLink *link, int count, ...) {
+    va_list arg;
+    va_start(arg, count);
+    while(count != 0) {
+        /* Getting the argument from the list */
+        uintptr_t a = va_arg(arg, uintptr_t);
+        sWidget *b = (sWidget *) a;
+
+        if (b->type != RADIOBUTTON) return;
+        if (link->len >= MAX_CHILDREN) {
+            tui_err(TUI_WARNING, 0, "Error in function radiobutton_link: link has maximum children");
+            return;
+        }
+        link->children[(link->len)++] = &b->widget.rbutton;
+        b->widget.rbutton.parent = link;
+        count--;
+    }
+    va_end(arg);
 }
 
 void grid_set(sWidget *widget, int col, int row) {
