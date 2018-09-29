@@ -375,6 +375,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
+    void widget_anchorer_helper(sWidget *a, int posdx, int posdy, int sizedx, int sizedy);
     void widget_anchorer(sWidget *a);
     void widget_positioner(sWidget *a)
     void redraw_widgets(sWidget *a);
@@ -408,6 +409,8 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
     widget_span_sizer() goes through the tree similar to widget_sizer but checks the colspan and rowspan
     of widgets and correctly sizes them.
+
+    widget_anchorer_helper() propagates the changes in a->pos to it's children if there are any.
 
     widget_anchorer() Refines the position and size of the widget according to it's anchor variable
 

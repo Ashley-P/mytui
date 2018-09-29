@@ -129,8 +129,7 @@ int main() {
     grid_set(but16, 0, 2);
 
     frame2->widget.frame.label.anchor = N;
-
-    frame->anchor = W;
+    frame->anchor = E;
 
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);
