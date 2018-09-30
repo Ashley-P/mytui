@@ -304,15 +304,13 @@ void widget_span_sizer(sWidget *a) {
     }
 }
 
-void widget_anchorer_helper(sWidget *a, int posdx, int posdy, int sizedx, int sizedy) {
+void widget_anchorer_helper(sWidget *a, int posdx, int posdy) {
     a->pos.x  += posdx;
     a->pos.y  += posdy;
-    a->size.x += sizedx;
-    a->size.y += sizedy;
     switch (a->type) {
         case FRAME:
             for (int i = 0; i < a->widget.frame.numch; i++)
-                widget_anchorer_helper(a->widget.frame.children[i], posdx, posdy, sizedx, sizedy);
+                widget_anchorer_helper(a->widget.frame.children[i], posdx, posdy);
             break;
         default:
             break;
@@ -329,11 +327,11 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     /* Centres the widget */
     l1:
     //a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
-    widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2), 0, 0, 0);
+    widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2), 0);
     if (a->rowspan) goto l5;
     l2:
     //a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
-    widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2), 0, 0);
+    widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2));
 
     /* Widget gets moved back up or left if either of these conditionals are true */
     l5:
@@ -341,19 +339,13 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
         //a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2);
         widget_anchorer_helper(a,
                                0,
-                               - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2),
-                               0,
-                               0);
-                               //prows[a->gridpos.y]);
+                               - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2));
         a->size.y = prows[a->gridpos.y];
     }
     if ((E | W) == (anchor & (E | W)) && !a->colspan) {
         //a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
         widget_anchorer_helper(a, 
                                - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2),
-                               0,
-                               0,
-                               //pcols[a->gridpos.x],
                                0);
         a->size.x = pcols[a->gridpos.x];
     }
@@ -365,19 +357,15 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     l3:
     //if (anchor & N) a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2);
     //if (anchor & S) a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2);
-    if (anchor & N) widget_anchorer_helper(a, 0, -((int) prows[a->gridpos.y] / 2), 0, 0); 
-    if (anchor & S) widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2), 0, 0); 
+    if (anchor & N) widget_anchorer_helper(a, 0, -((int) prows[a->gridpos.y] / 2)); 
+    if (anchor & S) widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2));
     if (anchor ^ (E | W) && !a->colspan) goto l4;
     return;
     l4:
     //if (anchor & E) a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
     //if (anchor & W) a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
-    if (anchor & E) widget_anchorer_helper(a,
-                                           ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2),
-                                           0, 0, 0);
-    if (anchor & W) widget_anchorer_helper(a,
-                                           - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2),
-                                           0, 0, 0);
+    if (anchor & E) widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2), 0);
+    if (anchor & W) widget_anchorer_helper(a, - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2), 0);
     return;
 }
 

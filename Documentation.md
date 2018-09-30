@@ -375,7 +375,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
-    void widget_anchorer_helper(sWidget *a, int posdx, int posdy, int sizedx, int sizedy);
+    void widget_anchorer_helper(sWidget *a, int posdx, int posdy);
     void widget_anchorer(sWidget *a);
     void widget_positioner(sWidget *a)
     void redraw_widgets(sWidget *a);
