@@ -46,6 +46,14 @@ sWidget * init_sWidget(sWidget *parent) {
     ptr->rowspan = 0;
     ptr->colspan = 0;
     ptr->anchor  = C;
+
+    /* Size setup */
+    ptr->usize = (sSize) {0, 0};
+    ptr->msize = (sSize) {0, 0};
+    ptr->bsize = (sSize) {0, 0};
+    ptr->psize = (sSize) {0, 0};
+    ptr->csize = (sSize) {0, 0};
+
     assign_to_parent(ptr, parent);
 
     return ptr;
@@ -62,6 +70,10 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     ptr->widget.frame.label.len    = wcslen(text);
     ptr->widget.frame.label.anchor = N | W;
 
+    /* Frames come with 1 wide borders */
+    ptr->bsize.x = 1;    
+    ptr->bsize.y = 1;
+
     /* Making sure each element is set to null in both arrays */
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.frame.children[i] = NULL;
@@ -77,8 +89,12 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
 
 void tui_root_frame() {
     w_root = tui_frame(NULL, L"");
-    w_root->size.x = sn_screenwidth;
-    w_root->size.y = sn_screenheight;
+    w_root->bsize.x = 1;
+    w_root->bsize.y = 1;
+    w_root->csize.x = sn_screenwidth;
+    w_root->csize.y = sn_screenheight;
+    w_root->rsize.x = w_root->csize.x + w_root->bsize.x;
+    w_root->rsize.y = w_root->csize.y + w_root->bsize.y;
 }
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
@@ -119,7 +135,7 @@ sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
 
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.cbox.children[i] = NULL;
-
+    
     return ptr;
 }
 
@@ -147,98 +163,109 @@ sRadiobuttonLink * tui_radiobutton_link() {
 }
 
 void widget_sizer(sWidget *a) {
-    /* Margins, paddings, borders and other things that can change size are computed here */
-    /* TODO: Refactor this, I could probably redo this without a trillion loops */
+    /*
+     * Sets up all the different sizes and fits them into their frames properly 
+     * Also does some basic calculations with the rsize (real size) and the other sizes
+     */
     switch (a->type) {
         case FRAME:
-            /* Tons of loops because I can't program */
+            /* Getting the size for the children or the rest of this jump won't work */
             for(int p = 0; p < MAX_CHILDREN; p++) {
                 if(a->widget.frame.children[p])
                     widget_sizer(a->widget.frame.children[p]);
             }
-            /*
-             * temp1 is for comparing and storing the largest value
-             * temp2 is for setting the size of the frame itself
-             * temp3 is for keeping track of the number of non-zero sized elements
-             */
-            int temp1;
-            int temp2 = 0;
-            int temp3 = 0;
 
             sFrame *af = &a->widget.frame;
+            /*
+             * temp1 is for comparing and storing the largest value
+             * temp2 is for storing the size of the frame (can do it without a temp value
+             * but it would result in more looping)
+             * i and j are for loops */
+            int temp1;
+            int temp2 = 0;
+            int i;
+            int j;
             /* WIDTH */
-            for(int i = 0; i < MAX_GRID_COLS; i++) {
+            for (i = 0; i < MAX_GRID_COLS; i++) {
                 temp1 = 0;
-                for(int j = 0; j < MAX_GRID_ROWS; j++) {
+                for (j = 0; j <MAX_GRID_ROWS; j++) {
                     /* Finding the largest width of each element in the column */
-                    if(af->grid[i][j]) {
-                        //if(af->grid[i][j]->colspan < 2)
-                        temp1 = af->grid[i][j]->size.x > temp1 ? af->grid[i][j]->size.x : temp1;
+                    if (af->grid[i][j]) {
+                        temp1 = af->grid[i][j]->rsize.x > temp1 ? af->grid[i][j]->rsize.x : temp1;
                     }
                 }
                 af->cols_size[i] = temp1;
-                if (temp1 > 0)
-                    ++temp3;
                 temp2 += temp1;
             }
-            /* 
-             * Formula is 2 for the side spaces + 
-             * temp3 (number of non-zero sized elements) - 1 for the inbetween spaces between widgets +
-             * temp2 (cummalative addition of widest widgets)
+            /*
+             * Everything isn't automatically spaced by 1 character anymore (That's the margins job)
+             * csize.x is assigned the same value as temp2
+             * rsize.x is calculated as usual
+             * w_root is skipped
              */
-            if (a != w_root)
-                a->size.x = 2 + (temp3 - 1) + temp2;
-            /* Resetting temps for height, temp1 gets reset in the loop so its redundant doing it here */
+            if (a != w_root) {
+                a->csize.x = temp2;
+                a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x) /* Comparison */
+                            + a->psize.x + a->bsize.x + a->msize.x;              /* Adding the rest */
+            }
+
             temp2 = 0;
-            temp3 = 0;
 
-
-            
             /* HEIGHT */
-            for(int k = 0; k < MAX_GRID_ROWS; k++) {
+            for(i = 0; i < MAX_GRID_ROWS; i++) {
                 temp1 = 0;
-                for(int l = 0; l < MAX_GRID_COLS; l++) {
+                for(int j = 0; j < MAX_GRID_COLS; j++) {
                     /* Finding the largest height of each element in the column */
-                    if(af->grid[l][k]) {
-                        //if(af->grid[i][j]->colspan < 2)
-                        temp1 = af->grid[l][k]->size.y > temp1 ? af->grid[l][k]->size.y : temp1;
+                    if(af->grid[j][i]) {
+                        temp1 = af->grid[j][i]->rsize.y > temp1 ? af->grid[j][i]->rsize.y : temp1;
                     }
                 }
-                af->rows_size[k] = temp1;
-                if (temp1 > 0)
-                    ++temp3;
+                af->rows_size[i] = temp1;
                 temp2 += temp1;
             }
-            /* refer to above for formula */
-            if (a != w_root)
-                a->size.y = 2 + (temp3 - 1) + temp2;
-
-            /* Filling out the empty slots of cols_size and rows_size */
-            for (int t = 0; t < MAX_GRID_ROWS; t++) {
-                if (!af->rows_size[t])
-                    af->rows_size[t] = 0;
+            if (a != w_root) {
+                a->csize.y = temp2;
+                a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+                            + a->psize.y + a->bsize.y + a->msize.y;
             }
-
-            for (int f = 0; f < MAX_GRID_ROWS; f++) {
-                if (!af->cols_size[f])
-                    af->cols_size[f] = 0;
-            }
+            
+            /* Setting the rest of cols_size and rows_size to be 0 */
+            for (i = 0; i < MAX_GRID_ROWS; i++) if(!af->rows_size[i]) af->rows_size[i] = 0;
+            for (i = 0; i < MAX_GRID_COLS; i++) if(!af->cols_size[i]) af->cols_size[i] = 0;
             break;
         case BUTTON:
-            a->size.x = a->widget.button.label.len;
-            a->size.y = 1;
-            break;
+            a->csize.x = a->widget.button.label.len;
+            a->csize.y = 1; /* No text wrapping yet */
+            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x) /* Comparison */
+                        + a->psize.x + a->bsize.x + a->msize.x;              /* Adding the rest */
+            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+                        + a->psize.y + a->bsize.y + a->msize.y;
         case LABEL:
-            a->size.x = a->widget.label.len;
-            a->size.y = 1;
+            a->csize.x = a->widget.label.len;
+            a->csize.y = 1; /* No text wrapping yet */
+            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
+                        + a->psize.x + a->bsize.x + a->msize.x;
+            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+                        + a->psize.y + a->bsize.y + a->msize.y;
             break;
         case CHECKBOX:
-            a->size.x = a->widget.cbox.label.len + 2;
-            a->size.y = 1;
+            a->csize.x = a->widget.cbox.label.len + 2;
+            a->csize.y = 1; /* No text wrapping yet */
+            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
+                        + a->psize.x + a->bsize.x + a->msize.x;
+            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+                        + a->psize.y + a->bsize.y + a->msize.y;
+            break;
         case RADIOBUTTON:
-            a->size.x = a->widget.rbutton.label.len + 2;
-            a->size.y = 1;
+            a->csize.x = a->widget.rbutton.label.len + 2;
+            a->csize.y = 1; /* No text wrapping yet */
+            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
+                        + a->psize.x + a->bsize.x + a->msize.x;
+            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+                        + a->psize.y + a->bsize.y + a->msize.y;
+            break;
         default:
+            tui_err(TUI_ERROR, 0, "Error in widget_sizer: Unknown Type");
             break;
     }
 }
@@ -248,11 +275,13 @@ void widget_span_sizer(sWidget *a) {
         case FRAME:
             ;
             sFrame *af = &a->widget.frame;
-            /* Calling the sizer for children */
+            /* Calling the sizer for children - Might not be needed */
+            /*
             for(int p = 0; p < MAX_CHILDREN; p++) {
                 if(af->children[p])
                     widget_sizer(af->children[p]);
             }
+            */
 
             /*
              * Setting the widget to the right size.
@@ -262,38 +291,35 @@ void widget_span_sizer(sWidget *a) {
              * Then is sets its size using cols_size/rows_size of the spanned
              * grid sections.
              */
-            /* TODO: Refactor */
-            /* Could reduce the two top level loops to one using some maths */
             for(int i = 0; i < MAX_GRID_COLS; i++) {
                 for(int j = 0; j < MAX_GRID_ROWS; j++) {
                     if (af->grid[i][j]) {
-
                         int k;
                         sWidget *wid = af->grid[i][j];
 
                         /* Row span */
                         if(wid->rowspan >= 2) {
-                            wid->size.y = 0;
+                            wid->rsize.y = 0;
                             for(k = 0; k < wid->rowspan; k++) {
                                 /*
                                 if(af->grid[i][j + k]) // Checking the next grid spaces
                                     break;
                                 */
-                                wid->size.y += af->rows_size[j + k];
+                                wid->rsize.y += af->rows_size[j + k];
                             }
-                            wid->size.y += (wid->rowspan - 1);
+                            wid->rsize.y += (wid->rowspan - 1);
                         }
                         /* Col span */
                         if(wid->colspan >= 2) {
-                            wid->size.x = 0;
+                            wid->rsize.x = 0;
                             for(k = 0; k < wid->colspan; k++) {
                                 /*
                                 if(af->grid[i + k][j]) // Checking the next grid spaces
                                     break;
                                 */
-                                wid->size.x += af->cols_size[i + k];
+                                wid->rsize.x += af->cols_size[i + k];
                             }
-                            wid->size.x += (wid->colspan - 1);
+                            wid->rsize.x += (wid->colspan - 1);
                         }
                     }
                 }
@@ -305,8 +331,8 @@ void widget_span_sizer(sWidget *a) {
 }
 
 void widget_anchorer_helper(sWidget *a, int posdx, int posdy) {
-    a->pos.x  += posdx;
-    a->pos.y  += posdy;
+    a->pos.x += posdx;
+    a->pos.y += posdy;
     switch (a->type) {
         case FRAME:
             for (int i = 0; i < a->widget.frame.numch; i++)
@@ -326,28 +352,24 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
 
     /* Centres the widget */
     l1:
-    //a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
-    widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2), 0);
+    widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->rsize.x / 2), 0);
     if (a->rowspan) goto l5;
     l2:
-    //a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2);
-    widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2) - ((int) a->size.y / 2));
+    widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2) - ((int) a->rsize.y / 2));
 
     /* Widget gets moved back up or left if either of these conditionals are true */
     l5:
     if ((N | S) == (anchor & (N | S)) && !a->rowspan) {
-        //a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2);
         widget_anchorer_helper(a,
                                0,
-                               - ((int) prows[a->gridpos.y] / 2) + ((int) a->size.y / 2));
-        a->size.y = prows[a->gridpos.y];
+                               - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2));
+        a->rsize.y = prows[a->gridpos.y];
     }
     if ((E | W) == (anchor & (E | W)) && !a->colspan) {
-        //a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
         widget_anchorer_helper(a, 
-                               - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2),
+                               - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2),
                                0);
-        a->size.x = pcols[a->gridpos.x];
+        a->rsize.x = pcols[a->gridpos.x];
     }
     if ((N | S | E | W) == (anchor & (N | S | E | W))) return;
 
@@ -355,26 +377,20 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     if ((E | W) == (anchor & (E | W)) && !a->colspan) goto l3;
 
     l3:
-    //if (anchor & N) a->pos.y = a->pos.y - ((int) prows[a->gridpos.y] / 2);
-    //if (anchor & S) a->pos.y = a->pos.y + ((int) prows[a->gridpos.y] / 2);
-    if (anchor & N) widget_anchorer_helper(a, 0, -((int) prows[a->gridpos.y] / 2)); 
-    if (anchor & S) widget_anchorer_helper(a, 0, ((int) prows[a->gridpos.y] / 2));
+    if (anchor & N) widget_anchorer_helper(a, 0, - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2)); 
+    if (anchor & S) widget_anchorer_helper(a, 0,   ((int) prows[a->gridpos.y] / 2) - ((int) a->rsize.y / 2));
     if (anchor ^ (E | W) && !a->colspan) goto l4;
     return;
     l4:
-    //if (anchor & E) a->pos.x = a->pos.x + ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2);
-    //if (anchor & W) a->pos.x = a->pos.x - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2);
-    if (anchor & E) widget_anchorer_helper(a, ((int) pcols[a->gridpos.x] / 2) - ((int) a->size.x / 2), 0);
-    if (anchor & W) widget_anchorer_helper(a, - ((int) pcols[a->gridpos.x] / 2) + ((int) a->size.x / 2), 0);
+    if (anchor & E) widget_anchorer_helper(a,   ((int) pcols[a->gridpos.x] / 2) - ((int) a->rsize.x / 2), 0);
+    if (anchor & W) widget_anchorer_helper(a, - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2), 0);
     return;
 }
 
 void widget_positioner(sWidget *a) {
     /*
-     * Sets up realsize and pos structs in the widget recursively. Generally the top level widget of
-     * the window should be given as the argument.
-     * Called when the program starts and when windows are created or resized.
-     * This relies on previous calls to set the cursor into position;
+     * Sets up pos structs in widgets.
+     * Top level window is usually the first call and then it recurses down the tree
      */
 
     /* Struct for the position of the "cursor" that places everything down */
@@ -383,8 +399,6 @@ void widget_positioner(sWidget *a) {
     switch (a->type) {
         case FRAME:
             a->pos = s_cursor;
-            sSize s_topleft2 = s_cursor;
-            s_cursor = add_sSize(s_cursor, (sSize) {1, 1});
             sSize s_topleft1 = s_cursor;
             sFrame *af = &a->widget.frame;
             for (int i = 0; i < MAX_GRID_COLS; i++) {
@@ -392,13 +406,13 @@ void widget_positioner(sWidget *a) {
                     if (af->grid[i][j]) {
                         widget_positioner(af->grid[i][j]);
                     }
-                    s_cursor.y += af->rows_size[j] + 1;
+                    s_cursor.y += af->rows_size[j];
                     
                 }
-                s_cursor.x += af->cols_size[i] + 1;
+                s_cursor.x += af->cols_size[i];
                 s_cursor.y = s_topleft1.y;
             }
-            s_cursor = s_topleft2;
+            s_cursor = s_topleft1;
             break;
         case BUTTON: case LABEL: case CHECKBOX: case RADIOBUTTON:
             a->pos = s_cursor;

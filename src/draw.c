@@ -4,6 +4,10 @@
 #include "tui.h"
 #include "utils.h"
 
+#define H HORIZONTAL
+#define V VERTICAL
+#define HORIZONTAL 1
+#define VERTICAL   2
 
 /* 
  * Unicode chars
@@ -19,6 +23,33 @@ void reset_buf() {
     }
 }
 
+void draw_line(const int x, const int y, const int len, const int direction, const int colour) {
+    /* Function draws from the coords provided towards the right or downwards */
+    if (direction != HORIZONTAL || direction != VERTICAL)
+        tui_err(TUI_ERROR, 0, "Error in draw_line: Incorrect argument for direction");
+    /* Throw error if the line is too long for the screen */
+    if (direction == HORIZONTAL && x + len > sn_screenwidth) {
+        tui_err(TUI_ERROR, 0, "Error in draw_line: Length too long");
+        return;
+    }
+    if (direction == VERTICAL && y + len > sn_screenwidth) {
+        tui_err(TUI_ERROR, 0, "Error in draw_line: Length too long");
+        return;
+    }
+    
+    if (direction == HORIZONTAL) {
+        for (int i = x; i < len; i++) {
+            (*tui_current_screen + i + (y * sn_screenwidth))->Attributes = colour;
+        }
+    }
+
+    if (direction == VERTICAL) {
+        for (int i = y; i < len; i++) {
+            (*tui_current_screen + x + (i * sn_screenwidth))->Attributes = colour;
+        }
+    }
+
+}
 void draw_box(int x, int y, const int width, const int height, const bool fill, int colour) {
     /*
     // Shifting the coords by -1, -1 to make sense on the screen
@@ -28,7 +59,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + height > sn_screenheight) {
-        tui_err(TUI_WARNING, 0, "Error in function draw_box: {arameters too large");
+        tui_err(TUI_WARNING, 0, "Error in function draw_box: Parameters too large");
         return;
     }
 
@@ -70,10 +101,10 @@ void draw_frame(sWidget *a, const bool fill) {
     /* Drawing the frame border */
     switch (a->state) {
         case DISABLED:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+            draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 1, 0x80);
             break;
         default:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, fill, 0x90);
+            draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, fill, 0x90);
             break;
     }
     
@@ -85,15 +116,15 @@ void draw_frame(sWidget *a, const bool fill) {
     int x = a->widget.frame.label.anchor;
     switch (x) {
         case N:
-            strx = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.frame.label.len / 2));
+            strx = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.frame.label.len / 2));
             stry = a->pos.y;
             break;
         case S:
-            strx = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.frame.label.len / 2));
-            stry = a->pos.y + a->size.y - 1;
+            strx = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.frame.label.len / 2));
+            stry = a->pos.y + a->csize.y - 1;
             break;
         case N | E:
-            strx = a->pos.x + a->size.x - a->widget.frame.label.len - 1;
+            strx = a->pos.x + a->csize.x - a->widget.frame.label.len - 1;
             stry = a->pos.y;
             break;
         case N | W:
@@ -101,12 +132,12 @@ void draw_frame(sWidget *a, const bool fill) {
             stry = a->pos.y;
             break;
         case S | E:
-            strx = a->pos.x + a->size.x - a->widget.frame.label.len - 1;
-            stry = a->pos.y + a->size.y - 1;
+            strx = a->pos.x + a->csize.x - a->widget.frame.label.len - 1;
+            stry = a->pos.y + a->csize.y - 1;
             break;
         case S | W:
             strx = a->pos.x + 1;
-            stry = a->pos.y + a->size.y - 1;
+            stry = a->pos.y + a->csize.y - 1;
             break;
         case E: case W: case N|S|E: case N|S|W: case S|E|W: case N|E|W: case N|S|E|W: default:
             /* Just skip drawing the text */
@@ -118,8 +149,8 @@ void draw_frame(sWidget *a, const bool fill) {
 
 void draw_button(const sWidget *a) {
     /* Offsetting for buttons that are larger than their text size */
-    int x = a->pos.x + ((int) (a->size.x / 2)) - ((int) (a->widget.button.label.len / 2));
-    int y = a->pos.y + ((int) (a->size.y / 2));
+    int x = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.button.label.len / 2));
+    int y = a->pos.y + ((int) (a->csize.y / 2));
 
     /* TODO: Update to work with diagonals e.g NE, SW) */
     switch (a->widget.button.label.anchor) {
@@ -127,10 +158,10 @@ void draw_button(const sWidget *a) {
             y = a->pos.y;
             break;
         case SOUTH:
-            y = a->pos.y + a->size.y - 1;
+            y = a->pos.y + a->csize.y - 1;
             break;
         case EAST:
-            x = a->pos.x + a->size.x - a->widget.button.label.len;
+            x = a->pos.x + a->csize.x - a->widget.button.label.len;
             break;
         case WEST:
             x = a->pos.x;
@@ -149,22 +180,22 @@ void draw_button(const sWidget *a) {
         else {p = p->parent;}
     }
     if (isDisabled) {
-        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
         return;
     }
 
     switch (a->state) {
         case NONE:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x40);
+            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x40);
             break;
         case DISABLED:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
             break;
         case HOVER:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x50);
+            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x50);
             break;
         case PRESS:
-            draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x60);
+            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x60);
             break;
         default:
             break;
@@ -211,7 +242,7 @@ void draw_checkbox(const sWidget *a) {
     }
 
     if (a->state == DISABLED)
-        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
 }
 
 void draw_radiobutton(const sWidget *a) {
@@ -242,5 +273,5 @@ void draw_radiobutton(const sWidget *a) {
     }
 
     if (a->state == DISABLED)
-        draw_box(a->pos.x, a->pos.y, a->size.x, a->size.y, 1, 0x80);
+        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
 }

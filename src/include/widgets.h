@@ -106,7 +106,12 @@ typedef struct tWidget {
     enum eAnchor anchor;
     sPos  pos;
     sPos  gridpos;
-    sSize size;
+    sSize rsize; /* Real Size - This one is used in place of the old size */
+    sSize usize; /* User requested Size - matches against csize */
+    sSize msize; /* Margin Size */ 
+    sSize bsize; /* Border Size */
+    sSize psize; /* Padding Size - Padding size extends the colour of the widget*/
+    sSize csize; /* Content Size */
     int rowspan;
     int colspan;
     struct tWidget *parent;

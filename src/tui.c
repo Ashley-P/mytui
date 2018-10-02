@@ -113,8 +113,8 @@ void find_widget(sStack *stack, sWidget *a, const int x, const int y) {
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (a->widget.frame.children[i]) {
                     sWidget *b = a->widget.frame.children[i];
-                    if ((x >= b->pos.x && x <= (b->pos.x + b->size.x - 1)) &&
-                        (y >= b->pos.y && y <= (b->pos.y + b->size.y - 1))) {
+                    if ((x >= b->pos.x && x <= (b->pos.x + b->csize.x - 1)) &&
+                        (y >= b->pos.y && y <= (b->pos.y + b->csize.y - 1))) {
                         find_widget(stack, a->widget.frame.children[i], x, y);
                     }
                 }
@@ -171,14 +171,6 @@ void inpthr_loop() {
 
 void tui_loop() {
     /* Stuff that needs to happen after setup but before the loop starts */
-    /* Even though calculate_min_size returns sSize, it's not used for the top level
-     * frame because it comes preset.
-     */
-    /*
-    widget_sizer(w_root);
-    widget_span_sizer(w_root);
-    widget_positioner(w_root);
-    */
     redraw_widgets(w_root);
 
     while(1) {
