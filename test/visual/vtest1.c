@@ -14,11 +14,14 @@ int main() {
     pWidget label = tui_label(w_root, L"AAAAAAAAAAAAAAAAAAAAAAAAA");
 
     pWidget frame = tui_frame(w_root, L"");
-    pWidget label2 = tui_label(frame, L"AAAAA");
+    pWidget button = tui_button(frame, L"TEST BOI", NULL);
+
+    button->msize.x = 1;
+    button->msize.y = 1;
 
     grid_set(frame, 0, 0);
     grid_set(label, 0, 1);
-    grid_set(label2, 0, 0);
+    grid_set(button, 0, 0);
 
     tui_loop();
     return 0;

@@ -91,7 +91,7 @@ int main() {
     pWidget but16  = tui_button(frame2, L"ns", ns);
 
     grid_set(test, 0, 0);
-    grid_set(label, 0, 1);
+    //grid_set(label, 0, 1);
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
@@ -129,7 +129,11 @@ int main() {
     grid_set(but16, 0, 2);
 
     frame2->widget.frame.label.anchor = N;
-    frame->anchor = E;
+    frame->anchor = NSEW;
+    /*
+    test->msize.x = 1;
+    test->msize.y = 1;
+    */
 
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);

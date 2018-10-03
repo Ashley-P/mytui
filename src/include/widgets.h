@@ -104,8 +104,13 @@ typedef struct tWidget {
     enum eType   type; 
     enum eState  state;
     enum eAnchor anchor;
-    sPos  pos;
-    sPos  gridpos;
+    sPos pos;
+    sPos cpos;
+    sPos gridpos;
+    /*
+     * rsize, usize and csize are the total sizes for the widget
+     * msize, bsize and psize are the sizes of each side
+     */
     sSize rsize; /* Real Size - This one is used in place of the old size */
     sSize usize; /* User requested Size - matches against csize */
     sSize msize; /* Margin Size */ 

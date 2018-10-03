@@ -113,14 +113,24 @@ void find_widget(sStack *stack, sWidget *a, const int x, const int y) {
             for(int i = 0; i < MAX_CHILDREN; i++) {
                 if (a->widget.frame.children[i]) {
                     sWidget *b = a->widget.frame.children[i];
+                    /*
                     if ((x >= b->pos.x && x <= (b->pos.x + b->csize.x - 1)) &&
                         (y >= b->pos.y && y <= (b->pos.y + b->csize.y - 1))) {
                         find_widget(stack, a->widget.frame.children[i], x, y);
+                    */
+                    /* Check if it's actually pressing inside csize */
+                    /*
+                    if ((x >= (b->pos.x + b->msize.x + b->bsize.x + b->psize.x)
+                      && x <= (b->pos.x + b->rsize.x - b->msize.x + b->bsize.x + b->psize.x - 1))
+                      && y >= (b->pos.y + b->msize.y + b->bsize.y + b->psize.y)
+                      && y <= (b->pos.y + b->rsize.y - b->msize.y + b->bsize.y + b->psize.y - 1))
+                        find_widget(stack, a->widget.frame.children[i], x, y);
+                    */
+                    if ((x >= b->cpos.x && x <= b->cpos.x + b->csize.x - 1) &&
+                        (y >= b->cpos.y && y <= b->cpos.y + b->csize.y - 1))
+                        find_widget(stack, a->widget.frame.children[i], x, y);
                     }
                 }
-            }
-            break;
-        case BUTTON:
             break;
         default:
             break;

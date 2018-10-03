@@ -59,7 +59,7 @@ void draw_box(int x, int y, const int width, const int height, const bool fill, 
 
     // Checking if the box goes off the screen to prevent weird drawing issues
     if (x + width > sn_screenwidth || y + height > sn_screenheight) {
-        tui_err(TUI_WARNING, 0, "Error in function draw_box: Parameters too large");
+        tui_err(TUI_WARNING, 0, "Error in function draw_box: Parameters too large x = %d, y = %d", width, height);
         return;
     }
 
@@ -149,22 +149,22 @@ void draw_frame(sWidget *a, const bool fill) {
 
 void draw_button(const sWidget *a) {
     /* Offsetting for buttons that are larger than their text size */
-    int x = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.button.label.len / 2));
-    int y = a->pos.y + ((int) (a->csize.y / 2));
+    int x = a->cpos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.button.label.len / 2));
+    int y = a->cpos.y + ((int) (a->csize.y / 2));
 
     /* TODO: Update to work with diagonals e.g NE, SW) */
     switch (a->widget.button.label.anchor) {
         case NORTH:
-            y = a->pos.y;
+            y = a->cpos.y;
             break;
         case SOUTH:
-            y = a->pos.y + a->csize.y - 1;
+            y = a->cpos.y + a->csize.y - 1;
             break;
         case EAST:
-            x = a->pos.x + a->csize.x - a->widget.button.label.len;
+            x = a->cpos.x + a->csize.x - a->widget.button.label.len;
             break;
         case WEST:
-            x = a->pos.x;
+            x = a->cpos.x;
             break;
         default:
             break;
@@ -180,22 +180,22 @@ void draw_button(const sWidget *a) {
         else {p = p->parent;}
     }
     if (isDisabled) {
-        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
+        draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x80);
         return;
     }
 
     switch (a->state) {
         case NONE:
-            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x40);
+            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x40);
             break;
         case DISABLED:
-            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
+            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x80);
             break;
         case HOVER:
-            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x50);
+            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x50);
             break;
         case PRESS:
-            draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x60);
+            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x60);
             break;
         default:
             break;

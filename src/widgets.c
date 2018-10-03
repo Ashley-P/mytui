@@ -71,8 +71,7 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     ptr->widget.frame.label.anchor = N | W;
 
     /* Frames come with 1 wide borders */
-    ptr->bsize.x = 1;    
-    ptr->bsize.y = 1;
+    ptr->bsize = (sSize) {1, 1};
 
     /* Making sure each element is set to null in both arrays */
     for(int i = 0; i < MAX_CHILDREN; i++)
@@ -89,12 +88,10 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
 
 void tui_root_frame() {
     w_root = tui_frame(NULL, L"");
-    w_root->bsize.x = 1;
-    w_root->bsize.y = 1;
-    w_root->csize.x = sn_screenwidth;
-    w_root->csize.y = sn_screenheight;
-    w_root->rsize.x = w_root->csize.x + w_root->bsize.x;
-    w_root->rsize.y = w_root->csize.y + w_root->bsize.y;
+    w_root->pos   = (sPos) {0, 0};
+    w_root->cpos   = (sPos) {1, 1};
+    w_root->csize = (sSize) {sn_screenwidth - 1, sn_screenheight - 1};
+    w_root->rsize = add_sSize(w_root->csize, w_root->bsize);
 }
 
 sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
@@ -162,6 +159,17 @@ sRadiobuttonLink * tui_radiobutton_link() {
     return ptr;
 }
 
+void calc_rsize(sWidget *a) {
+    if (!((E | W) == (a->anchor & (E | W)))) {
+    a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)     /* Comparison */
+               + (a->psize.x * 2) + (a->bsize.x * 2) + (a->msize.x * 2); /* Adding the rest */
+    }
+    if (!((N | S) == (a->anchor & (N | S)))) {
+    a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
+               + (a->psize.y * 2) + (a->bsize.y * 2) + (a->msize.y * 2);
+    }
+}
+
 void widget_sizer(sWidget *a) {
     /*
      * Sets up all the different sizes and fits them into their frames properly 
@@ -205,8 +213,8 @@ void widget_sizer(sWidget *a) {
              */
             if (a != w_root) {
                 a->csize.x = temp2;
-                a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x) /* Comparison */
-                            + a->psize.x + a->bsize.x + a->msize.x;              /* Adding the rest */
+                a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)      /* Comparison */
+                            + (a->psize.x * 2) + (a->bsize.x * 2) + (a->msize.x * 2); /* Adding the rest */
             }
 
             temp2 = 0;
@@ -225,8 +233,8 @@ void widget_sizer(sWidget *a) {
             }
             if (a != w_root) {
                 a->csize.y = temp2;
-                a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-                            + a->psize.y + a->bsize.y + a->msize.y;
+                a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)      /* Comparison */
+                            + (a->psize.y * 2) + (a->bsize.y * 2) + (a->msize.y * 2); /* Adding the rest */
             }
             
             /* Setting the rest of cols_size and rows_size to be 0 */
@@ -236,33 +244,22 @@ void widget_sizer(sWidget *a) {
         case BUTTON:
             a->csize.x = a->widget.button.label.len;
             a->csize.y = 1; /* No text wrapping yet */
-            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x) /* Comparison */
-                        + a->psize.x + a->bsize.x + a->msize.x;              /* Adding the rest */
-            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-                        + a->psize.y + a->bsize.y + a->msize.y;
+            calc_rsize(a);
+            break;
         case LABEL:
             a->csize.x = a->widget.label.len;
             a->csize.y = 1; /* No text wrapping yet */
-            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
-                        + a->psize.x + a->bsize.x + a->msize.x;
-            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-                        + a->psize.y + a->bsize.y + a->msize.y;
+            calc_rsize(a);
             break;
         case CHECKBOX:
             a->csize.x = a->widget.cbox.label.len + 2;
             a->csize.y = 1; /* No text wrapping yet */
-            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
-                        + a->psize.x + a->bsize.x + a->msize.x;
-            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-                        + a->psize.y + a->bsize.y + a->msize.y;
+            calc_rsize(a);
             break;
         case RADIOBUTTON:
             a->csize.x = a->widget.rbutton.label.len + 2;
             a->csize.y = 1; /* No text wrapping yet */
-            a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)
-                        + a->psize.x + a->bsize.x + a->msize.x;
-            a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-                        + a->psize.y + a->bsize.y + a->msize.y;
+            calc_rsize(a);
             break;
         default:
             tui_err(TUI_ERROR, 0, "Error in widget_sizer: Unknown Type");
@@ -333,6 +330,8 @@ void widget_span_sizer(sWidget *a) {
 void widget_anchorer_helper(sWidget *a, int posdx, int posdy) {
     a->pos.x += posdx;
     a->pos.y += posdy;
+    a->cpos.x += posdx;
+    a->cpos.y += posdy;
     switch (a->type) {
         case FRAME:
             for (int i = 0; i < a->widget.frame.numch; i++)
@@ -364,12 +363,14 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
                                0,
                                - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2));
         a->rsize.y = prows[a->gridpos.y];
+        a->csize.y = a->rsize.y - a->msize.y - a->bsize.y - a->psize.y;
     }
     if ((E | W) == (anchor & (E | W)) && !a->colspan) {
         widget_anchorer_helper(a, 
                                - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2),
                                0);
         a->rsize.x = pcols[a->gridpos.x];
+        a->csize.x = a->rsize.x - a->msize.x - a->bsize.x - a->psize.x;
     }
     if ((N | S | E | W) == (anchor & (N | S | E | W))) return;
 
@@ -389,45 +390,43 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
 
 void widget_positioner(sWidget *a) {
     /*
-     * Sets up pos structs in widgets.
-     * Top level window is usually the first call and then it recurses down the tree
+     * Positions everything after it's been sized
      */
 
-    /* Struct for the position of the "cursor" that places everything down */
-    static sSize s_cursor = {0, 0};
-    
-    switch (a->type) {
+    /* Skip w_root */
+    if (a == w_root) goto l1;
+
+    sWidget *p = a->parent;
+    sPos temp1 = add_sSize(p->pos, add_sSize(p->msize, add_sSize(p->bsize, p->psize)));
+    sPos temp2 = {0, 0};
+    int i;
+    for (i = 0; i < a->gridpos.x; i++) {
+        temp2.x += p->widget.frame.cols_size[i];
+    }
+    for (i = 0; i < a->gridpos.y; i++) {
+        temp2.y += p->widget.frame.rows_size[i];
+    }
+
+    a->pos = add_sSize(temp1, temp2);
+    a->cpos = add_sSize(a->pos, add_sSize(a->msize, add_sSize(a->bsize, a->psize)));
+    l1:
+
+    /* Calling positioner for children */
+    switch(a->type) {
         case FRAME:
-            a->pos = s_cursor;
-            sSize s_topleft1 = s_cursor;
-            sFrame *af = &a->widget.frame;
-            for (int i = 0; i < MAX_GRID_COLS; i++) {
-                for (int j = 0; j < MAX_GRID_ROWS; j++) {
-                    if (af->grid[i][j]) {
-                        widget_positioner(af->grid[i][j]);
-                    }
-                    s_cursor.y += af->rows_size[j];
-                    
-                }
-                s_cursor.x += af->cols_size[i];
-                s_cursor.y = s_topleft1.y;
-            }
-            s_cursor = s_topleft1;
-            break;
-        case BUTTON: case LABEL: case CHECKBOX: case RADIOBUTTON:
-            a->pos = s_cursor;
+            for (i = 0; i < a->widget.frame.numch; i++) widget_positioner(a->widget.frame.children[i]);
             break;
         default:
             break;
     }
 
-    /* Calling anchorer here to prevent a bunch of recursion. Also skip w_root */
-    if (a == w_root)
-        return;
+    /* Skip w_root */
+    if (a == w_root) return;
 
-    switch (a->parent->type) {
+    /* Calling anchorer */
+    switch(a->parent->type) {
         case FRAME:
-            widget_anchorer(a, a->parent->widget.frame.cols_size, a->parent->widget.frame.rows_size);
+            widget_anchorer(a, p->widget.frame.cols_size, p->widget.frame.rows_size);
             break;
         default:
             break;
