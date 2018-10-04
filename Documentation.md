@@ -45,13 +45,13 @@ The \<tui.c\> header file contains all the declarations for the functions and da
 The variables here are for internal use by the library
 
     HANDLE h_console                handle for the console
-    HANDLE h_stderr                 handle for stderr which is redirected to a file
-    HANDLE h_inpthr                 handle for the thread that reads the input buffer
     CHAR_INFO *ci_screen            CHAR_INFO array that gets passed to the console
+    HANDLE h_inpthr                 handle for the thread that reads the input buffer
+    HANDLE h_stdin
     CHAR_INFO **tui_current_screen  A pointer to the current screen being used
-    int i_bufsize                   size of *wc_screen in elements
     int sn_screenwidth              global screenx
     int sn_screenheight             global screeny
+    int i_bufsize                   size of *wc_screen in elements
     sWidget *w_root                 root widget struct
     COORD c_screensize              initialises the buffer size
     SMALL_RECT sr_screensize        initialises the window size
@@ -61,30 +61,30 @@ The variables here are for internal use by the library
 
 #### Synopsis
 
-    int init_tui(const int n_screenwidth, const int n_screenheight);
     CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
+    int init_tui(const int n_screenwidth, const int n_screenheight);
     void find_widget(sStack *stack, sWidget *a, int x, int y);
-    void tui_draw(sWidget *a);
     void tui_draw_helper(sWidget *a);
+    void tui_draw(sWidget *a);
     void inpthr_loop();
     void tui_loop();
     
 
 #### Description
 
+    alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
+
     init_tui() creates a new console process and a screen buffer for it. stderr
     is redirected to an output file and an array is created to fit the desired
     screen size. Then the screen buffer is linked to the console and the screen
     size is changed.
 
-    alloc_ci_array() returns a pointer to an array of CHAR_INFO structs.
-
     find_widget() finds a widget given (Ideally) the top level widget and an x and y coordinate.
-
-    tui_draw() is where all the drawing to the buffer is handled.
 
     tui_draw_helper() is a helper for tui_draw. It's purpose is to be called recursively
     over the tree created by the user.
+
+    tui_draw() is where all the drawing to the buffer is handled.
 
     inpthr_loop() is the looping for h_inpthr it just calls tui_handle_input.
 
@@ -127,6 +127,11 @@ The \<utils.c\> source file contains declarations for some utility functions suc
         sWidget **arr;
     } sStack;
 
+### Variables
+
+    HANDLE errlog               // Handle for the error file
+    DWORD dw_bytes_written      // Required for the WriteFile function
+
 ### Functions
 
 #### Synopsis
@@ -134,14 +139,13 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     void init_stderr();
     void win_err(const char *msg);
     void tui_err(const char *msg, const int err_type, const int quit_prog, ...);
-    wchar_t *rand_str();
     int rand_int(int min, int max);
+    wchar_t *rand_str();
     sStack *create_stack(unsigned int capacity);
     int is_stack_full(sStack *stack);
     int is_stack_empty(sStack *stack);
     void stack_push(sStack, sWidget *a);
     sSwidget *stack_pop(sStack *stack);
-    void stack_clear(sStack *stack);
 
 #### Description
 
@@ -154,11 +158,11 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     tui_err() is similar to win_err() in that it puts a formatted error/warning/other message into
     a logging file, and also offers the opportunity to quit the program all together.
 
+    rand_int() creates a non-biased int utilizing the rand() function.
+    
     rand_str() creates a random string of lower case alphabet characters with a random length
     between 1 and 15 characters.
 
-    rand_int() creates a non-biased int utilizing the rand() function.
-    
     create_stack() creates a stack for use in searching the widget tree.
 
     is_stack_full() checks if the stack is full.
@@ -193,6 +197,7 @@ The \<draw.c\> source file contains all the function implementations
 #### Synopsis
 
     void reset_buf();
+    void draw_line(const int x, const int y, const int len, const int direction, const int colour);
     void draw_box(int x, int y, const int width, const int height, const bool fill, int colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
     void draw_frame(sWidget *a, const bool fill);
@@ -205,6 +210,8 @@ The \<draw.c\> source file contains all the function implementations
     
     reset_buf() Fills the buffer with spaces.
     Used after every draw to the screen.
+
+    draw_line() Draws a non-diagonal line
 
     draw_box() Draws a box of the desired x and y at the provided co-ordinates x and y.
     The character used is the hash '#'. The box can be filled or just left with the borders.
@@ -236,6 +243,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
+    sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
     sRadiobuttonLink * tui_radiobutton_link();
     void tui_root_frame();
     void widget_sizer(sWidget *a);
@@ -257,6 +265,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     NE   N | E
     SW   S | W
     SE   S | E
+    NS   N | S
+    EW   E | W
     NSE  N | S | E
     NSW  N | S | W
     SEW  S | E | W
@@ -324,6 +334,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         struct tLabel label;
         struct tWidget *children[MAX_CHILDREN];
         struct tWidget *parent;
+        size_t len;
         unsigned char active;
     } sCheckbox;
 
@@ -337,15 +348,24 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     typedef struct tRadiobutton {
         struct tLabel label;
         unsigned char active;
+        struct tRadiobuttonLink *parent;
     } sRadiobutton;
 
     typedef struct tWidget {
         enum eType   type; 
         enum eState  state;
-        enum eAnchor anchor
+        enum eAnchor anchor;
         sPos  pos;
+        sPos  cpos;
         sPos  gridpos;
-        sSize size;
+        sSize rsize;
+        sSize usize;
+        sSize msize;
+        sSize bsize;
+        sSize psize;
+        sSize csize;
+        int rowspan;
+        int colspan;
         struct tWidget *parent;
         union {
             struct tButton      button;
@@ -366,12 +386,15 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 #### Synopsis
     
     void assign_to_parent(sWidget *child, sWidget *parent);
+    sWidget * init_sWidget(sWidget *parent);
     sWidget * tui_frame(sWidget *parent, wchar_t *text);
+    void tui_root_frame();
     sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
     sRadiobuttonLink * tui_radiobutton_link();
+    void calc_rsize(sWidget *a);
     void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
@@ -387,10 +410,15 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
 #### Description
 
-    assign_to_parent() assigns the first argument (the child) to the second arguments child list. It has a check to
-    see if the second widget is of the correct type.
+    assign_to_parent() assigns the first argument (the child) to the second arguments child list.
+    It has a check to see if the second widget is of the correct type.
+
+    init_sWidget() initializes the basic widget struct. Usually called by the specific constructors 
+    to facilitate easier struct creation.
 
     tui_frame() creates an sWidget struct with the internal type of FRAME and returns a pointer to it.
+    
+    tui_root_frame() creates the top level widget for the window, which has some special attributes.
 
     tui_button() creates an sWidget struct with the internal type of BUTTON and returns a pointer to it.
 
@@ -402,8 +430,7 @@ The \<widgets.c\> source contains all the functions including internal ones for 
 
     tui_radiobutton_link() creates an sRadiobuttonLink struct.
 
-    tui_root_frame() creates a special root frame and widget struct for all the
-    user created widgets to be a child to.
+    calc_rsize() calculates rsize based on the other size structs. Called in widget_sizer to prevent copy pasting.
 
     widget_sizer() fills out the sSize struct in frames and other widgets that can have children
 
