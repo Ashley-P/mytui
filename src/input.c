@@ -185,7 +185,6 @@ void tui_handle_input() {
 
             case MOUSE_EVENT:
                 ;
-                tui_err(TUI_OTHER, 0, "Mouse Event");
                 MOUSE_EVENT_RECORD *ev = &ir_inpbuf[i].Event.MouseEvent;
                 /*
                  * Finding the widget

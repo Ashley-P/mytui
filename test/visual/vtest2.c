@@ -46,10 +46,8 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
 
-    test = tui_button(w_root, L"TEST", testrbutton); 
+    test  = tui_button(w_root, L"TEST", testrbutton); 
 
-    /* This is to get the button to stretch because padding isn't implemented yet */
-    pWidget label = tui_label(w_root, L"AAAAAAAAAAAAA");
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
     link = tui_radiobutton_link();
@@ -91,7 +89,6 @@ int main() {
     pWidget but16  = tui_button(frame2, L"ns", ns);
 
     grid_set(test, 0, 0);
-    //grid_set(label, 0, 1);
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
@@ -129,7 +126,7 @@ int main() {
     grid_set(but16, 0, 2);
 
     frame2->widget.frame.label.anchor = N;
-    frame->anchor = NSEW;
+    frame->anchor = W;
     /*
     test->msize.x = 1;
     test->msize.y = 1;

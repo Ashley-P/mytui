@@ -7,7 +7,7 @@
 #include "const.h"
 
 /* For the grid system */
-#define MAX_CHILDREN    16
+#define MAX_CHILDREN    32
 #define MAX_GRID_COLS   16
 #define MAX_GRID_ROWS   16
 
@@ -66,7 +66,7 @@ typedef struct tLabel {
 } sLabel;
 
 typedef struct tFrame {
-    int numch;          /* TODO: Rename this to size_t len */
+    size_t len;
     struct tLabel label;
     struct tWidget  *children[MAX_CHILDREN];
     struct tWidget  *grid[MAX_GRID_COLS][MAX_GRID_ROWS];

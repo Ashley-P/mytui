@@ -21,8 +21,7 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
     child->parent = parent;
     switch (parent->type) {
         case FRAME:
-            parent->widget.frame.children[parent->widget.frame.numch] = child;
-            parent->widget.frame.numch += 1;
+            parent->widget.frame.children[parent->widget.frame.len++] = child;
             break;
         case BUTTON:
             tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is BUTTON");
@@ -65,7 +64,7 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     ptr->type    = FRAME;
 
     // sFrame setup
-    ptr->widget.frame.numch        = 0;
+    ptr->widget.frame.len        = 0;
     ptr->widget.frame.label.text   = text;
     ptr->widget.frame.label.len    = wcslen(text);
     ptr->widget.frame.label.anchor = N | W;
@@ -334,7 +333,7 @@ void widget_anchorer_helper(sWidget *a, int posdx, int posdy) {
     a->cpos.y += posdy;
     switch (a->type) {
         case FRAME:
-            for (int i = 0; i < a->widget.frame.numch; i++)
+            for (int i = 0; i < a->widget.frame.len; i++)
                 widget_anchorer_helper(a->widget.frame.children[i], posdx, posdy);
             break;
         default:
@@ -359,16 +358,12 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     /* Widget gets moved back up or left if either of these conditionals are true */
     l5:
     if ((N | S) == (anchor & (N | S)) && !a->rowspan) {
-        widget_anchorer_helper(a,
-                               0,
-                               - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2));
+        widget_anchorer_helper(a, 0, - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2));
         a->rsize.y = prows[a->gridpos.y];
         a->csize.y = a->rsize.y - a->msize.y - a->bsize.y - a->psize.y;
     }
     if ((E | W) == (anchor & (E | W)) && !a->colspan) {
-        widget_anchorer_helper(a, 
-                               - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2),
-                               0);
+        widget_anchorer_helper(a, - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2), 0);
         a->rsize.x = pcols[a->gridpos.x];
         a->csize.x = a->rsize.x - a->msize.x - a->bsize.x - a->psize.x;
     }
@@ -414,7 +409,7 @@ void widget_positioner(sWidget *a) {
     /* Calling positioner for children */
     switch(a->type) {
         case FRAME:
-            for (i = 0; i < a->widget.frame.numch; i++) widget_positioner(a->widget.frame.children[i]);
+            for (i = 0; i < a->widget.frame.len; i++) widget_positioner(a->widget.frame.children[i]);
             break;
         default:
             break;
