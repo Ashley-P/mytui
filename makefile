@@ -34,6 +34,9 @@ functional:
 clean:
 	del ".\src\obj\*"
 	del *.a
-
-cleanexe:
 	del ".\bin\*.exe"
+
+remake:
+	$(MAKE) clean
+	$(MAKE)
+	$(MAKE) test 

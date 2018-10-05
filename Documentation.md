@@ -317,7 +317,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     } sLabel;
 
     typedef struct tFrame {
-        int numch;
+        size_t len;
         struct tLabel label;
         struct tWidget *children[MAX_CHILDREN];
         struct tWidget *grid[MAX_GRID_x][MAX_GRID_y];

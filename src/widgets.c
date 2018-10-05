@@ -64,7 +64,7 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     ptr->type    = FRAME;
 
     // sFrame setup
-    ptr->widget.frame.len        = 0;
+    ptr->widget.frame.len          = 0;
     ptr->widget.frame.label.text   = text;
     ptr->widget.frame.label.len    = wcslen(text);
     ptr->widget.frame.label.anchor = N | W;

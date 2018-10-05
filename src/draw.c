@@ -25,8 +25,11 @@ void reset_buf() {
 
 void draw_line(const int x, const int y, const int len, const int direction, const int colour) {
     /* Function draws from the coords provided towards the right or downwards */
-    if (direction != HORIZONTAL || direction != VERTICAL)
-        tui_err(TUI_ERROR, 0, "Error in draw_line: Incorrect argument for direction");
+    if (direction != HORIZONTAL && direction != VERTICAL) {
+        tui_err(TUI_ERROR, 0, 
+                "Error in draw_line: Incorrect argument for direction; Expected 1 or 2 Got %d", direction);
+        return;
+    }
     /* Throw error if the line is too long for the screen */
     if (direction == HORIZONTAL && x + len > sn_screenwidth) {
         tui_err(TUI_ERROR, 0, "Error in draw_line: Length too long");
@@ -38,60 +41,32 @@ void draw_line(const int x, const int y, const int len, const int direction, con
     }
     
     if (direction == HORIZONTAL) {
-        for (int i = x; i < len; i++) {
-            (*tui_current_screen + i + (y * sn_screenwidth))->Attributes = colour;
+        for (int i = 0; i < len; i++) {
+            (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Attributes = colour;
         }
     }
 
     if (direction == VERTICAL) {
-        for (int i = y; i < len; i++) {
-            (*tui_current_screen + x + (i * sn_screenwidth))->Attributes = colour;
+        for (int i = 0; i < len; i++) {
+            (*tui_current_screen + x + ((y + i) * sn_screenwidth))->Attributes = colour;
         }
     }
 
 }
 void draw_box(int x, int y, const int width, const int height, const bool fill, int colour) {
-    /*
-    // Shifting the coords by -1, -1 to make sense on the screen
-    x = x - 1;
-    y = y - 1;
-    */
-
-    // Checking if the box goes off the screen to prevent weird drawing issues
-    if (x + width > sn_screenwidth || y + height > sn_screenheight) {
-        tui_err(TUI_WARNING, 0, "Error in function draw_box: Parameters too large x = %d, y = %d", width, height);
-        return;
-    }
-
-    // Filled box
-    if (fill == true) {
-        for(int i = 0; i < height; i++) {
-            for(int j = 0; j < width; j++) {
-                (*tui_current_screen + (x + j) + ((y + i) * sn_screenwidth ))->Attributes = colour;
-            }
+    if (fill) {
+        for (int i = 0; i < width; i++) {
+            draw_line(x + i, y, height - 1, VERTICAL, colour);
         }
-    }
-
-    // Non-filled box
-    if (fill == false) {
-        for(int i = 0; i < height; i++) {
-            // Left Border
-            (*tui_current_screen + x + ((y + i) * sn_screenwidth))->Attributes = colour;
-            // Right Border
-            (*tui_current_screen + (x + width - 1) + ((y + i) * sn_screenwidth))->Attributes = colour;
-        }
-
-        for(int j = 0; j < width; j++) {
-            // Top Border
-            (*tui_current_screen + (x + j) + (y * sn_screenwidth))->Attributes = colour;
-            // Bottom Border
-            (*tui_current_screen + (x + j) + ((y + height - 1) * sn_screenwidth))->Attributes = colour;
-        }
+    } else {
+        draw_line(x            , y             , width,  HORIZONTAL, colour); // Top Border
+        draw_line(x            , y + height - 1, width,  HORIZONTAL, colour); // Bottom Border
+        draw_line(x            , y             , height, VERTICAL,   colour); // Left Border
+        draw_line(x + width - 1, y             , height, VERTICAL,   colour); // Right Border
     }
 }
 
 void draw_str(const wchar_t *str, const size_t len, int x, int y) {
-    //int str_len = wcslen(str);
     for(int i = 0; i < len; i++) {
         (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Char.UnicodeChar = *(str + i);
     }
@@ -170,7 +145,7 @@ void draw_button(const sWidget *a) {
             break;
     }
 
-    draw_str(a->widget.button.label.text, a->widget.button.label.len, x, y);
+    draw_str(a->widget.button.label.text, a->widget.button.label.len, a->cpos.x, a->cpos.y);
 
     /* Traversing up the tree to see if any parents have the DISABLED state */
     sWidget *p = a->parent;
@@ -180,22 +155,19 @@ void draw_button(const sWidget *a) {
         else {p = p->parent;}
     }
     if (isDisabled) {
-        draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x80);
+        draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x80);
         return;
     }
 
     switch (a->state) {
         case NONE:
-            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x40);
-            break;
-        case DISABLED:
-            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x80);
+            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x40);
             break;
         case HOVER:
-            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x50);
+            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x50);
             break;
         case PRESS:
-            draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, 0x60);
+            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x60);
             break;
         default:
             break;

@@ -23,7 +23,7 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
     
-    pWidget myframe = tui_frame(w_root);
+    pWidget myframe = tui_frame(w_root, L"");
     grid_set(myframe, 0, 0);
     grid_set(tui_button(myframe, rand_str(), test1), 0, 0);
     grid_set(tui_button(myframe, rand_str(), test2), 1, 0);
