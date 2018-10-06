@@ -1,8 +1,11 @@
-#include <stdbool.h>
 #include <stddef.h>
 #include "draw.h"
 #include "tui.h"
 #include "utils.h"
+#include "input.h"
+
+#define SHOW_MARGIN 0 /* Debugging stuff because the margin isn't usually drawn */
+#define DRAW_MARGIN draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 0, 0x00);
 
 #define H HORIZONTAL
 #define V VERTICAL
@@ -53,10 +56,10 @@ void draw_line(const int x, const int y, const int len, const int direction, con
     }
 
 }
-void draw_box(int x, int y, const int width, const int height, const bool fill, int colour) {
+void draw_box(int x, int y, const int width, const int height, const int fill, int colour) {
     if (fill) {
         for (int i = 0; i < width; i++) {
-            draw_line(x + i, y, height - 1, VERTICAL, colour);
+            draw_line(x + i, y, height, VERTICAL, colour);
         }
     } else {
         draw_line(x            , y             , width,  HORIZONTAL, colour); // Top Border
@@ -72,105 +75,136 @@ void draw_str(const wchar_t *str, const size_t len, int x, int y) {
     }
 }
 
-void draw_frame(sWidget *a, const bool fill) {
-    /* Drawing the frame border */
-    switch (a->state) {
-        case DISABLED:
-            draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 1, 0x80);
-            break;
-        default:
-            draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, fill, 0x90);
-            break;
-    }
-    
-    /* Drawing the text */
-    /* Return if no text */
-    if (!wcscmp(L"", a->widget.frame.label.text)) return;
+void draw_border_padding_content(sWidget *a, int border_colour, int padding_colour, int content_colour) {
+    /* Margin showing for debug since it's usually not coloured */
+#if SHOW_MARGIN
+    DRAW_MARGIN
+#endif
 
-    int strx; int stry;
-    int x = a->widget.frame.label.anchor;
-    switch (x) {
-        case N:
-            strx = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.frame.label.len / 2));
-            stry = a->pos.y;
-            break;
-        case S:
-            strx = a->pos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.frame.label.len / 2));
-            stry = a->pos.y + a->csize.y - 1;
-            break;
-        case N | E:
-            strx = a->pos.x + a->csize.x - a->widget.frame.label.len - 1;
-            stry = a->pos.y;
-            break;
-        case N | W:
-            strx = a->pos.x + 1;
-            stry = a->pos.y;
-            break;
-        case S | E:
-            strx = a->pos.x + a->csize.x - a->widget.frame.label.len - 1;
-            stry = a->pos.y + a->csize.y - 1;
-            break;
-        case S | W:
-            strx = a->pos.x + 1;
-            stry = a->pos.y + a->csize.y - 1;
-            break;
-        case E: case W: case N|S|E: case N|S|W: case S|E|W: case N|E|W: case N|S|E|W: default:
-            /* Just skip drawing the text */
-            return;
+    /* Border */
+    if (a->bsize.x > 0 || a->bsize.y > 0) {
+        draw_box(a->pos.x + a->msize.x, a->pos.y + a->msize.y,
+                 a->rsize.x - (a->msize.x * 2), a->rsize.y - (a->msize.y * 2), 1, border_colour);
     }
-    draw_str(a->widget.frame.label.text, a->widget.frame.label.len, strx, stry);
+
+    /* Disabled widget check */
+    if (a->state == DISABLED || check_disable(a)) {
+        draw_box(a->pos.x + a->msize.x + a->bsize.x, a->pos.y + a->msize.y + a->bsize.y,
+                 a->rsize.x - (a->msize.x * 2) - (a->bsize.x * 2),
+                 a->rsize.y - (a->msize.y * 2) - (a->bsize.y * 2), 1, 0x80);
+    return;
+    }
+
+    /* Padding */
+    if (a->psize.x > 0 || a->psize.y > 0) {
+        draw_box(a->cpos.x - a->psize.x, a->cpos.y - a->psize.y,
+                 a->csize.x + (a->psize.x * 2),
+                 a->csize.y + (a->psize.y * 2), 1, padding_colour);
+    }
+
+    /* Content */
+    draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, content_colour);
 }
 
+void draw_frame(sWidget *a, const int fill) {
+    draw_border_padding_content(a, 0x90, 0xF0, 0x70);
 
-void draw_button(const sWidget *a) {
-    /* Offsetting for buttons that are larger than their text size */
-    int x = a->cpos.x + ((int) (a->csize.x / 2)) - ((int) (a->widget.button.label.len / 2));
-    int y = a->cpos.y + ((int) (a->csize.y / 2));
+    /* Drawing the text on the border */
+    /* Return if no text or if no top border*/
+    if (wcscmp(L"", a->widget.frame.label.text) == 0 || a->bsize.y == 0) return;
 
-    /* TODO: Update to work with diagonals e.g NE, SW) */
-    switch (a->widget.button.label.anchor) {
+    wchar_t *text = a->widget.frame.label.text;
+    size_t len = a->widget.frame.label.len;
+    int x = a->widget.frame.label.anchor;
+
+    switch (x) {
         case NORTH:
-            y = a->cpos.y;
+            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
             break;
         case SOUTH:
-            y = a->cpos.y + a->csize.y - 1;
+            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)),
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
             break;
-        case EAST:
-            x = a->cpos.x + a->csize.x - a->widget.button.label.len;
+        case NORTH | WEST:
+            draw_str(text, len, a->pos.x + a->msize.x + a->bsize.x,
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
             break;
-        case WEST:
-            x = a->cpos.x;
+        case NORTH | EAST:
+            draw_str(text, len, a->pos.x + a->rsize.x - (a->msize.x + a->bsize.x + len),
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
+            break;
+        case SOUTH | WEST:
+            draw_str(text, len, a->pos.x + a->msize.x + a->bsize.x,
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
+            break;
+        case SOUTH | EAST:
+            draw_str(text, len, a->pos.x + a->rsize.x - (a->msize.x + a->bsize.x + len),
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
             break;
         default:
+            /* Skip drawing for other anchors */
+            return;
+    }
+}
+
+void draw_button(sWidget *a) {
+    draw_border_padding_content(a, 0x90, 0x70, 0x40);
+
+    /* Drawing the label */
+    wchar_t *text = a->widget.button.label.text;
+    size_t len = a->widget.button.label.len;
+    int x = a->widget.button.label.anchor;
+
+    switch (x) {
+        case NORTH:
+            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
+                                a->cpos.y);
             break;
-    }
-
-    draw_str(a->widget.button.label.text, a->widget.button.label.len, a->cpos.x, a->cpos.y);
-
-    /* Traversing up the tree to see if any parents have the DISABLED state */
-    sWidget *p = a->parent;
-    int isDisabled = 0;
-    while (p != NULL) {
-        if (p->state == DISABLED) {isDisabled = 1; return;}
-        else {p = p->parent;}
-    }
-    if (isDisabled) {
-        draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x80);
-        return;
+        case SOUTH:
+            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
+                                a->cpos.y + a->csize.y - 1);
+            break;
+        case EAST:
+            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
+                                a->cpos.y + ((int) (a->csize.y / 2)));
+            break;
+        case WEST:
+            draw_str(text, len, a->cpos.x,
+                                a->cpos.y + ((int) (a->csize.y / 2)));
+            break;
+        case NORTH | WEST:
+            draw_str(text, len, a->cpos.x,
+                                a->cpos.y);
+            break;
+        case NORTH | EAST:
+            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
+                                a->cpos.y);
+            break;
+        case SOUTH | WEST:
+            draw_str(text, len, a->cpos.x,
+                                a->cpos.y + a->csize.y - 1);
+            break;
+        case SOUTH | EAST:
+            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
+                                a->cpos.y + a->csize.y - 1);
+            break;
+        default:
+            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
+                                a->cpos.y + ((int) (a->csize.y / 2)));
+            break;
     }
 
     switch (a->state) {
-        case NONE:
-            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x40);
-            break;
         case HOVER:
-            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x50);
+            draw_border_padding_content(a, 0x90, 0x70, 0x50);
             break;
         case PRESS:
-            draw_line(a->cpos.x, a->cpos.y, a->csize.x, HORIZONTAL, 0x60);
+            draw_border_padding_content(a, 0x90, 0x70, 0x60);
             break;
         default:
             break;
+
     }
 }
 

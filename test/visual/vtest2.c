@@ -27,15 +27,17 @@ void new()    {test->anchor = N | E | W; redraw_widgets(w_root);}
 void sew()    {test->anchor = S | E | W; redraw_widgets(w_root);}
 void nsew()   {test->anchor = N | S | E | W; redraw_widgets(w_root);}
 
-void testrbutton() {tui_err(TUI_OTHER, 0, "Radiobutton pressed = %d", link->active);}
+void testrbutton() {tui_err(TUI_OTHER, 0, "x = %d, y = %d", w_root->rsize.x, w_root->rsize.y);} 
 
 void disable_wid() {
     if (frame->state != DISABLED) {
         frame->state = DISABLED;
         frame2->state = DISABLED;
+        test->state = DISABLED;
     } else {
         frame->state = NONE;
         frame2->state = NONE;
+        test->state = NONE;
     }
 }
         
@@ -125,11 +127,21 @@ int main() {
     grid_set(but15, 0, 0);
     grid_set(but16, 0, 2);
 
-    frame2->widget.frame.label.anchor = N;
-    frame->anchor = W;
+    frame2->widget.frame.label.anchor = NW;
+    frame->anchor = NSEW;
+
+    frame->msize.y = 5;
+    frame->psize = (sSize) {1, 1};
+    frame->bsize = (sSize) {2, 2};
+
+    frame2->bsize = (sSize) {1, 1};
+    frame2->msize = (sSize) {2, 2};
     
-    test->msize.x = 1;
-    test->msize.y = 1;
+    /*
+    test->msize = (sSize) {1, 1};
+    test->bsize = (sSize) {1, 1};
+    test->psize = (sSize) {1, 1};
+    */
 
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);

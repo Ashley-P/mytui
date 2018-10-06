@@ -178,6 +178,16 @@ The \<utils.c\> source file contains declarations for some utility functions suc
 
 The \<draw.h\> header file contains all the function declarations that are exposed to other files
 
+### Constants/Defines
+
+    SHOW_MARGIN 0 // Debug Variable 
+    DRAW_MARGIN draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 0, 0x00);
+
+    H HORIZONTAL
+    V VERTICAL
+    HORIZONTAL 1
+    VERTICAL 2
+
 ### Functions
 
     void reset_buf();
@@ -200,7 +210,8 @@ The \<draw.c\> source file contains all the function implementations
     void draw_line(const int x, const int y, const int len, const int direction, const int colour);
     void draw_box(int x, int y, const int width, const int height, const bool fill, int colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
-    void draw_frame(sWidget *a, const bool fill);
+    void draw_border_padding_content(sWidget *a, int colour);
+    void draw_frame(sWidget *a, const int fill);
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
     void draw_checkbox(const sWidget *a);
@@ -217,6 +228,8 @@ The \<draw.c\> source file contains all the function implementations
     The character used is the hash '#'. The box can be filled or just left with the borders.
 
     draw_str() Draws a string to the screen at the desired position.
+
+    draw_border_padding_content() Fills out the colour for the border, padding and content for the supplied widget.
 
     draw_frame() Draws a frame to the screen at the desired location. Also reads the state
     of the frame and changes the colour accordingly.
@@ -465,6 +478,7 @@ The \<input.h\> header file contains all the declarations for the functions and 
 ### Functions
 
     void tui_handle_input();
+    int check_disable(sWidget *a);
 
 ---
 ## The \<input.c\> Source
