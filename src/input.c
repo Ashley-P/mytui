@@ -106,6 +106,13 @@ void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev)
     }
 }
 
+void label_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    /* Basic stuff just for getting highlighting buttons to work properly */
+    if (a->state == DISABLED || check_disable(a)) return;
+    mouse_hover(a, old, ev);
+
+}
+
 void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     /* Not doing anything if the widget is disabled */
     if (a->state == DISABLED || check_disable(a)) return;
@@ -201,7 +208,7 @@ void tui_handle_input() {
                     case BUTTON:      button_mouse_event(wid, &old_wid, ev);  break;
                     case CHECKBOX:    cbox_mouse_event(wid, &old_wid, ev);    break;
                     case RADIOBUTTON: rbutton_mouse_event(wid, &old_wid, ev); break;
-                    case LABEL: break;
+                    case LABEL:       label_mouse_event(wid, &old_wid, ev);   break;
 
                     default: break;
                 }

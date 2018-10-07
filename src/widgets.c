@@ -508,7 +508,8 @@ void grid_set(sWidget *widget, int col, int row) {
             if (widget->parent->widget.frame.grid[col][row])
                 tui_err(TUI_WARNING,
                         0,
-                        "Error in function grid_set. Grid position is already taken, overwritten anyway");
+                        "Error in function grid_set: Grid position x = %d, y = %d, "
+                        "is already taken; overwritten anyway", col, row);
             widget->parent->widget.frame.grid[col][row] = widget;
             widget->gridpos.x = col;
             widget->gridpos.y = row;

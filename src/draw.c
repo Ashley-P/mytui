@@ -209,7 +209,8 @@ void draw_button(sWidget *a) {
 }
 
 void draw_label(const sWidget *a) {
-    draw_str(a->widget.label.text, a->widget.label.len, a->pos.x, a->pos.y);
+    draw_border_padding_content(a, 0x90, 0x70, 0x40);
+    draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y);
 }
 
 void draw_checkbox(const sWidget *a) {
