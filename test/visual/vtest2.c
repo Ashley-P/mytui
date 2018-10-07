@@ -48,11 +48,13 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
 
-    test  = tui_button(w_root, L"TEST", testrbutton); 
+    test  = tui_button(w_root, L"TEST1", testrbutton); 
 
     pWidget disable = tui_button(w_root, L"Disable", disable_wid);
 
     link = tui_radiobutton_link();
+
+    pWidget label = tui_label(w_root, L"Label");
 
     pWidget rbut1 = tui_radiobutton(w_root, L"Radio Button 1");
     pWidget rbut2 = tui_radiobutton(w_root, L"Radio Button 2");
@@ -94,6 +96,7 @@ int main() {
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
+    grid_set(label, 0, 1);
 
     grid_set(rbut1, 1, 2);
     grid_set(rbut2, 1, 3);
@@ -137,11 +140,9 @@ int main() {
     frame2->bsize = (sSize) {1, 1};
     frame2->msize = (sSize) {2, 2};
     
-    /*
-    test->msize = (sSize) {1, 1};
+    //test->msize = (sSize) {1, 1};
     test->bsize = (sSize) {1, 1};
     test->psize = (sSize) {1, 1};
-    */
 
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);

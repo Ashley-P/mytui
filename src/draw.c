@@ -107,7 +107,7 @@ void draw_border_padding_content(sWidget *a, int border_colour, int padding_colo
 }
 
 void draw_frame(sWidget *a, const int fill) {
-    draw_border_padding_content(a, 0x90, 0xF0, 0x70);
+    draw_border_padding_content(a, 0x90, 0x70, 0x70);
 
     /* Drawing the text on the border */
     /* Return if no text or if no top border*/
@@ -208,38 +208,39 @@ void draw_button(sWidget *a) {
     }
 }
 
-void draw_label(const sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x40);
+void draw_label(sWidget *a) {
+    draw_border_padding_content(a, 0x90, 0x70, 0x70);
     draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y);
 }
 
-void draw_checkbox(const sWidget *a) {
+void draw_checkbox(sWidget *a) {
+    draw_border_padding_content(a, 0x90, 0x70, 0x70);
     switch (a->widget.cbox.label.anchor) {
         case E:
             if (a->state == HOVER || a->state == PRESS)
-                draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0x80);
+                draw_box(a->cpos.x, a->cpos.y, 1, 1, 1, 0x80);
             else
-                draw_box(a->pos.x, a->pos.y, 1, 1, 1, 0xF0);
+                draw_box(a->cpos.x, a->cpos.y, 1, 1, 1, 0xF0);
 
             /* drawing checkbox */
             if (a->widget.cbox.active == 1)
-                draw_str(L"\u25A0", 1, a->pos.x, a->pos.y);
+                draw_str(L"\u25A0", 1, a->cpos.x, a->cpos.y);
             else if (a->widget.cbox.active == 2)
-                draw_str(L"~", 1, a->pos.x, a->pos.y);
-            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->pos.x + 2), a->pos.y);
+                draw_str(L"~", 1, a->cpos.x, a->cpos.y);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->cpos.x + 2), a->cpos.y);
             break;
         case W:
             if (a->state == HOVER || a->state == PRESS)
-                draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0x80);
+                draw_box((a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 1, 1, 1, 0x80);
             else
-                draw_box((a->pos.x + a->widget.cbox.label.len + 1), a->pos.y, 1, 1, 1, 0xF0);
+                draw_box((a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 1, 1, 1, 0xF0);
 
             /* drawing checkbox */
             if (a->widget.cbox.active == 1)
-                draw_str(L"\u25A0", 1, (a->pos.x + a->widget.cbox.label.len + 1), a->pos.y);
+                draw_str(L"\u25A0", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y);
             else if (a->widget.cbox.active == 2)
-                draw_str(L"~", 1, (a->pos.x + a->widget.cbox.label.len + 1), a->pos.y);
-            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->pos.x, a->pos.y);
+                draw_str(L"~", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->cpos.x, a->cpos.y);
             break;
         default:
             tui_err(TUI_ERROR,
@@ -247,30 +248,28 @@ void draw_checkbox(const sWidget *a) {
                     "Error in function draw_checkbox: a->widget.checkbox.label.anchor is incorrect");
             break;
     }
-
-    if (a->state == DISABLED)
-        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
 }
 
-void draw_radiobutton(const sWidget *a) {
+void draw_radiobutton(sWidget *a) {
+    draw_border_padding_content(a, 0x90, 0x70, 0x70);
     switch (a->widget.rbutton.label.anchor) {
         case E:
             /* Drawing the label */
-            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, (a->pos.x + 2), a->pos.y);
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, (a->cpos.x + 2), a->cpos.y);
             /* Drawing the dot */
             if (a->widget.rbutton.active == 0)
-                draw_str(L"\u25CB", 1, a->pos.x, a->pos.y);
+                draw_str(L"\u25CB", 1, a->cpos.x, a->cpos.y);
             else if (a->widget.rbutton.active == 1)
-                draw_str(L"\u25CF", 1, a->pos.x, a->pos.y);
+                draw_str(L"\u25CF", 1, a->cpos.x, a->cpos.y);
             break;
         case W:
             /* Drawing the label */
-            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, a->pos.x, a->pos.y);
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, a->cpos.x, a->cpos.y);
             /* Drawing the dot */
             if (a->widget.rbutton.active == 0)
-                draw_str(L"\u25CB", 1, (a->pos.x + a->widget.rbutton.label.len + 1), a->pos.y);
+                draw_str(L"\u25CB", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y);
             else if (a->widget.rbutton.active == 1)
-                draw_str(L"\u25CF", 1, (a->pos.x + a->widget.rbutton.label.len + 1), a->pos.y);
+                draw_str(L"\u25CF", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y);
             break;
         default:
             tui_err(TUI_ERROR,
@@ -278,7 +277,4 @@ void draw_radiobutton(const sWidget *a) {
                     "Error in function draw_radiobutton: a->widget.radiobutton.label.anchor is incorrect");
             break;
     }
-
-    if (a->state == DISABLED)
-        draw_box(a->pos.x, a->pos.y, a->csize.x, a->csize.y, 1, 0x80);
 }
