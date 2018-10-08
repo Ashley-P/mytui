@@ -31,8 +31,6 @@ CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight) {
     if (ptr == NULL)
         tui_err(TUI_ERROR, 1, "Error in alloc_ci_array. Calloc failed to allocate memory");
 
-    i_bufsize = n_screenwidth * n_screenheight;
-
     return ptr;
 }
 
@@ -59,6 +57,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
     if (h_console == INVALID_HANDLE_VALUE)
         win_err("Bad Handle");
     ci_screen = alloc_ci_array(n_screenwidth, n_screenheight);
+    i_bufsize = n_screenwidth * n_screenheight;
     tui_current_screen = &ci_screen;
     sn_screenwidth = n_screenwidth;
     sn_screenheight = n_screenheight;
@@ -154,6 +153,7 @@ void tui_draw_helper(sWidget *a) {
         case LABEL:       draw_label(a);       break;
         case CHECKBOX:    draw_checkbox(a);    break;
         case RADIOBUTTON: draw_radiobutton(a); break;
+        case CANVAS:      draw_canvas(a);      break;
         default: break;
     }
 }
@@ -161,7 +161,7 @@ void tui_draw_helper(sWidget *a) {
 void tui_draw(sWidget *a) {
     // Basic drawing for now
     // Resetting each element
-    reset_buf(*tui_current_screen);   
+    reset_buf(*tui_current_screen, i_bufsize);   
     tui_draw_helper(a);
     if(!WriteConsoleOutputW(h_console,
                             *tui_current_screen,
@@ -169,8 +169,6 @@ void tui_draw(sWidget *a) {
                             (COORD) {0, 0},
                             &sr_screensize))
         win_err("WriteConsoleOutput");
-
-
 }
 
 void inpthr_loop() {

@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "input.h"
 
-#define SHOW_MARGIN 0 /* Debugging stuff because the margin isn't usually drawn */
+#define SHOW_MARGIN 1 /* Debugging stuff because the margin isn't usually drawn */
 #define DRAW_MARGIN draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 0, 0x00);
 
 #define H HORIZONTAL
@@ -19,10 +19,10 @@
  * \u25CF == Black Circle
  */
 
-void reset_buf() {
-    for(int i = 0; i < i_bufsize; i++) {
-        (*tui_current_screen + i)->Char.UnicodeChar = L' ';
-        (*tui_current_screen + i)->Attributes = 0x70;
+void reset_buf(CHAR_INFO *arr, size_t len) {
+    for (int i = 0; i < len; i++) {
+        (arr + i)->Char.UnicodeChar = L' ';
+        (arr + i)->Attributes = 0x00;
     }
 }
 
@@ -276,5 +276,19 @@ void draw_radiobutton(sWidget *a) {
                     0,
                     "Error in function draw_radiobutton: a->widget.radiobutton.label.anchor is incorrect");
             break;
+    }
+}
+
+void draw_canvas(sWidget *a) {
+    draw_border_padding_content(a, 0x90, 0x70, 0xF0);
+    /* Directly copying the CHAR_INFO structs into the screen */
+    unsigned short width  = a->widget.canvas.width;
+    unsigned short height = a->widget.canvas.height;
+    CHAR_INFO *c = a->widget.canvas.canvas;
+
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            *(*tui_current_screen + a->cpos.x + i + ((a->cpos.y + j) * sn_screenwidth)) = *(c + i + (j * height));
+        }
     }
 }

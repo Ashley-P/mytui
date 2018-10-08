@@ -41,7 +41,6 @@ void disable_wid() {
     }
 }
         
-
 int main() {
     int n_screenwidth = 180;
     int n_screenheight = 50;
@@ -56,20 +55,27 @@ int main() {
 
     pWidget label = tui_label(w_root, L"Label");
 
-    pWidget rbut1 = tui_radiobutton(w_root, L"Radio Button 1");
-    pWidget rbut2 = tui_radiobutton(w_root, L"Radio Button 2");
-    pWidget rbut3 = tui_radiobutton(w_root, L"Radio Button 3");
-    pWidget rbut4 = tui_radiobutton(w_root, L"Radio Button 4");
+    pWidget cboxframe    = tui_frame(w_root, L"Checkbox");
+    pWidget rbuttonframe = tui_frame(w_root, L"Radio Button");
+
+    /* Canvas testing */
+    pWidget frame3 = tui_frame(w_root, L"Canvas");
+    pWidget canvas = tui_canvas(frame3, 20, 20);
+
+    pWidget rbut1 = tui_radiobutton(rbuttonframe, L"Radio Button 1");
+    pWidget rbut2 = tui_radiobutton(rbuttonframe, L"Radio Button 2");
+    pWidget rbut3 = tui_radiobutton(rbuttonframe, L"Radio Button 3");
+    pWidget rbut4 = tui_radiobutton(rbuttonframe, L"Radio Button 4");
 
     radiobutton_link(link, 4, rbut1, rbut2, rbut3, rbut4);
 
-    pWidget cbox1 = tui_checkbox(w_root, L"Checkbox Test");
-    pWidget cbox2 = tui_checkbox(w_root, L"Parent 1");
-    pWidget cbox3 = tui_checkbox(w_root, L"Child 1");
-    pWidget cbox4 = tui_checkbox(w_root, L"Child 2");
-    pWidget cbox5 = tui_checkbox(w_root, L"Parent 2");
-    pWidget cbox6 = tui_checkbox(w_root, L"Child 1");
-    pWidget cbox7 = tui_checkbox(w_root, L"Child 2");
+    pWidget cbox1 = tui_checkbox(cboxframe, L"Checkbox Test");
+    pWidget cbox2 = tui_checkbox(cboxframe, L"Parent 1");
+    pWidget cbox3 = tui_checkbox(cboxframe, L"Child 1");
+    pWidget cbox4 = tui_checkbox(cboxframe, L"Child 2");
+    pWidget cbox5 = tui_checkbox(cboxframe, L"Parent 2");
+    pWidget cbox6 = tui_checkbox(cboxframe, L"Child 1");
+    pWidget cbox7 = tui_checkbox(cboxframe, L"Child 2");
 
     frame = tui_frame(w_root, L"");
     pWidget but1  = tui_button(frame, L" ", nw);
@@ -96,20 +102,24 @@ int main() {
     grid_set(disable, 1, 1);
     grid_set(frame, 1, 0);
     grid_set(frame2, 2, 0);
+    grid_set(frame3, 2, 2);
+    grid_set(canvas, 0, 0);
     grid_set(label, 0, 1);
+    grid_set(cboxframe, 0, 2);
+    grid_set(rbuttonframe, 1, 2);
 
-    grid_set(rbut1, 1, 2);
-    grid_set(rbut2, 1, 3);
-    grid_set(rbut3, 1, 4);
-    grid_set(rbut4, 1, 5);
+    grid_set(rbut1, 0, 0);
+    grid_set(rbut2, 0, 1);
+    grid_set(rbut3, 0, 2);
+    grid_set(rbut4, 0, 3);
 
-    grid_set(cbox1, 0, 2);
-    grid_set(cbox2, 0, 3);
-    grid_set(cbox3, 0, 4);
-    grid_set(cbox4, 0, 5);
-    grid_set(cbox5, 0, 6);
-    grid_set(cbox6, 0, 7);
-    grid_set(cbox7, 0, 8);
+    grid_set(cbox1, 0, 0);
+    grid_set(cbox2, 0, 1);
+    grid_set(cbox3, 0, 2);
+    grid_set(cbox4, 0, 3);
+    grid_set(cbox5, 0, 4);
+    grid_set(cbox6, 0, 5);
+    grid_set(cbox7, 0, 6);
 
     grid_set(but1, 0, 0);
     grid_set(but2, 1, 0);
@@ -132,6 +142,9 @@ int main() {
 
     frame2->widget.frame.label.anchor = NW;
     frame->anchor = NSEW;
+
+    cboxframe->anchor = N;
+    rbuttonframe->anchor = N;
 
     frame->msize.y = 5;
     frame->psize = (sSize) {1, 1};
@@ -161,6 +174,10 @@ int main() {
     rbut2->widget.rbutton.label.anchor = W;
     rbut3->widget.rbutton.label.anchor = W;
     rbut4->widget.rbutton.label.anchor = W;
+
+    for (int i = 0; i < canvas->widget.canvas.len; i++) {
+        (canvas->widget.canvas.canvas + i)->Attributes = (i % 0xF) * 16;
+    }
 
     tui_loop();
 }

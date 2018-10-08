@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include "tui.h"
 #include "const.h"
 #include "widgets.h"
 #include "draw.h"
@@ -25,7 +26,8 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
             break;
         default:
             tui_err(TUI_ERROR, 1,
-                    "Error in assign_to_parent. Wrong type for parent: type is %s", reverse_eType(a));
+                    "Error in assign_to_parent. Wrong type for parent: type is %s",
+                    reverse_eType(parent->type));
             break;
     }
 
@@ -136,6 +138,20 @@ sWidget * tui_radiobutton(sWidget *parent, wchar_t *text) {
     ptr->widget.rbutton.label.len    = wcslen(text);
     ptr->widget.rbutton.label.anchor = W;
     ptr->widget.rbutton.active       = 0;
+
+    return ptr;
+}
+
+sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned short height) {
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type    = CANVAS;
+    
+    ptr->usize.x = width;
+    ptr->usize.y = height;
+    ptr->widget.canvas.width  = width;
+    ptr->widget.canvas.height = height;
+    ptr->widget.canvas.canvas = alloc_ci_array(width, height);
+    ptr->widget.canvas.len    = width * height;
 
     return ptr;
 }
@@ -253,8 +269,12 @@ void widget_sizer(sWidget *a) {
             a->csize.y = 1; /* No text wrapping yet */
             calc_rsize(a);
             break;
+        case CANVAS:
+            a->csize = a->usize;
+            calc_rsize(a);
+            break;
         default:
-            tui_err(TUI_ERROR, 0, "Error in widget_sizer: Unknown Type");
+            tui_err(TUI_ERROR, 0, "Error in widget_sizer: Unknown Type %s", reverse_eType(a->type));
             break;
     }
 }
@@ -441,9 +461,10 @@ sSize max_sSize(const sSize a, const sSize b) {
 }
 
 void checkbox_add(sWidget *a, sWidget *b) {
-    if (a->type != CHECKBOX || a->type != CHECKBOX) {
+    if (a->type != CHECKBOX || b->type != CHECKBOX) {
         tui_err(TUI_WARNING, 0, 
-                "Error in function checkbox_add. Wrong widget type: Expected CHECKBOX got %s", reverse_eType(a));
+                "Error in function checkbox_add. Wrong widget type: Expected CHECKBOX got %s and %s",
+                reverse_eType(a->type), reverse_eType(b->type));
         return;
     }
 

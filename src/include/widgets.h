@@ -36,7 +36,8 @@ enum eType {
     BUTTON       = /*1 <<*/ 2,
     LABEL        = /*1 <<*/ 3,
     CHECKBOX     = /*1 <<*/ 4,
-    RADIOBUTTON  = /*1 <<*/ 5
+    RADIOBUTTON  = /*1 <<*/ 5,
+    CANVAS       = /*1 <<*/ 6
 };
 
 enum eState {
@@ -100,6 +101,13 @@ typedef struct tRadiobutton {
     struct tRadiobuttonLink *parent;
 } sRadiobutton;
 
+typedef struct tCanvas {
+    CHAR_INFO *canvas;
+    size_t len;
+    unsigned short width;
+    unsigned short height;
+} sCanvas;
+
 typedef struct tWidget {
     enum eType   type; 
     enum eState  state;
@@ -126,6 +134,7 @@ typedef struct tWidget {
         struct tLabel       label;
         struct tCheckbox    cbox;
         struct tRadiobutton rbutton;
+        struct tCanvas      canvas;
     } widget;
 } sWidget, *pWidget;
 
@@ -134,6 +143,7 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void (*callback)());
 sWidget * tui_label(sWidget *parent, wchar_t *text);
 sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
 sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
+sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned short height);
 sRadiobuttonLink * tui_radiobutton_link();
 void tui_root_frame();
 void widget_sizer(sWidget *a);

@@ -185,7 +185,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
 
 ### Constants/Defines
 
-    SHOW_MARGIN 0 // Debug Variable 
+    SHOW_MARGIN 1/0 // Debug Variable 
     DRAW_MARGIN draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 0, 0x00);
 
     H HORIZONTAL
@@ -195,12 +195,16 @@ The \<draw.h\> header file contains all the function declarations that are expos
 
 ### Functions
 
-    void reset_buf();
-    void draw_frame(const sWidget *a, const bool fill);
-    void draw_button(const sWidget *a);
-    void draw_label(const sWidget *a);
-    void draw_checkbox(const sWidget *a);
-    void draw_radiobutton(const sWidget *a);
+    void reset_buf(CHAR_INFO *arr, size_t len);
+    void draw_line(const int x, const int y, const int len, const int direction, const int colour);
+    void draw_box(int x, int y, const int width, const int height, const int fill, int colour);
+    void draw_str(const wchar_t *str, const size_t len, int x, int y);
+    void draw_frame(sWidget *a, const bool fill);
+    void draw_button(sWidget *a);
+    void draw_label(sWidget *a);
+    void draw_checkbox(sWidget *a);
+    void draw_radiobutton(sWidget *a);
+    void draw_canvas(sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -211,7 +215,7 @@ The \<draw.c\> source file contains all the function implementations
 
 #### Synopsis
 
-    void reset_buf();
+    void reset_buf(CHAR_INFO *arr, size_t len);
     void draw_line(const int x, const int y, const int len, const int direction, const int colour);
     void draw_box(int x, int y, const int width, const int height, const bool fill, int colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
@@ -221,11 +225,12 @@ The \<draw.c\> source file contains all the function implementations
     void draw_label(const sWidget *a);
     void draw_checkbox(const sWidget *a);
     void draw_radiobutton(const sWidget *a);
+    void draw_canvas(const sWidget *a);
 
 #### Description
     
-    reset_buf() Fills the buffer with spaces.
-    Used after every draw to the screen.
+    reset_buf() Sets all the elements in the buffer to a space and the background and foreground
+    to black.
 
     draw_line() Draws a non-diagonal line
 
@@ -249,6 +254,8 @@ The \<draw.c\> source file contains all the function implementations
 
     draw_radiobutton() Draws a radiobutton widget to the screen at the desired position. Anchoring of
     the label decides whether the label is on the left or right.
+
+    draw_canvas() Draws the canvas to the screen utilising the widgets array of CHAR_INFO structs.
 
 ---
 ## The \<widgets.h\> Header
@@ -368,6 +375,11 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         unsigned char active;
         struct tRadiobuttonLink *parent;
     } sRadiobutton;
+
+    typedef struct tCanvas {
+        CHAR_INFO *canvas;
+        size_t len;
+    } sCanvas;
 
     typedef struct tWidget {
         enum eType   type; 
@@ -502,6 +514,7 @@ The \<input.c\> source file contains all the definitions for the functions and d
     void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
     void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     void tui_handle_input();
 
 #### Description
@@ -524,6 +537,8 @@ The \<input.c\> source file contains all the definitions for the functions and d
     cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
 
     rbutton_mouse_event() handles the mouse events when the widget is of type RADIOBUTTON.
+
+    canvas_mouse_event() handles the mouse events when the widget is of type CANVAS.
 
     tui_handle_input() handles all the events for the program.
 --- 
