@@ -84,6 +84,17 @@ void tui_err(const int err_type, const int quit_prog, const char *msg, ...) {
               NULL);
 }
 
+wchar_t * reverse_eType(enum eType type) {
+    switch (type) {
+        case FRAME:       return L"FRAME";
+        case BUTTON:      return L"BUTTON";
+        case LABEL:       return L"LABEL";
+        case CHECKBOX:    return L"CHECKBOX";
+        case RADIOBUTTON: return L"RADIOBUTTON";
+        default:          return L"UNKNOWN";
+    }
+}
+
 int rand_int(int min, int max) {
     /* Provides non modulus biased integers */
     int x;

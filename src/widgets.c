@@ -23,16 +23,9 @@ void assign_to_parent(sWidget *child, sWidget *parent) {
         case FRAME:
             parent->widget.frame.children[parent->widget.frame.len++] = child;
             break;
-        case BUTTON:
-            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is BUTTON");
-            break;
-        case LABEL:
-            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is LABEL");
-            break;
-        case CHECKBOX:
-            tui_err(TUI_ERROR, 1, "Error in assign_to_parent. Wrong type for parent: type is CHECKBOX");
-            break;
         default:
+            tui_err(TUI_ERROR, 1,
+                    "Error in assign_to_parent. Wrong type for parent: type is %s", reverse_eType(a));
             break;
     }
 
@@ -360,12 +353,12 @@ void widget_anchorer(sWidget *a, int *pcols, int *prows) {
     if ((N | S) == (anchor & (N | S)) && !a->rowspan) {
         widget_anchorer_helper(a, 0, - ((int) prows[a->gridpos.y] / 2) + ((int) a->rsize.y / 2));
         a->rsize.y = prows[a->gridpos.y];
-        a->csize.y = a->rsize.y - (a->msize.y * 2)- (a->bsize.y * 2) - (a->psize.y * 2);
+        a->csize.y = a->rsize.y - (a->msize.y * 2) - (a->bsize.y * 2) - (a->psize.y * 2);
     }
     if ((E | W) == (anchor & (E | W)) && !a->colspan) {
         widget_anchorer_helper(a, - ((int) pcols[a->gridpos.x] / 2) + ((int) a->rsize.x / 2), 0);
         a->rsize.x = pcols[a->gridpos.x];
-        a->csize.x = a->rsize.x - (a->msize.x * 2)- (a->bsize.x * 2) - (a->psize.x * 2);
+        a->csize.x = a->rsize.x - (a->msize.x * 2) - (a->bsize.x * 2) - (a->psize.x * 2);
     }
     if ((N | S | E | W) == (anchor & (N | S | E | W))) return;
 
@@ -449,7 +442,8 @@ sSize max_sSize(const sSize a, const sSize b) {
 
 void checkbox_add(sWidget *a, sWidget *b) {
     if (a->type != CHECKBOX || a->type != CHECKBOX) {
-        tui_err(TUI_WARNING, 0, "Error in function checkbox_add. Wrong widget type: Expected CHECKBOX");
+        tui_err(TUI_WARNING, 0, 
+                "Error in function checkbox_add. Wrong widget type: Expected CHECKBOX got %s", reverse_eType(a));
         return;
     }
 

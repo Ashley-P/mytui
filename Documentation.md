@@ -101,6 +101,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     void init_stderr();
     void win_err(const char *msg);
     void tui_err(const int err_type, const int quit_prog, const char *msg, ...);
+    wchar_t * reverse_eType(enum eType type);
     wchar_t *rand_str();
     sStack *create_stack(unsigned int capacity);
     int is_stack_full(sStack *stack);
@@ -139,6 +140,7 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     void init_stderr();
     void win_err(const char *msg);
     void tui_err(const char *msg, const int err_type, const int quit_prog, ...);
+    wchar_t * reverse_eType(enum eType type);
     int rand_int(int min, int max);
     wchar_t *rand_str();
     sStack *create_stack(unsigned int capacity);
@@ -157,6 +159,9 @@ The \<utils.c\> source file contains declarations for some utility functions suc
 
     tui_err() is similar to win_err() in that it puts a formatted error/warning/other message into
     a logging file, and also offers the opportunity to quit the program all together.
+
+    reverse_eType() checks the input and returns a wchar_t string corresponding to the type.
+    Used with tui_err to provide more descriptive errors.
 
     rand_int() creates a non-biased int utilizing the rand() function.
     

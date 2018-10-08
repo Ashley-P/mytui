@@ -16,6 +16,7 @@ typedef struct tStack {
 void init_stderr();
 void win_err(const char *msg);
 void tui_err(const int err_type, const int quit_prog, const char *msg, ...);
+wchar_t * reverse_eType(enum eType type);
 wchar_t *rand_str();
 sStack *create_stack(unsigned int capacity);
 int is_stack_full(sStack *stack);
