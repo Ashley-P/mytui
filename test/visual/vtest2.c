@@ -55,7 +55,7 @@ int main() {
 
     pWidget label = tui_label(w_root, L"Label");
 
-    pWidget cboxframe    = tui_frame(w_root, L"Checkbox");
+    pWidget cboxframe    = tui_frame(w_root, L"Checkbox With a really Long name");
     pWidget rbuttonframe = tui_frame(w_root, L"Radio Button");
 
     /* Canvas testing */
@@ -154,8 +154,8 @@ int main() {
     frame2->msize = (sSize) {2, 2};
     
     //test->msize = (sSize) {1, 1};
-    test->bsize = (sSize) {1, 1};
-    test->psize = (sSize) {1, 1};
+    //test->bsize = (sSize) {1, 1};
+    //test->psize = (sSize) {1, 1};
 
     /* Testing out checkboxes */
     checkbox_add(cbox1, cbox2);

@@ -220,7 +220,7 @@ void widget_sizer(sWidget *a) {
              * w_root is skipped
              */
             if (a != w_root) {
-                a->csize.x = temp2;
+                a->csize.x = temp2 > af->label.len ? temp2 : af->label.len;
                 a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)      /* Comparison */
                             + (a->psize.x * 2) + (a->bsize.x * 2) + (a->msize.x * 2); /* Adding the rest */
             }
