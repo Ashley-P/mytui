@@ -196,8 +196,8 @@ The \<draw.h\> header file contains all the function declarations that are expos
 ### Functions
 
     void reset_buf(CHAR_INFO *arr, size_t len);
-    void draw_line(const int x, const int y, const int len, const int direction, const int colour);
-    void draw_box(int x, int y, const int width, const int height, const int fill, int colour);
+    void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
+    void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
     void draw_str(const wchar_t *str, const size_t len, int x, int y);
     void draw_frame(sWidget *a, const bool fill);
     void draw_button(sWidget *a);
@@ -216,10 +216,10 @@ The \<draw.c\> source file contains all the function implementations
 #### Synopsis
 
     void reset_buf(CHAR_INFO *arr, size_t len);
-    void draw_line(const int x, const int y, const int len, const int direction, const int colour);
-    void draw_box(int x, int y, const int width, const int height, const bool fill, int colour);
+    void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
+    void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
-    void draw_border_padding_content(sWidget *a, int colour);
+    void draw_border_padding_content(sWidget *a, unsigned char border_colour, unsigned char padding_colour, unsigned char content_colour);
     void draw_frame(sWidget *a, const int fill);
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
@@ -394,6 +394,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         sSize bsize;
         sSize psize;
         sSize csize;
+        char bcolour;
+        char pcolour;
+        char ccolour;
         int rowspan;
         int colspan;
         struct tWidget *parent;

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <windows.h>
 #include "tui.h"
 #include "const.h"
 #include "widgets.h"
@@ -64,6 +65,12 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
     ptr->widget.frame.label.len    = wcslen(text);
     ptr->widget.frame.label.anchor = N | W;
 
+
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+    ptr->ccolour = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+
     /* Frames come with 1 wide borders */
     ptr->bsize = (sSize) {1, 1};
 
@@ -83,7 +90,7 @@ sWidget * tui_frame(sWidget *parent, wchar_t *text) {
 void tui_root_frame() {
     w_root = tui_frame(NULL, L"");
     w_root->pos   = (sPos) {0, 0};
-    w_root->cpos   = (sPos) {1, 1};
+    w_root->cpos  = (sPos) {1, 1};
     w_root->csize = (sSize) {sn_screenwidth - 2, sn_screenheight - 2};
     w_root->rsize = (sSize) {sn_screenwidth, sn_screenheight};
 }
@@ -99,6 +106,11 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->widget.button.label.anchor = C;
     ptr->widget.button.callback     = callback;
 
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+    ptr->ccolour = BACKGROUND_RED;
+
     return ptr;
 }
 
@@ -110,6 +122,11 @@ sWidget * tui_label(sWidget *parent, wchar_t *text) {
     ptr->widget.label.text   = text;
     ptr->widget.label.len    = wcslen(text);
     ptr->widget.label.anchor = C;
+
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = parent->ccolour;
+    ptr->ccolour = parent->ccolour;
 
     return ptr;
 }
@@ -123,6 +140,11 @@ sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
     ptr->widget.cbox.label.anchor = W;
     ptr->widget.cbox.active       = 0;
     ptr->widget.cbox.len          = 0;
+
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = parent->ccolour;
+    ptr->ccolour = parent->ccolour;
 
     for(int i = 0; i < MAX_CHILDREN; i++)
         ptr->widget.cbox.children[i] = NULL;
@@ -139,6 +161,11 @@ sWidget * tui_radiobutton(sWidget *parent, wchar_t *text) {
     ptr->widget.rbutton.label.anchor = W;
     ptr->widget.rbutton.active       = 0;
 
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = parent->ccolour;
+    ptr->ccolour = parent->ccolour;
+
     return ptr;
 }
 
@@ -152,6 +179,11 @@ sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned
     ptr->widget.canvas.height = height;
     ptr->widget.canvas.canvas = alloc_ci_array(width, height);
     ptr->widget.canvas.len    = width * height;
+
+    /* Colours - No point setting ccolour */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = parent->ccolour;
+
 
     return ptr;
 }

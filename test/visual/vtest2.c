@@ -149,10 +149,13 @@ int main() {
     frame->msize.y = 5;
     frame->psize = (sSize) {1, 1};
     frame->bsize = (sSize) {2, 2};
+    frame->anchor = E;
 
     frame2->bsize = (sSize) {1, 1};
     frame2->msize = (sSize) {2, 2};
-    
+    frame2->anchor = W;
+
+    cbox1->anchor = E;
     //test->msize = (sSize) {1, 1};
     //test->bsize = (sSize) {1, 1};
     //test->psize = (sSize) {1, 1};
@@ -170,11 +173,13 @@ int main() {
     cbox2->anchor = W; 
     cbox5->anchor = W; 
 
+    /* Testing radio buttons */
     rbut1->widget.rbutton.label.anchor = W;
     rbut2->widget.rbutton.label.anchor = W;
     rbut3->widget.rbutton.label.anchor = W;
     rbut4->widget.rbutton.label.anchor = W;
 
+    /* Testing out Canvas */
     for (int i = 0; i < canvas->widget.canvas.len; i++) {
         (canvas->widget.canvas.canvas + i)->Attributes = (i % 0xF) * 16;
     }

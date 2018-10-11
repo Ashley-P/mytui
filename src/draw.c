@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "input.h"
 
-#define SHOW_MARGIN 1 /* Debugging stuff because the margin isn't usually drawn */
+#define SHOW_MARGIN 0 /* Debugging stuff because the margin isn't usually drawn */
 #define DRAW_MARGIN draw_box(a->pos.x, a->pos.y, a->rsize.x, a->rsize.y, 0, 0x00);
 
 #define H HORIZONTAL
@@ -26,7 +26,7 @@ void reset_buf(CHAR_INFO *arr, size_t len) {
     }
 }
 
-void draw_line(const int x, const int y, const int len, const int direction, const int colour) {
+void draw_line(const int x, const int y, const int len, const int direction, const unsigned char colour) {
     /* Function draws from the coords provided towards the right or downwards */
     if (direction != HORIZONTAL && direction != VERTICAL) {
         tui_err(TUI_ERROR, 0, 
@@ -56,7 +56,7 @@ void draw_line(const int x, const int y, const int len, const int direction, con
     }
 
 }
-void draw_box(int x, int y, const int width, const int height, const int fill, int colour) {
+void draw_box(const int x, const int y, const int width, const int height, const int fill, unsigned char colour) {
     if (fill) {
         for (int i = 0; i < width; i++) {
             draw_line(x + i, y, height, VERTICAL, colour);
@@ -75,7 +75,8 @@ void draw_str(const wchar_t *str, const size_t len, int x, int y) {
     }
 }
 
-void draw_border_padding_content(sWidget *a, int border_colour, int padding_colour, int content_colour) {
+void draw_border_padding_content(sWidget *a, unsigned char border_colour, unsigned char padding_colour,
+        unsigned char content_colour) {
     /* Margin showing for debug since it's usually not coloured */
 #if SHOW_MARGIN
     DRAW_MARGIN
@@ -107,7 +108,7 @@ void draw_border_padding_content(sWidget *a, int border_colour, int padding_colo
 }
 
 void draw_frame(sWidget *a, const int fill) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x70);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
     /* Drawing the text on the border */
     /* Return if no text or if no top border*/
@@ -149,7 +150,7 @@ void draw_frame(sWidget *a, const int fill) {
 }
 
 void draw_button(sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x40);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
     /* Drawing the label */
     wchar_t *text = a->widget.button.label.text;
@@ -209,12 +210,12 @@ void draw_button(sWidget *a) {
 }
 
 void draw_label(sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x70);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y);
 }
 
 void draw_checkbox(sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x70);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     switch (a->widget.cbox.label.anchor) {
         case E:
             if (a->state == HOVER || a->state == PRESS)
@@ -251,7 +252,7 @@ void draw_checkbox(sWidget *a) {
 }
 
 void draw_radiobutton(sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0x70);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     switch (a->widget.rbutton.label.anchor) {
         case E:
             /* Drawing the label */
@@ -280,7 +281,7 @@ void draw_radiobutton(sWidget *a) {
 }
 
 void draw_canvas(sWidget *a) {
-    draw_border_padding_content(a, 0x90, 0x70, 0xF0);
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     /* Directly copying the CHAR_INFO structs into the screen */
     unsigned short width  = a->widget.canvas.width;
     unsigned short height = a->widget.canvas.height;

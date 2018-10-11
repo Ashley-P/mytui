@@ -11,17 +11,17 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
     
-    pWidget label = tui_label(w_root, L"AAAAAAAAAAAAAAAAAAAAAAAAA");
+    pWidget label1 = tui_label(w_root, L"label");
+    pWidget label2 = tui_label(w_root, L"Padding");
+    pWidget label3 = tui_label(w_root, L"label");
 
-    pWidget frame = tui_frame(w_root, L"");
-    pWidget button = tui_button(frame, L"TEST BOI", NULL);
+    grid_set(label1, 0, 0);
+    grid_set(label2, 0, 1);
+    grid_set(label3, 1, 0);
 
-    button->msize.x = 1;
-    button->msize.y = 1;
-
-    grid_set(frame, 0, 0);
-    grid_set(label, 0, 1);
-    grid_set(button, 0, 0);
+    label1->anchor = E;
+    label3->anchor = W;
+    label2->msize = (sSize) {3, 3};
 
     tui_loop();
     return 0;

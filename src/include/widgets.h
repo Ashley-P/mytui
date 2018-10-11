@@ -125,6 +125,9 @@ typedef struct tWidget {
     sSize bsize; /* Border Size */
     sSize psize; /* Padding Size - Padding size extends the colour of the widget*/
     sSize csize; /* Content Size */
+    unsigned char bcolour;
+    unsigned char pcolour;
+    unsigned char ccolour;
     int rowspan;
     int colspan;
     struct tWidget *parent;

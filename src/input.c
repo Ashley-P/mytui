@@ -162,6 +162,7 @@ void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev
                 if (p->old) p->old->active = 0;
                 p->old = &a->widget.rbutton;
             }
+            *old = a;
             break;
         case 0:
             mouse_hover(a, old, ev);
