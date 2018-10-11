@@ -5,7 +5,7 @@
 
 void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     if (ev->dwEventFlags == 0)
-    a->state = HOVER;
+        a->state = HOVER;
 
     if (a == *old) return; 
     else {
@@ -88,7 +88,7 @@ void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev)
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
-            if (a->state == PRESS) {
+            if (a->state == PRESS || a->state != HOVER) {
                 break;
             }
 
@@ -118,7 +118,7 @@ void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
-            if (a->state == PRESS) {
+            if (a->state == PRESS || a->state != HOVER) {
                 break;
             }
 
@@ -145,7 +145,7 @@ void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev
     switch (ev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
-            if (a->state == PRESS) {
+            if (a->state == PRESS || a->state != HOVER) {
                 break;
             }
 
