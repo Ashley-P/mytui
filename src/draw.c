@@ -198,10 +198,10 @@ void draw_button(sWidget *a) {
 
     switch (a->state) {
         case HOVER:
-            draw_border_padding_content(a, 0x90, 0x70, 0x50);
+            draw_border_padding_content(a, a->bcolour, a->pcolour, 0x50);
             break;
         case PRESS:
-            draw_border_padding_content(a, 0x90, 0x70, 0x60);
+            draw_border_padding_content(a, a->bcolour, a->pcolour, 0x60);
             break;
         default:
             break;
@@ -292,4 +292,12 @@ void draw_canvas(sWidget *a) {
             *(*tui_current_screen + a->cpos.x + i + ((a->cpos.y + j) * sn_screenwidth)) = *(c + i + (j * height));
         }
     }
+}
+
+void draw_field(sWidget *a) {
+    draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
+    draw_str(a->widget.field.text.text, a->widget.field.text.len, a->cpos.x, a->cpos.y);
+    if (a->widget.field.active)
+        draw_box(a->cpos.x + a->widget.field.cursor.x, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+                 
 }

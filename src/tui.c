@@ -20,6 +20,7 @@ int i_bufsize;                      // Size of *ci_screen in elements
 
 // Specially created root widget
 sWidget *w_root;
+sWidget *focused_wid;
 
 // Needed for initialisation
 static COORD c_screensize;
@@ -100,6 +101,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 
     // Other stuff
     tui_root_frame();
+    focused_wid = NULL;
 
     return 1;
 }
@@ -154,6 +156,7 @@ void tui_draw_helper(sWidget *a) {
         case CHECKBOX:    draw_checkbox(a);    break;
         case RADIOBUTTON: draw_radiobutton(a); break;
         case CANVAS:      draw_canvas(a);      break;
+        case FIELD:       draw_field(a);       break;
         default: break;
     }
 }

@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "const.h"
 
+#define MAX_BUF_SIZE 256
+
 /* For the grid system */
 #define MAX_CHILDREN    32
 #define MAX_GRID_COLS   16
@@ -30,6 +32,7 @@
 #define E EAST
 #define W WEST
 
+
 /* Might not use bitwise operations on the widget types so just keeping them sequential */
 enum eType {
     FRAME        = /*1 <<*/ 1,
@@ -37,7 +40,8 @@ enum eType {
     LABEL        = /*1 <<*/ 3,
     CHECKBOX     = /*1 <<*/ 4,
     RADIOBUTTON  = /*1 <<*/ 5,
-    CANVAS       = /*1 <<*/ 6
+    CANVAS       = /*1 <<*/ 6,
+    FIELD        = /*1 <<*/ 7
 };
 
 enum eState {
@@ -108,6 +112,22 @@ typedef struct tCanvas {
     unsigned short height;
 } sCanvas;
 
+typedef struct tTextLine {
+    size_t len;
+    wchar_t *text;
+} sTextLine;
+
+typedef struct tText {
+    size_t len;
+    wchar_t **text;
+} sText;
+
+typedef struct tField {
+    struct tTextLine text;
+    sPos cursor;
+    char active;
+} sField;
+
 typedef struct tWidget {
     enum eType   type; 
     enum eState  state;
@@ -138,6 +158,7 @@ typedef struct tWidget {
         struct tCheckbox    cbox;
         struct tRadiobutton rbutton;
         struct tCanvas      canvas;
+        struct tField       field;
     } widget;
 } sWidget, *pWidget;
 
@@ -147,6 +168,7 @@ sWidget * tui_label(sWidget *parent, wchar_t *text);
 sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
 sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
 sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned short height);
+sWidget * tui_field(sWidget *parent, wchar_t *text, const unsigned short width);
 sRadiobuttonLink * tui_radiobutton_link();
 void tui_root_frame();
 void widget_sizer(sWidget *a);

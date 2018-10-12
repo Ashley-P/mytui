@@ -1,10 +1,11 @@
 #include <windows.h>
+#include "const.h"
 #include "input.h"
 #include "tui.h"
 
 
-void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    if (ev->dwEventFlags == 0)
+void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
+    if (mev->dwEventFlags == 0)
         a->state = HOVER;
 
     if (a == *old) return; 
@@ -14,6 +15,21 @@ void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
         a->state = HOVER;
         *old = a;
     }
+}
+
+void mouse_press(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
+    if (*old) (*old)->state = NONE;
+    a->state = PRESS;
+    *old = a;
+    /* To make text cursor display properly */
+    if (focused_wid) {
+        switch (focused_wid->type) {
+            case FIELD: focused_wid->widget.field.active = 0; break;
+
+            default: break;
+        }
+    }
+    focused_wid = a;
 }
 
 int check_disable(sWidget *a) {
@@ -28,20 +44,7 @@ int check_disable(sWidget *a) {
 void cbox_set_active(sWidget *a, int active) {
     /* Travelling down the tree */
     for (int i = 0; i < a->widget.cbox.len; i++) cbox_set_active(a->widget.cbox.children[i], active);
-
-    switch (active) {
-        case 0:
-            a->widget.cbox.active = 0;
-            break;
-        case 1:
-            a->widget.cbox.active = 1;
-            break;
-        case 2:
-            a->widget.cbox.active = 2;
-            break;
-        default:
-            break;
-    }
+    a->widget.cbox.active = active;
 }
 
 void cbox_check_parent_active(sWidget *a) {
@@ -68,24 +71,31 @@ void cbox_check_parent_active(sWidget *a) {
         } 
     }
 
-    if (on == 0 && off == 1)              parent->active = 0; 
-    if (on == 1 && off == 0)              parent->active = 1; 
+    if (on == 0 && off == 1)               parent->active = 0; 
+    if (on == 1 && off == 0)               parent->active = 1; 
     if ((on == 1 && off == 1) || mid == 1) parent->active = 2; 
 
     cbox_check_parent_active(a->widget.cbox.parent);
 }
 
-void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     /* Basic stuff just for getting highlighting buttons to work properly */
     if (a->state == DISABLED || check_disable(a)) return;
-    mouse_hover(a, old, ev);
+    switch (mev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            mouse_press(a, old, mev);
+            break;
+        default:
+            mouse_hover(a, old, mev);
+            break;
+    }
 }
 
-void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     /* Not doing anything if the widget is disabled */
     if (a->state == DISABLED || check_disable(a)) return;
 
-    switch (ev->dwButtonState) {
+    switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
             if (a->state == PRESS || a->state != HOVER) {
@@ -94,55 +104,58 @@ void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev)
 
             if (a->widget.button.callback)
                 a->widget.button.callback();
-            a->state = PRESS;
-            *old = a;
-            break;
-        case 0:
-            mouse_hover(a, old, ev);
+            mouse_press(a, old, mev);
             break;
         default:
+            mouse_hover(a, old, mev);
             break;
     }
 }
 
-void label_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+void label_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     /* Basic stuff just for getting highlighting buttons to work properly */
     if (a->state == DISABLED || check_disable(a)) return;
-    mouse_hover(a, old, ev);
+    switch (mev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            mouse_press(a, old, mev);
+            break;
+        default:
+            mouse_hover(a, old, mev);
+            break;
+    }
 }
 
-void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     /* Not doing anything if the widget is disabled */
     if (a->state == DISABLED || check_disable(a)) return;
 
-    switch (ev->dwButtonState) {
+    switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
             if (a->state == PRESS || a->state != HOVER) {
                 break;
             }
 
-            a->state = PRESS;
             /* If the active variable is 2 it goes to 1 instead of 0 */
             if (a->widget.cbox.active == 2) a->widget.cbox.active = 1;
             else a->widget.cbox.active = !a->widget.cbox.active;
             cbox_set_active(a, a->widget.cbox.active);
             cbox_check_parent_active(a);
-            *old = a;
+            mouse_press(a, old, mev);
             break;
         case 0:
-            mouse_hover(a, old, ev);
+            mouse_hover(a, old, mev);
             break;
         default:
             break;
     }
 }
 
-void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     /* Not doing anything if the widget is disabled */
     if (a->state == DISABLED || check_disable(a)) return;
 
-    switch (ev->dwButtonState) {
+    switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             /* If the state hasn't been changed since last time do nothing */
             if (a->state == PRESS || a->state != HOVER) {
@@ -162,21 +175,46 @@ void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev
                 if (p->old) p->old->active = 0;
                 p->old = &a->widget.rbutton;
             }
-            *old = a;
-            break;
-        case 0:
-            mouse_hover(a, old, ev);
+            mouse_press(a, old, mev);
             break;
         default:
+            mouse_hover(a, old, mev);
             break;
     }
 }
 
-void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    /* TODO: Implement passthrough of events to user */
+void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
+    /* TODO: Implement passthrough of mevents to user */
     /* Basic stuff just for getting highlighting buttons to work properly */
     if (a->state == DISABLED || check_disable(a)) return;
-    mouse_hover(a, old, ev);
+    switch (mev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            mouse_press(a, old, mev);
+            if (a == focused_wid) a->widget.field.active = 1;
+            break;
+        default:
+            mouse_hover(a, old, mev);
+            break;
+    }
+}
+
+void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
+    /* TODO: Let the mouse press set the cursor position */
+    /* Basic stuff just for getting highlighting buttons to work properly */
+    if (a->state == DISABLED || check_disable(a)) return;
+    switch (mev->dwButtonState) {
+        case FROM_LEFT_1ST_BUTTON_PRESSED:
+            mouse_press(a, old, mev);
+            if (focused_wid) a->widget.field.active = 1;
+            break;
+        default:
+            mouse_hover(a, old, mev);
+            break;
+    }
+}
+
+void field_key_event(const KEY_EVENT_RECORD *kev) {
+    
 }
 
 void tui_handle_input() {
@@ -193,28 +231,36 @@ void tui_handle_input() {
     for(int i = 0; i < ul_evread; i++) {
         switch (ir_inpbuf[i].EventType) {
             case KEY_EVENT:
+                ;
+                KEY_EVENT_RECORD *kev = &ir_inpbuf[i].Event.KeyEvent;
+                switch (focused_wid->type) {
+                    case FIELD: field_key_event(kev);
+
+                    default: break;
+                }
                 tui_err(TUI_OTHER, 0, "Key Event");
                 break;
 
             case MOUSE_EVENT:
                 ;
-                MOUSE_EVENT_RECORD *ev = &ir_inpbuf[i].Event.MouseEvent;
+                MOUSE_EVENT_RECORD *mev = &ir_inpbuf[i].Event.MouseEvent;
                 /*
                  * Finding the widget
                  * Magic number picked for the size of the stack
                  */
                 sStack *wid_search = create_stack(16);
-                find_widget(wid_search, w_root, ev->dwMousePosition.X, ev->dwMousePosition.Y);
+                find_widget(wid_search, w_root, mev->dwMousePosition.X, mev->dwMousePosition.Y);
                 sWidget *wid = stack_pop(wid_search);
                 free(wid_search->arr);
                 free(wid_search);
                 /* Cases get handled in their own function to make the code more readable */
-                switch(wid->type) {
-                    case FRAME:       frame_mouse_event(wid, &old_wid, ev);   break;
-                    case BUTTON:      button_mouse_event(wid, &old_wid, ev);  break;
-                    case CHECKBOX:    cbox_mouse_event(wid, &old_wid, ev);    break;
-                    case RADIOBUTTON: rbutton_mouse_event(wid, &old_wid, ev); break;
-                    case LABEL:       label_mouse_event(wid, &old_wid, ev);   break;
+                switch (wid->type) {
+                    case FRAME:       frame_mouse_event(wid, &old_wid, mev);   break;
+                    case BUTTON:      button_mouse_event(wid, &old_wid, mev);  break;
+                    case CHECKBOX:    cbox_mouse_event(wid, &old_wid, mev);    break;
+                    case RADIOBUTTON: rbutton_mouse_event(wid, &old_wid, mev); break;
+                    case LABEL:       label_mouse_event(wid, &old_wid, mev);   break;
+                    case FIELD:       field_mouse_event(wid, &old_wid, mev);   break;
 
                     default: break;
                 }

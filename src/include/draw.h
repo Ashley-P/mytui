@@ -15,5 +15,6 @@ void draw_label(sWidget *a);
 void draw_checkbox(sWidget *a);
 void draw_radiobutton(sWidget *a);
 void draw_canvas(sWidget *a);
+void draw_field(sWidget *a);
 
 #endif

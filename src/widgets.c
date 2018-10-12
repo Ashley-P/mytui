@@ -188,6 +188,25 @@ sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned
     return ptr;
 }
 
+sWidget * tui_field(sWidget *parent, wchar_t *text, const unsigned short width) {
+    sWidget *ptr = init_sWidget(parent);
+    ptr->type    = FIELD;
+
+    ptr->usize.x = width;
+    ptr->widget.field.text.text = (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
+    ptr->widget.field.cursor.y = 0;
+    ptr->widget.field.cursor.x = wcslen(text);
+    ptr->widget.field.text.len = wcslen(text);
+    wcscpy(ptr->widget.field.text.text, text);
+
+    /* Colours */
+    ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+    ptr->pcolour = parent->ccolour;
+    ptr->ccolour = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY;
+
+    return ptr;
+}
+
 sRadiobuttonLink * tui_radiobutton_link() {
     sRadiobuttonLink *ptr = (sRadiobuttonLink *)calloc(1, sizeof(sRadiobuttonLink));
     
@@ -303,6 +322,11 @@ void widget_sizer(sWidget *a) {
             break;
         case CANVAS:
             a->csize = a->usize;
+            calc_rsize(a);
+            break;
+        case FIELD:
+            a->csize.x = a->usize.x;
+            a->csize.y = 1; /* No text wrapping yet */
             calc_rsize(a);
             break;
         default:

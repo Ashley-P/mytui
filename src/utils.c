@@ -91,6 +91,8 @@ wchar_t * reverse_eType(enum eType type) {
         case LABEL:       return L"LABEL";
         case CHECKBOX:    return L"CHECKBOX";
         case RADIOBUTTON: return L"RADIOBUTTON";
+        case CANVAS:      return L"CANVAS";
+        case FIELD:       return L"RADIOBUTTON";
         default:          return L"UNKNOWN";
     }
 }
