@@ -295,9 +295,25 @@ void draw_canvas(sWidget *a) {
 }
 
 void draw_field(sWidget *a) {
+    /* TODO: Blinking Cursor */
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
-    draw_str(a->widget.field.text.text, a->widget.field.text.len, a->cpos.x, a->cpos.y);
-    if (a->widget.field.active)
-        draw_box(a->cpos.x + a->widget.field.cursor.x, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
-                 
+
+    /* Drawing text and making sure it doesn't leave the boundaries of the field */
+    if (a->widget.field.text.len > a->csize.x) {
+        wchar_t temp[a->csize.x];
+        for (int i = 0; i < a->csize.x; i++) {
+            temp[a->csize.x - 1 - i] = *(a->widget.field.text.text + a->widget.field.text.len - i);
+        }
+        draw_str(temp, a->csize.x, a->cpos.x, a->cpos.y);
+    }
+    else
+        draw_str(a->widget.field.text.text, a->widget.field.text.len, a->cpos.x, a->cpos.y);
+
+    /* Drawing the cursor and making sure it doesn't leave the field */
+    if (a->widget.field.active) {
+        if (a->widget.field.cursor.x >= a->csize.x)
+            draw_box(a->cpos.x + a->csize.x - 1, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+        else
+            draw_box(a->cpos.x + a->widget.field.cursor.x, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+    }
 }

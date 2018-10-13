@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "widgets.h"
 #include "const.h"
 #include "input.h"
 #include "tui.h"
@@ -213,8 +214,31 @@ void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev)
     }
 }
 
-void field_key_event(const KEY_EVENT_RECORD *kev) {
-    
+void field_key_event(sWidget *a, const KEY_EVENT_RECORD *kev) {
+    /* Return on key lift */
+    if (kev->bKeyDown == 0) return;
+
+    /* TODO: Implement other keys */
+    /* Normal keys */
+    if(((kev->wVirtualKeyCode >= 0x30 && kev->wVirtualKeyCode <= 0x39) || 
+        (kev->wVirtualKeyCode >= 0x41 && kev->wVirtualKeyCode <= 0x5a)) &&
+         a->widget.field.text.len < MAX_BUF_SIZE) {
+        *(a->widget.field.text.text + a->widget.field.cursor.x) = kev->uChar.UnicodeChar;
+        a->widget.field.cursor.x++;
+        a->widget.field.text.len++;
+    }
+    /* Backspace */
+    if(kev->wVirtualKeyCode == 0x08 && a->widget.field.cursor.x > 0) {
+        *(a->widget.field.text.text + a->widget.field.cursor.x - 1) = L'\0';
+        a->widget.field.cursor.x--;
+        a->widget.field.text.len--;
+    }
+    /* Space */
+    if(kev->wVirtualKeyCode == 0x20 && a->widget.field.text.len < MAX_BUF_SIZE) {
+        *(a->widget.field.text.text + a->widget.field.cursor.x) = L' ';
+        a->widget.field.cursor.x++;
+        a->widget.field.text.len++;
+    }
 }
 
 void tui_handle_input() {
@@ -233,12 +257,12 @@ void tui_handle_input() {
             case KEY_EVENT:
                 ;
                 KEY_EVENT_RECORD *kev = &ir_inpbuf[i].Event.KeyEvent;
+                if (!focused_wid) break;
                 switch (focused_wid->type) {
-                    case FIELD: field_key_event(kev);
+                    case FIELD: field_key_event(focused_wid, kev); break;
 
                     default: break;
                 }
-                tui_err(TUI_OTHER, 0, "Key Event");
                 break;
 
             case MOUSE_EVENT:
