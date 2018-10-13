@@ -4,6 +4,6 @@
 #include "widgets.h"
 
 void tui_handle_input();
-int check_disable(sWidget *a);
+int check_disable(const sWidget *a);
 
 #endif

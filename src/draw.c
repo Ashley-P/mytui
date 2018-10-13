@@ -19,7 +19,7 @@
  * \u25CF == Black Circle
  */
 
-void reset_buf(CHAR_INFO *arr, size_t len) {
+void reset_buf(CHAR_INFO *arr, const size_t len) {
     for (int i = 0; i < len; i++) {
         (arr + i)->Char.UnicodeChar = L' ';
         (arr + i)->Attributes = 0x00;
@@ -69,13 +69,13 @@ void draw_box(const int x, const int y, const int width, const int height, const
     }
 }
 
-void draw_str(const wchar_t *str, const size_t len, int x, int y) {
+void draw_str(const wchar_t *str, const size_t len, const int x, const int y) {
     for(int i = 0; i < len; i++) {
         (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Char.UnicodeChar = *(str + i);
     }
 }
 
-void draw_border_padding_content(sWidget *a, unsigned char border_colour, unsigned char padding_colour,
+void draw_border_padding_content(const sWidget *a, unsigned char border_colour, unsigned char padding_colour,
         unsigned char content_colour) {
     /* Margin showing for debug since it's usually not coloured */
 #if SHOW_MARGIN
@@ -107,7 +107,7 @@ void draw_border_padding_content(sWidget *a, unsigned char border_colour, unsign
     draw_box(a->cpos.x, a->cpos.y, a->csize.x, a->csize.y, 1, content_colour);
 }
 
-void draw_frame(sWidget *a, const int fill) {
+void draw_frame(const sWidget *a, const int fill) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
     /* Drawing the text on the border */
@@ -149,7 +149,7 @@ void draw_frame(sWidget *a, const int fill) {
     }
 }
 
-void draw_button(sWidget *a) {
+void draw_button(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
     /* Drawing the label */
@@ -209,12 +209,12 @@ void draw_button(sWidget *a) {
     }
 }
 
-void draw_label(sWidget *a) {
+void draw_label(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y);
 }
 
-void draw_checkbox(sWidget *a) {
+void draw_checkbox(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     switch (a->widget.cbox.label.anchor) {
         case E:
@@ -251,7 +251,7 @@ void draw_checkbox(sWidget *a) {
     }
 }
 
-void draw_radiobutton(sWidget *a) {
+void draw_radiobutton(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     switch (a->widget.rbutton.label.anchor) {
         case E:
@@ -280,7 +280,7 @@ void draw_radiobutton(sWidget *a) {
     }
 }
 
-void draw_canvas(sWidget *a) {
+void draw_canvas(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
     /* Directly copying the CHAR_INFO structs into the screen */
     unsigned short width  = a->widget.canvas.width;
@@ -294,7 +294,7 @@ void draw_canvas(sWidget *a) {
     }
 }
 
-void draw_field(sWidget *a) {
+void draw_field(const sWidget *a) {
     /* TODO: Blinking Cursor */
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 

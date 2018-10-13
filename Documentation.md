@@ -22,8 +22,10 @@ The \<const.h\> header file contains all the declarations for the functions and 
     extern HANDLE h_stdin;
     extern CHAR_INFO **tui_current_screen;
 
+    extern struct tWidget *focused_wid;
     extern struct tWidget *w_root;
---
+
+---
 ## The \<tui.h\> Header
 
 The \<tui.h\> header file contains all the declarations for the functions and datatypes
@@ -31,6 +33,7 @@ The \<tui.h\> header file contains all the declarations for the functions and da
 ### Functions
 
     int tui_init(const int n_screenwidth, const int n_screenheight);
+    CHAR_INFO * alloc_ci_array(const int n_screenwidth, const int n_screenheight);
     void find_widget(sStack *stack, sWidget *a, const int x, const int y);
     void inpthr_loop();
     void tui_loop();
@@ -51,8 +54,8 @@ The variables here are for internal use by the library
     CHAR_INFO **tui_current_screen  A pointer to the current screen being used
     int sn_screenwidth              global screenx
     int sn_screenheight             global screeny
-    int i_bufsize                   size of *wc_screen in elements
     sWidget *w_root                 root widget struct
+    sWidget *focused_wid;           focused widget for use in input.c
     COORD c_screensize              initialises the buffer size
     SMALL_RECT sr_screensize        initialises the window size
 
@@ -199,12 +202,13 @@ The \<draw.h\> header file contains all the function declarations that are expos
     void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
     void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
     void draw_str(const wchar_t *str, const size_t len, int x, int y);
-    void draw_frame(sWidget *a, const bool fill);
-    void draw_button(sWidget *a);
-    void draw_label(sWidget *a);
-    void draw_checkbox(sWidget *a);
-    void draw_radiobutton(sWidget *a);
-    void draw_canvas(sWidget *a);
+    void draw_frame(const sWidget *a, const bool fill);
+    void draw_button(const sWidget *a);
+    void draw_label(const sWidget *a);
+    void draw_checkbox(const sWidget *a);
+    void draw_radiobutton(const sWidget *a);
+    void draw_canvas(const sWidget *a);
+    void draw_field(const sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -215,7 +219,7 @@ The \<draw.c\> source file contains all the function implementations
 
 #### Synopsis
 
-    void reset_buf(CHAR_INFO *arr, size_t len);
+    void reset_buf(CHAR_INFO *arr, const size_t len);
     void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
     void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
     void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
@@ -226,6 +230,7 @@ The \<draw.c\> source file contains all the function implementations
     void draw_checkbox(const sWidget *a);
     void draw_radiobutton(const sWidget *a);
     void draw_canvas(const sWidget *a);
+    void draw_field(const sWidget *a);
 
 #### Description
     
@@ -257,6 +262,8 @@ The \<draw.c\> source file contains all the function implementations
 
     draw_canvas() Draws the canvas to the screen utilising the widgets array of CHAR_INFO structs.
 
+    draw_field() Draws the field to the screen along with the cursor if it's the focused widget.
+
 ---
 ## The \<widgets.h\> Header
 
@@ -269,6 +276,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
+    sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned short height);
+    sWidget * tui_field(sWidget *parent, wchar_t *text, const unsigned short width);
     sRadiobuttonLink * tui_radiobutton_link();
     void tui_root_frame();
     void widget_sizer(sWidget *a);
@@ -282,7 +291,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
 ### Constants/Defines
 
-    MAX_CHILDREN    16
+    MAX_BUF_SIZE    256
+
+    MAX_CHILDREN    32
     MAX_GRID_COLS   16
     MAX_GRID_ROWS   16
 
@@ -311,7 +322,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         BUTTON      = 2,
         LABEL       = 3,
         CHECKBOX    = 4,
-        RADIOBUTTON = 5
+        RADIOBUTTON = 5,
+        CANVAS      = 6,
+        FIELD       = 7
     };
 
     enum eState {
@@ -346,8 +359,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         struct tLabel label;
         struct tWidget *children[MAX_CHILDREN];
         struct tWidget *grid[MAX_GRID_x][MAX_GRID_y];
-        int *cols_size[MAX_GRID_COLS];
-        int *rows_size[MAX_GRID_ROWS];
+        int cols_size[MAX_GRID_COLS];
+        int rows_size[MAX_GRID_ROWS];
     } sFrame, *pFrame;
 
     typedef struct tButton {
@@ -364,7 +377,7 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     } sCheckbox;
 
     typedef struct tRadiobuttonLink {
-        struct tRadiobuttonNode *children[MAX_CHILDREN];
+        struct tRadiobutton *children[MAX_CHILDREN];
         size_t len;
         unsigned char active;
         sRadiobutton *old;
@@ -379,7 +392,25 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     typedef struct tCanvas {
         CHAR_INFO *canvas;
         size_t len;
+        unsigned short width;
+        unsigned short height;
     } sCanvas;
+
+    typedef struct tTextLine {
+        size_t len;
+        wchar_t *text;
+    } sTextLine;
+
+    typedef struct tText {
+        size_t len;
+        wchar_t **text;
+    } sText;
+
+    typedef struct tField {
+        struct tTextLine text;
+        sPos cursor;
+        char active;
+    } sField;
 
     typedef struct tWidget {
         enum eType   type; 
@@ -394,9 +425,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
         sSize bsize;
         sSize psize;
         sSize csize;
-        char bcolour;
-        char pcolour;
-        char ccolour;
+        unsigned char bcolour;
+        unsigned char pcolour;
+        unsigned char ccolour;
         int rowspan;
         int colspan;
         struct tWidget *parent;
@@ -406,6 +437,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
             struct tLabel       label;
             struct tCheckbox    cbox;
             struct tRadiobutton rbutton;
+            struct tCanvas      canvas;
+            struct tField       field;
         } widget;
     } sWidget, *pWidget;
 
@@ -426,13 +459,14 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     sWidget * tui_label(sWidget *parent, wchar_t *text);
     sWidget * tui_checkbox(sWidget *parent, wchar_t *text);
     sWidget * tui_radiobutton(sWidget *parent, wchar_t *text);
+    sWidget * tui_canvas(sWidget *parent, const unsigned short width, const unsigned short height);
+    sWidget * tui_field(sWidget *parent, wchar_t *text, const unsigned short width);
     sRadiobuttonLink * tui_radiobutton_link();
     void calc_rsize(sWidget *a);
-    void tui_root_frame();
     void widget_sizer(sWidget *a);
     void widget_span_sizer(sWidget *a);
     void widget_anchorer_helper(sWidget *a, int posdx, int posdy);
-    void widget_anchorer(sWidget *a);
+    void widget_anchorer(sWidget *a, int *pcols, int *prows);
     void widget_positioner(sWidget *a)
     void redraw_widgets(sWidget *a);
     sSize add_sSize(const sSize a, const sSize b);
@@ -460,6 +494,10 @@ The \<widgets.c\> source contains all the functions including internal ones for 
     tui_checkbox() creates an sWidget struct with the internal type of CHECKBOX and returns a pointer to it.
 
     tui_radiobutton() creates an sWidget struct with the internal type of RADIOBUTTON and returns a pointer to it.
+
+    tui_canvas() creates an sWidget struct with the internal type of CANVAS and returns a pointer to it.
+
+    tui_field() creates an sWidget struct with the internal type of FIELD and returns a pointer to it.
 
     tui_radiobutton_link() creates an sRadiobuttonLink struct.
 
@@ -498,7 +536,7 @@ The \<input.h\> header file contains all the declarations for the functions and 
 ### Functions
 
     void tui_handle_input();
-    int check_disable(sWidget *a);
+    int check_disable(const sWidget *a);
 
 ---
 ## The \<input.c\> Source
@@ -509,20 +547,26 @@ The \<input.c\> source file contains all the definitions for the functions and d
 
 #### Synopsis
 
-    void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    int check_disable(sWidget *a);
+    void mouse_hover(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void mouse_press(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    int check_disable(const sWidget *a);
     void cbox_set_active(sWidget *a, int active);
     void cbox_check_parent_active(sWidget *a) {
-    void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
-    void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev);
-    void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
-    void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *ev) {
+    void frame_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void button_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void label_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void cbox_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void rbutton_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev);
+    void field_key_event(sWidget *a, const KEY_EVENT_RECORD *kev);
     void tui_handle_input();
 
 #### Description
 
     mouse_hover() exists for some code reuse in the *_mouse_event functions.
+
+    mouse_press() exists for some code reuse in the *_mouse_event functions.
 
     check_disable() is for some code reuse to propagate the effects of the DISABLED
     state without actually applying it to the widget.
@@ -537,11 +581,17 @@ The \<input.c\> source file contains all the definitions for the functions and d
 
     button_mouse_event() handles the mouse events when the widget is of type BUTTON.
 
+    label_mouse_event() handles the mouse events when the widget is of type LABEL.
+
     cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
 
     rbutton_mouse_event() handles the mouse events when the widget is of type RADIOBUTTON.
 
     canvas_mouse_event() handles the mouse events when the widget is of type CANVAS.
+
+    field_mouse_event() handles the mouse events when the widget is of type FIELD.
+
+    field_key_event() handles the key events when the focused widget is of type FIELD.
 
     tui_handle_input() handles all the events for the program.
 --- 

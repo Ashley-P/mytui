@@ -516,6 +516,7 @@ sSize max_sSize(const sSize a, const sSize b) {
     return s_return;
 }
 
+/* TODO: Refactor to be variadic like radiobutton_link */
 void checkbox_add(sWidget *a, sWidget *b) {
     if (a->type != CHECKBOX || b->type != CHECKBOX) {
         tui_err(TUI_WARNING, 0, 

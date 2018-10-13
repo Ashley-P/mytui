@@ -33,7 +33,7 @@ void mouse_press(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     focused_wid = a;
 }
 
-int check_disable(sWidget *a) {
+int check_disable(const sWidget *a) {
     sWidget *p = a->parent;
     while (p != NULL) {
         if (p->state == DISABLED) return 1;
