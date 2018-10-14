@@ -29,7 +29,7 @@ int main() {
     grid_set(field2, 0, 2);
     grid_set(button, 1, 1);
 
-    field->anchor = EW;
+    field->anchor = E;
 
     tui_loop();
     return 0;

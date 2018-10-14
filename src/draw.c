@@ -299,7 +299,7 @@ void draw_field(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
     /* Drawing text and making sure it doesn't leave the boundaries of the field */
-    if (a->widget.field.text.len > a->csize.x) {
+    if (a->widget.field.text.len >= a->csize.x) {
         wchar_t temp[a->csize.x];
         for (int i = 0; i < a->csize.x; i++) {
             temp[a->csize.x - 1 - i] = *(a->widget.field.text.text + a->widget.field.text.len - i);

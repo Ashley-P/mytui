@@ -218,26 +218,26 @@ void field_key_event(sWidget *a, const KEY_EVENT_RECORD *kev) {
     /* Return on key lift */
     if (kev->bKeyDown == 0) return;
 
-    /* TODO: Implement other keys */
+    /* TODO: implement cursor movement */
     /* Normal keys */
-    if(((kev->wVirtualKeyCode >= 0x30 && kev->wVirtualKeyCode <= 0x39) || 
-        (kev->wVirtualKeyCode >= 0x41 && kev->wVirtualKeyCode <= 0x5a)) &&
+    if (((kev->wVirtualKeyCode >= 0x30 && kev->wVirtualKeyCode <= 0x39) || // Numbers [0-9]
+         (kev->wVirtualKeyCode >= 0x41 && kev->wVirtualKeyCode <= 0x5A) || // Letters [a-z]
+         (kev->wVirtualKeyCode >= 0x60 && kev->wVirtualKeyCode <= 0x6F) || // Numpad
+         (kev->wVirtualKeyCode >= 0xBA && kev->wVirtualKeyCode <= 0xC0) || // Other
+         (kev->wVirtualKeyCode >= 0xDB && kev->wVirtualKeyCode <= 0xDF) || // Other
+          kev->wVirtualKeyCode == 0x20                                  || // Space
+          kev->wVirtualKeyCode == 0xE2)                                 && // Backslash
          a->widget.field.text.len < MAX_BUF_SIZE) {
         *(a->widget.field.text.text + a->widget.field.cursor.x) = kev->uChar.UnicodeChar;
         a->widget.field.cursor.x++;
         a->widget.field.text.len++;
     }
     /* Backspace */
-    if(kev->wVirtualKeyCode == 0x08 && a->widget.field.cursor.x > 0) {
+    else if (kev->wVirtualKeyCode == 0x08 && 
+       a->widget.field.cursor.x > 0) {
         *(a->widget.field.text.text + a->widget.field.cursor.x - 1) = L'\0';
         a->widget.field.cursor.x--;
         a->widget.field.text.len--;
-    }
-    /* Space */
-    if(kev->wVirtualKeyCode == 0x20 && a->widget.field.text.len < MAX_BUF_SIZE) {
-        *(a->widget.field.text.text + a->widget.field.cursor.x) = L' ';
-        a->widget.field.cursor.x++;
-        a->widget.field.text.len++;
     }
 }
 
