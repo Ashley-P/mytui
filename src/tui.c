@@ -101,6 +101,7 @@ int tui_init(const int n_screenwidth, const int n_screenheight) {
 
     // Other stuff
     tui_root_frame();
+    init_time();
     focused_wid = NULL;
 
     return 1;

@@ -23,13 +23,6 @@ void mouse_press(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev) {
     a->state = PRESS;
     *old = a;
     /* To make text cursor display properly */
-    if (focused_wid) {
-        switch (focused_wid->type) {
-            case FIELD: focused_wid->widget.field.active = 0; break;
-
-            default: break;
-        }
-    }
     focused_wid = a;
 }
 
@@ -191,7 +184,6 @@ void canvas_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev
     switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             mouse_press(a, old, mev);
-            if (a == focused_wid) a->widget.field.active = 1;
             break;
         default:
             mouse_hover(a, old, mev);
@@ -206,7 +198,6 @@ void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev)
     switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             mouse_press(a, old, mev);
-            if (focused_wid) a->widget.field.active = 1;
             break;
         default:
             mouse_hover(a, old, mev);
@@ -217,6 +208,8 @@ void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev)
 void field_key_event(sWidget *a, const KEY_EVENT_RECORD *kev) {
     /* Return on key lift */
     if (kev->bKeyDown == 0) return;
+
+    a->widget.field.cursor_force_on = 1;
 
     /* TODO: implement cursor movement */
     /* Normal keys */

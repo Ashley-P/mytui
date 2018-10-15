@@ -105,6 +105,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     void win_err(const char *msg);
     void tui_err(const int err_type, const int quit_prog, const char *msg, ...);
     wchar_t * reverse_eType(enum eType type);
+    void init_time();
     wchar_t *rand_str();
     sStack *create_stack(unsigned int capacity);
     int is_stack_full(sStack *stack);
@@ -145,11 +146,13 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     void tui_err(const char *msg, const int err_type, const int quit_prog, ...);
     wchar_t * reverse_eType(enum eType type);
     int rand_int(int min, int max);
+    void init_time();
+    int rand_int(int min, int max);
     wchar_t *rand_str();
     sStack *create_stack(unsigned int capacity);
     int is_stack_full(sStack *stack);
     int is_stack_empty(sStack *stack);
-    void stack_push(sStack, sWidget *a);
+    void stack_push(sStack *stack, sWidget *a);
     sSwidget *stack_pop(sStack *stack);
 
 #### Description
@@ -177,9 +180,9 @@ The \<utils.c\> source file contains declarations for some utility functions suc
 
     is_stack_empty() checks if the stack is empty.
     
-    stack_push appends a pointer to a widget to the top of the array.
+    stack_push() appends a pointer to a widget to the top of the array.
 
-    stack_pop returns the pointer at the top of the list.
+    stack_pop() returns the pointer at the top of the list.
 
 ---
 ## The \<draw.h\> Header
@@ -208,7 +211,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
     void draw_checkbox(const sWidget *a);
     void draw_radiobutton(const sWidget *a);
     void draw_canvas(const sWidget *a);
-    void draw_field(const sWidget *a);
+    void draw_field(sWidget *a);
 
 ---
 ## The \<draw.c\> Source
@@ -230,7 +233,7 @@ The \<draw.c\> source file contains all the function implementations
     void draw_checkbox(const sWidget *a);
     void draw_radiobutton(const sWidget *a);
     void draw_canvas(const sWidget *a);
-    void draw_field(const sWidget *a);
+    void draw_field(sWidget *a);
 
 #### Description
     
@@ -409,7 +412,9 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
     typedef struct tField {
         struct tTextLine text;
         sPos cursor;
-        char active;
+        clock_t cursor_blink;
+        char cursor_active;
+        char cursor_force_on;
     } sField;
 
     typedef struct tWidget {

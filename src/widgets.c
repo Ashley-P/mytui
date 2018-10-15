@@ -194,9 +194,11 @@ sWidget * tui_field(sWidget *parent, wchar_t *text, const unsigned short width) 
 
     ptr->usize.x = width;
     ptr->widget.field.text.text = (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
-    ptr->widget.field.cursor.y = 0;
-    ptr->widget.field.cursor.x = wcslen(text);
-    ptr->widget.field.text.len = wcslen(text);
+    ptr->widget.field.cursor_blink  = 0;
+    ptr->widget.field.cursor_active = 1;
+    ptr->widget.field.cursor.y      = 0;
+    ptr->widget.field.cursor.x      = wcslen(text);
+    ptr->widget.field.text.len      = wcslen(text);
     wcscpy(ptr->widget.field.text.text, text);
 
     /* Colours */

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <time.h>
 #include "const.h"
 
 #define MAX_BUF_SIZE 256
@@ -125,7 +126,9 @@ typedef struct tText {
 typedef struct tField {
     struct tTextLine text;
     sPos cursor;
-    char active;
+    clock_t cursor_blink;
+    char cursor_active;
+    char cursor_force_on;
 } sField;
 
 typedef struct tWidget {

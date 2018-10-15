@@ -294,7 +294,7 @@ void draw_canvas(const sWidget *a) {
     }
 }
 
-void draw_field(const sWidget *a) {
+void draw_field(sWidget *a) {
     /* TODO: Blinking Cursor */
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
@@ -310,10 +310,22 @@ void draw_field(const sWidget *a) {
         draw_str(a->widget.field.text.text, a->widget.field.text.len, a->cpos.x, a->cpos.y);
 
     /* Drawing the cursor and making sure it doesn't leave the field */
-    if (a->widget.field.active) {
-        if (a->widget.field.cursor.x >= a->csize.x)
-            draw_box(a->cpos.x + a->csize.x - 1, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
-        else
-            draw_box(a->cpos.x + a->widget.field.cursor.x, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+    if (a == focused_wid) {
+        if (a->widget.field.cursor.x >= a->csize.x) {
+            if (a->widget.field.cursor_active || a->widget.field.cursor_force_on)
+                draw_box(a->cpos.x + a->csize.x - 1, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+        }
+        else {
+            if (a->widget.field.cursor_active || a->widget.field.cursor_force_on)
+                draw_box(a->cpos.x + a->widget.field.cursor.x, 
+                         a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+        }
+
+        /* Blinking Cursor */
+        if (a->widget.field.cursor_blink + (0.5 * CLOCKS_PER_SEC) < clock()) {
+            a->widget.field.cursor_blink = clock();
+            a->widget.field.cursor_active = !a->widget.field.cursor_active;
+            a->widget.field.cursor_force_on = 0;
+        }
     }
 }

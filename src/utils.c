@@ -97,14 +97,13 @@ wchar_t * reverse_eType(enum eType type) {
     }
 }
 
+void init_time() {
+    srand(time(NULL));
+}
+
 int rand_int(int min, int max) {
     /* Provides non modulus biased integers */
     int x;
-    static int flag = 0;
-    if (!flag) {
-        srand(time(NULL));
-        flag = 1;
-    }
     do {
         x = 1 + rand() / ((RAND_MAX + 1u) / (max + 1));
     } while (x > max || x < min); 
