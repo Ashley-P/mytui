@@ -19,7 +19,7 @@ int main() {
     
     pWidget label  = tui_label(w_root, L"Type something");
     field  = tui_field(w_root, L"In here", 20);
-    pWidget field2  = tui_field(w_root, L"ANOTHER ONE ", 60);
+    pWidget field2  = tui_field(w_root, L"ANOTHER ONE", 60);
     pWidget button = tui_button(w_root, L"Send to error log", prnt_field);
     
     field->psize.x = 1;
@@ -29,7 +29,7 @@ int main() {
     grid_set(field2, 0, 2);
     grid_set(button, 1, 1);
 
-    field->anchor = E;
+    //field->anchor = E;
 
     tui_loop();
     return 0;

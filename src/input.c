@@ -198,6 +198,10 @@ void field_mouse_event(sWidget *a, sWidget **old, const MOUSE_EVENT_RECORD *mev)
     switch (mev->dwButtonState) {
         case FROM_LEFT_1ST_BUTTON_PRESSED:
             mouse_press(a, old, mev);
+            if (mev->dwMousePosition.X - a->cpos.x > a->widget.field.text.len - a->widget.field.draw_cursor)
+                a->widget.field.cursor = a->widget.field.text.len - a->widget.field.draw_cursor;
+            else
+                a->widget.field.cursor = mev->dwMousePosition.X - a->cpos.x;
             break;
         default:
             mouse_hover(a, old, mev);
@@ -221,16 +225,42 @@ void field_key_event(sWidget *a, const KEY_EVENT_RECORD *kev) {
           kev->wVirtualKeyCode == 0x20                                  || // Space
           kev->wVirtualKeyCode == 0xE2)                                 && // Backslash
          a->widget.field.text.len < MAX_BUF_SIZE) {
-        *(a->widget.field.text.text + a->widget.field.cursor.x) = kev->uChar.UnicodeChar;
-        a->widget.field.cursor.x++;
+
+        /* Inserting text properly */
+        if (a->widget.field.cursor == a->widget.field.text.len) {
+            *(a->widget.field.text.text + a->widget.field.cursor) = kev->uChar.UnicodeChar;
+        } else {
+            for (int i = a->widget.field.text.len; i >= a->widget.field.cursor; i--)
+                a->widget.field.text.text[i+1] = a->widget.field.text.text[i];
+            *(a->widget.field.text.text + a->widget.field.cursor) = kev->uChar.UnicodeChar;
+        }
+        a->widget.field.cursor++;
         a->widget.field.text.len++;
+
+        if (a->widget.field.cursor + 1 > a->csize.x) a->widget.field.draw_cursor++;
     }
     /* Backspace */
-    else if (kev->wVirtualKeyCode == 0x08 && 
-       a->widget.field.cursor.x > 0) {
-        *(a->widget.field.text.text + a->widget.field.cursor.x - 1) = L'\0';
-        a->widget.field.cursor.x--;
+    else if (kev->wVirtualKeyCode == 0x08 && a->widget.field.cursor > 0) {
+        if (a->widget.field.cursor == a->widget.field.text.len)
+            *(a->widget.field.text.text + a->widget.field.cursor - 1) = L'\0';
+        else {
+            for (int i = a->widget.field.cursor - 1; i < a->widget.field.text.len; i++)
+                a->widget.field.text.text[i] = a->widget.field.text.text[i+1]; // Will probably overflow
+        }
+        a->widget.field.cursor--;
         a->widget.field.text.len--;
+
+        if (a->widget.field.cursor < a->widget.field.draw_cursor) a->widget.field.draw_cursor--;
+    }
+    /* Left Arrow Key */
+    else if (kev->wVirtualKeyCode == 0x25 && a->widget.field.cursor != 0) {
+        a->widget.field.cursor--;
+        if (a->widget.field.cursor < a->widget.field.draw_cursor) a->widget.field.draw_cursor--;
+    }
+    /* Right Arrow Key */
+    else if (kev->wVirtualKeyCode == 0x27 && a->widget.field.cursor < a->widget.field.text.len) {
+        a->widget.field.cursor++;
+        if (a->widget.field.cursor + 1 > a->widget.field.draw_cursor + a->csize.x) a->widget.field.draw_cursor++;
     }
 }
 

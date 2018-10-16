@@ -125,7 +125,8 @@ typedef struct tText {
 
 typedef struct tField {
     struct tTextLine text;
-    sPos cursor;
+    int cursor;
+    int draw_cursor;
     clock_t cursor_blink;
     char cursor_active;
     char cursor_force_on;

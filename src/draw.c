@@ -69,9 +69,11 @@ void draw_box(const int x, const int y, const int width, const int height, const
     }
 }
 
-void draw_str(const wchar_t *str, const size_t len, const int x, const int y) {
+void draw_str(const wchar_t *str, const size_t len, const int x, const int y, const unsigned char colour) {
     for(int i = 0; i < len; i++) {
         (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Char.UnicodeChar = *(str + i);
+        if (colour != 0) 
+            (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Attributes = colour;
     }
 }
 
@@ -121,27 +123,27 @@ void draw_frame(const sWidget *a, const int fill) {
     switch (x) {
         case NORTH:
             draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
-                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)), 0);
             break;
         case SOUTH:
             draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)),
-                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)), 0);
             break;
         case NORTH | WEST:
             draw_str(text, len, a->pos.x + a->msize.x + a->bsize.x,
-                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)), 0);
             break;
         case NORTH | EAST:
             draw_str(text, len, a->pos.x + a->rsize.x - (a->msize.x + a->bsize.x + len),
-                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->msize.y + ((int) (a->bsize.y / 2)), 0);
             break;
         case SOUTH | WEST:
             draw_str(text, len, a->pos.x + a->msize.x + a->bsize.x,
-                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)), 0);
             break;
         case SOUTH | EAST:
             draw_str(text, len, a->pos.x + a->rsize.x - (a->msize.x + a->bsize.x + len),
-                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)));
+                                a->pos.y + a->rsize.y - a->msize.y - ((int) (a->bsize.y / 2)), 0);
             break;
         default:
             /* Skip drawing for other anchors */
@@ -160,39 +162,39 @@ void draw_button(const sWidget *a) {
     switch (x) {
         case NORTH:
             draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
-                                a->cpos.y);
+                                a->cpos.y, 0);
             break;
         case SOUTH:
             draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
-                                a->cpos.y + a->csize.y - 1);
+                                a->cpos.y + a->csize.y - 1, 0);
             break;
         case EAST:
             draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
-                                a->cpos.y + ((int) (a->csize.y / 2)));
+                                a->cpos.y + ((int) (a->csize.y / 2)), 0);
             break;
         case WEST:
             draw_str(text, len, a->cpos.x,
-                                a->cpos.y + ((int) (a->csize.y / 2)));
+                                a->cpos.y + ((int) (a->csize.y / 2)), 0);
             break;
         case NORTH | WEST:
             draw_str(text, len, a->cpos.x,
-                                a->cpos.y);
+                                a->cpos.y, 0);
             break;
         case NORTH | EAST:
             draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
-                                a->cpos.y);
+                                a->cpos.y, 0);
             break;
         case SOUTH | WEST:
             draw_str(text, len, a->cpos.x,
-                                a->cpos.y + a->csize.y - 1);
+                                a->cpos.y + a->csize.y - 1, 0);
             break;
         case SOUTH | EAST:
             draw_str(text, len, a->cpos.x + (a->csize.x - 1) - len,
-                                a->cpos.y + a->csize.y - 1);
+                                a->cpos.y + a->csize.y - 1, 0);
             break;
         default:
             draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (len / 2)),
-                                a->cpos.y + ((int) (a->csize.y / 2)));
+                                a->cpos.y + ((int) (a->csize.y / 2)), 0);
             break;
     }
 
@@ -211,7 +213,7 @@ void draw_button(const sWidget *a) {
 
 void draw_label(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
-    draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y);
+    draw_str(a->widget.label.text, a->widget.label.len, a->cpos.x, a->cpos.y, 0);
 }
 
 void draw_checkbox(const sWidget *a) {
@@ -225,10 +227,10 @@ void draw_checkbox(const sWidget *a) {
 
             /* drawing checkbox */
             if (a->widget.cbox.active == 1)
-                draw_str(L"\u25A0", 1, a->cpos.x, a->cpos.y);
+                draw_str(L"\u25A0", 1, a->cpos.x, a->cpos.y, 0);
             else if (a->widget.cbox.active == 2)
-                draw_str(L"~", 1, a->cpos.x, a->cpos.y);
-            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->cpos.x + 2), a->cpos.y);
+                draw_str(L"~", 1, a->cpos.x, a->cpos.y, 0);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, (a->cpos.x + 2), a->cpos.y, 0);
             break;
         case W:
             if (a->state == HOVER || a->state == PRESS)
@@ -238,10 +240,10 @@ void draw_checkbox(const sWidget *a) {
 
             /* drawing checkbox */
             if (a->widget.cbox.active == 1)
-                draw_str(L"\u25A0", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y);
+                draw_str(L"\u25A0", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 0);
             else if (a->widget.cbox.active == 2)
-                draw_str(L"~", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y);
-            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->cpos.x, a->cpos.y);
+                draw_str(L"~", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 0);
+            draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->cpos.x, a->cpos.y, 0);
             break;
         default:
             tui_err(TUI_ERROR,
@@ -256,21 +258,21 @@ void draw_radiobutton(const sWidget *a) {
     switch (a->widget.rbutton.label.anchor) {
         case E:
             /* Drawing the label */
-            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, (a->cpos.x + 2), a->cpos.y);
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, (a->cpos.x + 2), a->cpos.y, 0);
             /* Drawing the dot */
             if (a->widget.rbutton.active == 0)
-                draw_str(L"\u25CB", 1, a->cpos.x, a->cpos.y);
+                draw_str(L"\u25CB", 1, a->cpos.x, a->cpos.y, 0);
             else if (a->widget.rbutton.active == 1)
-                draw_str(L"\u25CF", 1, a->cpos.x, a->cpos.y);
+                draw_str(L"\u25CF", 1, a->cpos.x, a->cpos.y, 0);
             break;
         case W:
             /* Drawing the label */
-            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, a->cpos.x, a->cpos.y);
+            draw_str(a->widget.rbutton.label.text, a->widget.rbutton.label.len, a->cpos.x, a->cpos.y, 0);
             /* Drawing the dot */
             if (a->widget.rbutton.active == 0)
-                draw_str(L"\u25CB", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y);
+                draw_str(L"\u25CB", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y, 0);
             else if (a->widget.rbutton.active == 1)
-                draw_str(L"\u25CF", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y);
+                draw_str(L"\u25CF", 1, (a->cpos.x + a->widget.rbutton.label.len + 1), a->cpos.y, 0);
             break;
         default:
             tui_err(TUI_ERROR,
@@ -295,30 +297,25 @@ void draw_canvas(const sWidget *a) {
 }
 
 void draw_field(sWidget *a) {
-    /* TODO: Blinking Cursor */
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
-    /* Drawing text and making sure it doesn't leave the boundaries of the field */
-    if (a->widget.field.text.len >= a->csize.x) {
-        wchar_t temp[a->csize.x];
-        for (int i = 0; i < a->csize.x; i++) {
-            temp[a->csize.x - 1 - i] = *(a->widget.field.text.text + a->widget.field.text.len - i);
-        }
-        draw_str(temp, a->csize.x, a->cpos.x, a->cpos.y);
+    wchar_t temp[a->csize.x];
+    size_t tlen;
+    for (tlen = 0; tlen < a->csize.x && *(a->widget.field.text.text + tlen) != L'\0'; tlen++) {
+        temp[tlen] = *(a->widget.field.text.text + a->widget.field.draw_cursor + tlen);
     }
-    else
-        draw_str(a->widget.field.text.text, a->widget.field.text.len, a->cpos.x, a->cpos.y);
+
+    draw_str(temp, tlen, a->cpos.x, a->cpos.y, 0);
 
     /* Drawing the cursor and making sure it doesn't leave the field */
     if (a == focused_wid) {
-        if (a->widget.field.cursor.x >= a->csize.x) {
-            if (a->widget.field.cursor_active || a->widget.field.cursor_force_on)
-                draw_box(a->cpos.x + a->csize.x - 1, a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
-        }
-        else {
-            if (a->widget.field.cursor_active || a->widget.field.cursor_force_on)
-                draw_box(a->cpos.x + a->widget.field.cursor.x, 
-                         a->cpos.y + a->widget.field.cursor.y, 1, 1, 1, 0x00);
+        if (a->widget.field.cursor_active || a->widget.field.cursor_force_on) {
+            if (a->widget.field.cursor >= a->widget.field.draw_cursor + a->csize.x - 1)
+                draw_str(a->widget.field.text.text + a->widget.field.cursor, 1,
+                         a->cpos.x + a->csize.x - 1, a->cpos.y, 0x07);
+            else
+                draw_str(a->widget.field.text.text + a->widget.field.cursor, 1,
+                         a->cpos.x + (a->widget.field.cursor - a->widget.field.draw_cursor), a->cpos.y, 0x07);
         }
 
         /* Blinking Cursor */

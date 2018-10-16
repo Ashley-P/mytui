@@ -204,7 +204,7 @@ The \<draw.h\> header file contains all the function declarations that are expos
     void reset_buf(CHAR_INFO *arr, size_t len);
     void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
     void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
-    void draw_str(const wchar_t *str, const size_t len, int x, int y);
+    void draw_str(const wchar_t *str, const size_t len, const int x, const int y, const unsigned char colour);
     void draw_frame(const sWidget *a, const bool fill);
     void draw_button(const sWidget *a);
     void draw_label(const sWidget *a);
@@ -225,7 +225,7 @@ The \<draw.c\> source file contains all the function implementations
     void reset_buf(CHAR_INFO *arr, const size_t len);
     void draw_line(const int x, const int y, const int len, const int direction, const unsigned colour);
     void draw_box(const int x, const int y, const int width, const int height, const bool fill, const unsigned colour);
-    void draw_str(const wchar_t *str, const size_t len, const size_t str_len, int x, int y);
+    void draw_str(const wchar_t *str, const size_t len, const int x, const int y, const unsigned char colour);
     void draw_border_padding_content(sWidget *a, unsigned char border_colour, unsigned char padding_colour, unsigned char content_colour);
     void draw_frame(sWidget *a, const int fill);
     void draw_button(const sWidget *a);
@@ -411,7 +411,8 @@ The \<widgets.h\> header file contains all the struct definitions and functions 
 
     typedef struct tField {
         struct tTextLine text;
-        sPos cursor;
+        int cursor;
+        int draw_cursor;
         clock_t cursor_blink;
         char cursor_active;
         char cursor_force_on;
@@ -584,19 +585,19 @@ The \<input.c\> source file contains all the definitions for the functions and d
 
     frame_mouse_event() handles the mouse events when the widget is of type FRAME.
 
-    button_mouse_event() handles the mouse events when the widget is of type BUTTON.
+    button_mouse_event() handles the mouse events when the widget is of type BUTTON, mainly just calls the callback.
 
     label_mouse_event() handles the mouse events when the widget is of type LABEL.
 
-    cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX.
+    cbox_mouse_event() handles the mouse events when the widget is of type CHECKBOX, activates and deactives checkboxes.
 
-    rbutton_mouse_event() handles the mouse events when the widget is of type RADIOBUTTON.
+    rbutton_mouse_event() handles the mouse events when the widget is of type RADIOBUTTON, activates radiobuttons and deactivates other.
 
     canvas_mouse_event() handles the mouse events when the widget is of type CANVAS.
 
-    field_mouse_event() handles the mouse events when the widget is of type FIELD.
+    field_mouse_event() handles the mouse events when the widget is of type FIELD, places the cursor into the field.
 
-    field_key_event() handles the key events when the focused widget is of type FIELD.
+    field_key_event() handles the key events when the focused widget is of type FIELD, Enters key presses into the field.
 
     tui_handle_input() handles all the events for the program.
 --- 
