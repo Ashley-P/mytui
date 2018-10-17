@@ -24,6 +24,8 @@ int main() {
     
     field->psize.x = 1;
 
+    button->usize.x = 5;
+
     grid_set(label,  0, 0);
     grid_set(field,  0, 1);
     grid_set(field2, 0, 2);

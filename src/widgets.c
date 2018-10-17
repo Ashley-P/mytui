@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <windows.h>
+#include <math.h>
 #include "tui.h"
 #include "const.h"
 #include "widgets.h"
@@ -222,12 +223,12 @@ sRadiobuttonLink * tui_radiobutton_link() {
 
 void calc_rsize(sWidget *a) {
     if (!((E | W) == (a->anchor & (E | W)))) {
-    a->rsize.x = (a->csize.x > a->usize.x ? a->csize.x : a->usize.x)     /* Comparison */
-               + (a->psize.x * 2) + (a->bsize.x * 2) + (a->msize.x * 2); /* Adding the rest */
+    a->csize.x = a->csize.x > a->usize.x ? a->csize.x : a->usize.x;
+    a->rsize.x = a->csize.x + (a->psize.x * 2) + (a->bsize.x * 2) + (a->msize.x * 2); /* Adding the rest */
     }
     if (!((N | S) == (a->anchor & (N | S)))) {
-    a->rsize.y = (a->csize.y > a->usize.y ? a->csize.y : a->usize.y)
-               + (a->psize.y * 2) + (a->bsize.y * 2) + (a->msize.y * 2);
+    a->csize.y = a->csize.y > a->usize.y ? a->csize.y : a->usize.y;
+    a->rsize.y = a->csize.y + (a->psize.y * 2) + (a->bsize.y * 2) + (a->msize.y * 2);
     }
 }
 
@@ -303,8 +304,14 @@ void widget_sizer(sWidget *a) {
             for (i = 0; i < MAX_GRID_COLS; i++) if(!af->cols_size[i]) af->cols_size[i] = 0;
             break;
         case BUTTON:
-            a->csize.x = a->widget.button.label.len;
-            a->csize.y = 1; /* No text wrapping yet */
+            /* Getting the widget the right size for text wrapping */
+            if (a->usize.x < a->widget.button.label.len && a->usize.x > 0) {
+                int temp = (int) ceil((float) a->widget.button.label.len / (float) a->usize.x);
+                a->usize.y = a->usize.y >= temp ? a->usize.y : temp;
+            }
+
+            if (a->usize.x == 0) a->csize.x = a->widget.button.label.len;
+            if (a->usize.y == 0) a->csize.y = 1;
             calc_rsize(a);
             break;
         case LABEL:
