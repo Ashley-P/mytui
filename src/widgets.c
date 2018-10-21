@@ -102,10 +102,11 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->type    = BUTTON;
 
     // sButton setup
-    ptr->widget.button.label.text   = text;
+    ptr->widget.button.label.text   =  (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
     ptr->widget.button.label.len    = wcslen(text);
     ptr->widget.button.label.anchor = C;
     ptr->widget.button.callback     = callback;
+    wcscpy(ptr->widget.button.label.text, text);
 
     /* Colours */
     ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
@@ -305,6 +306,7 @@ void widget_sizer(sWidget *a) {
             break;
         case BUTTON:
             /* Getting the widget the right size for text wrapping */
+            /* Old Text Wrapping 
             if (a->usize.x < a->widget.button.label.len && a->usize.x > 0) {
                 int temp = (int) ceil((float) a->widget.button.label.len / (float) a->usize.x);
                 a->usize.y = a->usize.y >= temp ? a->usize.y : temp;
@@ -312,6 +314,14 @@ void widget_sizer(sWidget *a) {
 
             if (a->usize.x == 0) a->csize.x = a->widget.button.label.len;
             if (a->usize.y == 0) a->csize.y = 1;
+            */
+            if (a->usize.x < a->widget.button.label.len && a->usize.x > 0) {
+                word_wrap(&a->widget.button.label.text, a->widget.button.label.len, 
+                        a->usize.x, &a->usize.y);
+            }
+            if (a->usize.x == 0) a->csize.x = a->widget.button.label.len;
+            if (a->usize.y == 0) a->csize.y = 1;
+
             calc_rsize(a);
             break;
         case LABEL:
@@ -472,13 +482,10 @@ void widget_positioner(sWidget *a) {
     sWidget *p = a->parent;
     sPos temp1 = add_sSize(p->pos, add_sSize(p->msize, add_sSize(p->bsize, p->psize)));
     sPos temp2 = {0, 0};
+
     int i;
-    for (i = 0; i < a->gridpos.x; i++) {
-        temp2.x += p->widget.frame.cols_size[i];
-    }
-    for (i = 0; i < a->gridpos.y; i++) {
-        temp2.y += p->widget.frame.rows_size[i];
-    }
+    for (i = 0; i < a->gridpos.x; i++) temp2.x += p->widget.frame.cols_size[i];
+    for (i = 0; i < a->gridpos.y; i++) temp2.y += p->widget.frame.rows_size[i];
 
     a->pos = add_sSize(temp1, temp2);
     a->cpos = add_sSize(a->pos, add_sSize(a->msize, add_sSize(a->bsize, a->psize)));

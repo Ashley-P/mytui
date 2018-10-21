@@ -20,11 +20,12 @@ int main() {
     pWidget label  = tui_label(w_root, L"Type something");
     field  = tui_field(w_root, L"In here", 20);
     pWidget field2  = tui_field(w_root, L"ANOTHER ONE", 60);
-    pWidget button = tui_button(w_root, L"Send to error log", prnt_field);
+    pWidget button = tui_button(w_root, L"Send to error log more words", prnt_field);
     
-    field->psize.x = 1;
+    //field->psize.x = 1;
 
-    button->usize.x = 5;
+    button->usize.x = 8;
+    button->widget.button.label.anchor = C;
 
     grid_set(label,  0, 0);
     grid_set(field,  0, 1);
