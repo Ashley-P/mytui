@@ -112,7 +112,7 @@ The \<utils.h\> header file contains declarations for some utility functions suc
     int is_stack_empty(sStack *stack);
     void stack_push(sStack *stack, sWidget *a);
     sWidget * stack_pop(sStack *stack);
-    wchar_t *word_wrap(wchar_t *text, int line_break_len);
+    void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *ysize);
 
 ---
 ## The \<utils.c\> Source
@@ -155,7 +155,7 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     int is_stack_empty(sStack *stack);
     void stack_push(sStack *stack, sWidget *a);
     sWidget *stack_pop(sStack *stack);
-    wchar_t *word_wrap(wchar_t *text, int line_break_len);
+    void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *ysize);
 
 #### Description
 
@@ -187,7 +187,8 @@ The \<utils.c\> source file contains declarations for some utility functions suc
     stack_pop() returns the pointer at the top of the list.
 
     word_wrap sets up the provided text to be wrapped properly (By inserting
-    newline characters that are checked later)
+    newline characters that are checked later by draw_str), it also edits the
+    usize.y of the widget that the text comes from.
 
 ---
 ## The \<draw.h\> Header

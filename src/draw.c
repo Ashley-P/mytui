@@ -187,49 +187,11 @@ void draw_frame(const sWidget *a, const int fill) {
 void draw_button(const sWidget *a) {
     draw_border_padding_content(a, a->bcolour, a->pcolour, a->ccolour);
 
-    /* Drawing the label */
-    wchar_t *text = a->widget.button.label.text;
-    int len = a->widget.button.label.len;
-    int x = a->widget.button.label.anchor;
-
-    switch (x) {
-        case NORTH:
-            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (a->csize.x / 2)),
-                                a->cpos.y, 0);
-            break;
-        case SOUTH:
-            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (a->csize.x / 2)),
-                                a->cpos.y + a->csize.y - 1, 0);
-            break;
-        case EAST:
-            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - a->csize.x,
-                                a->cpos.y, 0);
-            break;
-        case WEST:
-            draw_str(text, len, a->cpos.x,
-                                a->cpos.y + ((int) (a->csize.y / 2)), 0);
-            break;
-        case NORTH | WEST:
-            draw_str(text, len, a->cpos.x,
-                                a->cpos.y, 0);
-            break;
-        case NORTH | EAST:
-            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - a->csize.x,
-                                a->cpos.y, 0);
-            break;
-        case SOUTH | WEST:
-            draw_str(text, len, a->cpos.x,
-                                a->cpos.y + a->csize.y - 1, 0);
-            break;
-        case SOUTH | EAST:
-            draw_str(text, len, a->cpos.x + (a->csize.x - 1) - a->csize.x,
-                                a->cpos.y + a->csize.y - 1, 0);
-            break;
-        case CENTRE: default:
-            draw_str(text, len, a->pos.x + ((int) (a->rsize.x / 2)) - ((int) (a->csize.x / 2)),
-                                a->cpos.y, 0);
-            break;
-    }
+    /*
+     * Somewhat pointless to do anchoring for the label since the implementation of word wrapping 
+     * So we just print it in the top left of the content box
+     */
+    draw_str(a->widget.button.label.text, a->widget.button.label.len, a->cpos.x, a->cpos.y, 0);
 
     switch (a->state) {
         case HOVER:
