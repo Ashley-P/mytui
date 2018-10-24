@@ -155,7 +155,6 @@ int main() {
     frame2->msize = (sSize) {2, 2};
     frame2->anchor = W;
 
-    cbox1->anchor = E;
     //test->msize = (sSize) {1, 1};
     //test->bsize = (sSize) {1, 1};
     //test->psize = (sSize) {1, 1};

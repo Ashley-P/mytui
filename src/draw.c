@@ -72,28 +72,6 @@ void draw_box(const int x, const int y, const int width, const int height, const
 }
 
 void draw_str(const wchar_t *str, const size_t len, const int x, const int y, const unsigned char colour) {
-    /* No line breaks */
-    /*
-    if (line_break_len == 0) {
-        for (int i = 0; i < len; i++) {
-            (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Char.UnicodeChar = *(str + i);
-            if (colour != 0) 
-                (*tui_current_screen + (x + i) + (y * sn_screenwidth))->Attributes = colour;
-        }
-    } else {
-        int cnt = -1;
-        for (int i = 0; i < len; i++) {
-            if (i % line_break_len == 0) cnt++;
-
-            (*tui_current_screen + (x + (i % line_break_len)) +
-            ((y + cnt) * sn_screenwidth))->Char.UnicodeChar = *(str + i);
-            if (colour != 0) {
-                (*tui_current_screen + (x + (i % line_break_len)) +
-                ((y + cnt) * sn_screenwidth))->Attributes = colour;
-            }
-        }
-    }
-    */
     int line = 0;
     int xpos = 0;
     for (int i = 0; i < len; i++) {
@@ -191,7 +169,10 @@ void draw_button(const sWidget *a) {
      * Somewhat pointless to do anchoring for the label since the implementation of word wrapping 
      * So we just print it in the top left of the content box
      */
-    draw_str(a->widget.button.label.text, a->widget.button.label.len, a->cpos.x, a->cpos.y, 0);
+
+    /* FIXME: Re-implement centering for the label */
+    draw_str(a->widget.button.label.text, a->widget.button.label.len,
+             a->cpos.x, a->cpos.y, 0);
 
     switch (a->state) {
         case HOVER:
@@ -229,15 +210,15 @@ void draw_checkbox(const sWidget *a) {
             break;
         case W:
             if (a->state == HOVER || a->state == PRESS)
-                draw_box((a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 1, 1, 1, 0x80);
+                draw_box((a->cpos.x + a->csize.x - 1), a->cpos.y, 1, 1, 1, 0x80);
             else
-                draw_box((a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 1, 1, 1, 0xF0);
+                draw_box((a->cpos.x + a->csize.x - 1), a->cpos.y, 1, 1, 1, 0xF0);
 
             /* drawing checkbox */
             if (a->widget.cbox.active == 1)
-                draw_str(L"\u25A0", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 0);
+                draw_str(L"\u25A0", 1, (a->cpos.x + a->csize.x - 1), a->cpos.y, 0);
             else if (a->widget.cbox.active == 2)
-                draw_str(L"~", 1, (a->cpos.x + a->widget.cbox.label.len + 1), a->cpos.y, 0);
+                draw_str(L"~", 1, (a->cpos.x + a->csize.x - 1), a->cpos.y, 0);
             draw_str(a->widget.cbox.label.text, a->widget.cbox.label.len, a->cpos.x, a->cpos.y, 0);
             break;
         default:

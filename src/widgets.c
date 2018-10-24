@@ -102,7 +102,7 @@ sWidget * tui_button(sWidget *parent, wchar_t *text, void(*callback)()) {
     ptr->type    = BUTTON;
 
     // sButton setup
-    ptr->widget.button.label.text   =  (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
+    ptr->widget.button.label.text   = (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
     ptr->widget.button.label.len    = wcslen(text);
     ptr->widget.button.label.anchor = C;
     ptr->widget.button.callback     = callback;
@@ -121,9 +121,10 @@ sWidget * tui_label(sWidget *parent, wchar_t *text) {
     sWidget *ptr = init_sWidget(parent);
     ptr->type    = LABEL;
 
-    ptr->widget.label.text   = text;
+    ptr->widget.label.text   = (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
     ptr->widget.label.len    = wcslen(text);
     ptr->widget.label.anchor = C;
+    wcscpy(ptr->widget.label.text, text);
 
     /* Colours */
     ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
@@ -137,11 +138,12 @@ sWidget * tui_checkbox(sWidget *parent, wchar_t *text) {
     sWidget *ptr = init_sWidget(parent);
     ptr->type    = CHECKBOX;
     
-    ptr->widget.cbox.label.text   = text;
+    ptr->widget.cbox.label.text   = (wchar_t *)calloc(MAX_BUF_SIZE, sizeof(wchar_t));
     ptr->widget.cbox.label.len    = wcslen(text);
     ptr->widget.cbox.label.anchor = W;
     ptr->widget.cbox.active       = 0;
     ptr->widget.cbox.len          = 0;
+    wcscpy(ptr->widget.cbox.label.text, text);
 
     /* Colours */
     ptr->bcolour = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
@@ -325,13 +327,19 @@ void widget_sizer(sWidget *a) {
             calc_rsize(a);
             break;
         case LABEL:
-            a->csize.x = a->widget.label.len;
-            a->csize.y = 1; /* No text wrapping yet */
+            if (a->usize.x < a->widget.label.len && a->usize.x > 0) {
+                word_wrap(&a->widget.label.text, a->widget.label.len, 
+                        a->usize.x, &a->usize.y);
+            }
+            if (a->usize.x == 0) a->csize.x = a->widget.label.len;
+            if (a->usize.y == 0) a->csize.y = 1;
+
             calc_rsize(a);
             break;
         case CHECKBOX:
             a->csize.x = a->widget.cbox.label.len + 2;
             a->csize.y = 1; /* No text wrapping yet */
+
             calc_rsize(a);
             break;
         case RADIOBUTTON:

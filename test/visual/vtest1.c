@@ -23,6 +23,7 @@ int main() {
     pWidget button = tui_button(w_root, L"Send to error log more words", prnt_field);
     
     //field->psize.x = 1;
+    label->usize.x = 10;
 
     button->usize.x = 8;
     button->widget.button.label.anchor = E;
