@@ -170,9 +170,14 @@ void draw_button(const sWidget *a) {
      * So we just print it in the top left of the content box
      */
 
-    /* FIXME: Re-implement centering for the label */
-    draw_str(a->widget.button.label.text, a->widget.button.label.len,
-             a->cpos.x, a->cpos.y, 0);
+    if (a->usize.x == 0)
+        draw_str(a->widget.button.label.text, a->widget.button.label.len,
+                 a->cpos.x + ((int) a->csize.x / 2) - ((int) a->widget.button.label.len / 2),
+                 a->cpos.y + ((int) a->csize.y / 2), 0);
+    else
+        draw_str(a->widget.button.label.text, a->widget.button.label.len,
+                 a->cpos.x + ((int) a->csize.x / 2) - ((int) a->usize.x / 2),
+                 a->cpos.y + ((int) a->csize.y / 2) - ((int) a->usize.y / 2), 0);
 
     switch (a->state) {
         case HOVER:

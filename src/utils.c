@@ -155,7 +155,7 @@ sWidget * stack_pop(sStack *stack) {
     return stack->arr[stack->top--];
 } 
 
-void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *ysize) {
+void word_wrap(wchar_t **text, const size_t len, int *xsize, int *ysize) {
     /* Counting words */
     int word_sizes[MAX_BUF_SIZE];
     int word_sizes_pos = 0;
@@ -165,9 +165,15 @@ void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *
         if ((*text)[i] != L'\0' && (*text)[i] != L' ') {
             word_size++;
         } else {
-            word_sizes[word_sizes_pos++] = word_size;
-            word_size = 0;
-            words++;
+            if (word_size > *xsize) {
+                *xsize = word_size;
+                word_wrap(text, len, xsize, ysize);
+                return;
+            } else {
+                word_sizes[word_sizes_pos++] = word_size;
+                word_size = 0;
+                words++;
+            }
             //if (text[i] == L'\0') break;
         }
     }
@@ -178,16 +184,16 @@ void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *
     */
 
     /* Doing the wrapping by inserting newline characters */
-    int cnt = line_break_len;
+    int cnt = *xsize;
     int pos = -1;
     int lines = 1;
     for (int j = 0; j < words; j++) {
-        if (cnt == line_break_len) {
+        if (cnt == *xsize) {
             if (cnt - word_sizes[j] > 0) {
                 cnt -= word_sizes[j];
             } else {
                 (*text)[++pos] = L'\n';
-                cnt = line_break_len - word_sizes[j];
+                cnt = *xsize - word_sizes[j];
                 lines++;
             }
             pos += word_sizes[j];
@@ -197,7 +203,7 @@ void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *
                 pos += word_sizes[j] + 1;
             } else {
                 (*text)[++pos] = L'\n';
-                cnt = line_break_len - word_sizes[j];
+                cnt = *xsize - word_sizes[j];
                 lines++;
                 pos += word_sizes[j];
             }

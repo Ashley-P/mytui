@@ -17,19 +17,23 @@ int main() {
 
     tui_init(n_screenwidth, n_screenheight);
     
-    pWidget label  = tui_label(w_root, L"Type something");
+    pWidget label   = tui_label(w_root, L"Type something");
+    pWidget label2  = tui_label(w_root, L"test for nice long wooooooooooorrrrrrddddssss");
     field  = tui_field(w_root, L"In here", 20);
     pWidget field2  = tui_field(w_root, L"ANOTHER ONE", 60);
     pWidget button = tui_button(w_root, L"Send to error log more words", prnt_field);
     
     //field->psize.x = 1;
     label->usize.x = 10;
+    label2->bsize = (sSize) {1, 1};
+    label2->usize.x = 1;
 
     button->usize.x = 8;
     button->widget.button.label.anchor = E;
     button->psize = (sSize) {1, 1};
 
     grid_set(label,  0, 0);
+    grid_set(label2, 0, 3);
     grid_set(field,  0, 1);
     grid_set(field2, 0, 2);
     grid_set(button, 1, 1);

@@ -24,6 +24,6 @@ int is_stack_full(sStack *stack);
 int is_stack_empty(sStack *stack);
 void stack_push(sStack *stack, sWidget *a);
 sWidget * stack_pop(sStack *stack);
-void word_wrap(wchar_t **text, const size_t len, const int line_break_len, int *ysize);
+void word_wrap(wchar_t **text, const size_t len, int *xsize, int *ysize);
 
 #endif

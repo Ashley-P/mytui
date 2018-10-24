@@ -319,7 +319,7 @@ void widget_sizer(sWidget *a) {
             */
             if (a->usize.x < a->widget.button.label.len && a->usize.x > 0) {
                 word_wrap(&a->widget.button.label.text, a->widget.button.label.len, 
-                        a->usize.x, &a->usize.y);
+                        &a->usize.x, &a->usize.y);
             }
             if (a->usize.x == 0) a->csize.x = a->widget.button.label.len;
             if (a->usize.y == 0) a->csize.y = 1;
@@ -329,7 +329,7 @@ void widget_sizer(sWidget *a) {
         case LABEL:
             if (a->usize.x < a->widget.label.len && a->usize.x > 0) {
                 word_wrap(&a->widget.label.text, a->widget.label.len, 
-                        a->usize.x, &a->usize.y);
+                        &a->usize.x, &a->usize.y);
             }
             if (a->usize.x == 0) a->csize.x = a->widget.label.len;
             if (a->usize.y == 0) a->csize.y = 1;
